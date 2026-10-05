@@ -1,0 +1,10 @@
+{
+  "name": "wikideck-web",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @wikideck/web dev",
+    "build": "pnpm --filter @wikideck/web build",
+    "lint": "pnpm --filter @wikideck/web lint"
+  },
+  "packageManager": "pnpm@11.22.0"
+}
