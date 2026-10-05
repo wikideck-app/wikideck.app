@@ -92,8 +92,8 @@ export default async function Page({ searchParams }: PageProps<"/">) {
                 Chaque carte est un vrai article.
               </h2>
               <p className="prose-serif mt-5 text-pale-mist">
-                Sa fréquentation fixe sa rareté, sa longueur son attaque, ses traductions sa
-                défense. Retournez-les pour voir.
+                Sa fréquentation sur Wikipédia fixe sa rareté. Retournez les cartes pour lire
+                l&apos;article.
               </p>
             </Reveal>
             <div className="mt-16">

@@ -21,7 +21,7 @@ const readable = Atkinson_Hyperlegible({
 
 export const metadata: Metadata = {
   title: "Wikideck",
-  description: "Cartes Wikipédia, paquets à ouvrir et duels entre amis.",
+  description: "Cartes Wikipédia, paquets à ouvrir et courses Wikipédia entre amis.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -15,8 +15,7 @@ const FEATURES = [
   {
     icon: Swords,
     title: "Défiez vos amis",
-    text: "Un duel avec vos propres cartes : l'attaque marque, la défense encaisse.",
-    soon: true,
+    text: "Une course Wikipédia en salon : le premier à atteindre l'article cible gagne des wikibits.",
   },
   {
     icon: Handshake,
@@ -38,16 +37,11 @@ const FEATURES = [
 export function Features() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {FEATURES.map(({ icon: Icon, title, text, soon }, i) => (
+      {FEATURES.map(({ icon: Icon, title, text }, i) => (
         <Reveal key={title} delay={(i % 3) * 120}>
           <article className="group h-full rounded-xl border border-line bg-surface p-7 transition-colors duration-300 hover:border-accent">
             <div className="flex items-start justify-between">
               <Icon className="size-6 transition-transform duration-500 group-hover:-translate-y-1" />
-              {soon && (
-                <span className="rounded-full border border-line px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-fog">
-                  Bientôt
-                </span>
-              )}
             </div>
             <h3 className="mt-6 text-lg font-bold">{title}</h3>
             <p className="prose-serif mt-2 text-pale-mist">{text}</p>

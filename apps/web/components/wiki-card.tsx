@@ -1,6 +1,5 @@
 "use client";
 
-import { Shield, Swords } from "@/components/icons";
 import Image from "next/image";
 import { RARITIES, type CardDto, type TagColor } from "@wikideck/shared";
 import { swatchStyle } from "@/lib/tag-style";
@@ -93,15 +92,7 @@ export function WikiCard({
         </div>
 
         <div className="st">
-          <i title="Attaque (longueur de l'article)">
-            <Swords aria-label="ATK" />
-            {fmt.format(card.attack)}
-          </i>
           <b className="pill">{pill}</b>
-          <i title="Défense (langues disponibles)">
-            <Shield aria-label="DEF" />
-            {fmt.format(card.defense)}
-          </i>
         </div>
       </article>
     </div>

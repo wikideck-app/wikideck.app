@@ -709,27 +709,11 @@ body {
 .wk .st {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0.8em 0.6em 0.2em;
   border-top: 1px solid rgba(0, 0, 0, 0.12);
   font-size: 1.5em;
   font-weight: 800;
-}
-.wk .st i {
-  color: var(--st);
-  font-style: normal;
-  white-space: nowrap;
-}
-.wk .st i {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-}
-.wk .st svg {
-  width: 0.95em;
-  height: 0.95em;
-  flex: none;
-  stroke-width: 2.4;
 }
 .wk.r-SR .st,
 .wk.r-UR .st,
@@ -737,9 +721,6 @@ body {
 .wk.r-M .st {
   border-color: rgba(255, 255, 255, 0.4);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
-}
-.wk.r-M .st i {
-  color: #e9c46a;
 }
 .wk .pill {
   padding: 0.3em 1.1em;

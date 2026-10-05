@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Gavel, Lock, Recycle, Shield, Swords, X } from "@/components/icons";
+import { ArrowUpRight, Gavel, Lock, Recycle, X } from "@/components/icons";
 import { useEffect, useState, type ReactNode } from "react";
 import { RARITIES, RECYCLE_VALUES, type CardDto } from "@wikideck/shared";
 import { buttonClass, primaryButtonClass } from "@/components/settings/controls";
@@ -86,23 +86,6 @@ export function CardDetail({
             <p className="prose-serif mt-4 text-pale-mist">{card.description}</p>
           )}
           {children && <div className="mt-5">{children}</div>}
-
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-xl border border-line p-4 text-center bg-surface">
-              <p className="flex items-center justify-center gap-2 text-xl font-bold">
-                <Swords className="size-5" />
-                {fmt.format(card.attack)}
-              </p>
-              <p className="mt-1 text-xs opacity-60">ATK</p>
-            </div>
-            <div className="rounded-xl border border-line p-4 text-center bg-surface">
-              <p className="flex items-center justify-center gap-2 text-xl font-bold">
-                <Shield className="size-5" />
-                {fmt.format(card.defense)}
-              </p>
-              <p className="mt-1 text-xs opacity-60">DEF</p>
-            </div>
-          </div>
 
           <ul className="mt-4 space-y-1 text-sm opacity-60">
             <li>Exemplaires : {quantity}</li>
