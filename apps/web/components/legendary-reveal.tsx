@@ -264,7 +264,7 @@ export function LegendaryReveal({
       role="dialog"
       aria-label="Carte légendaire"
       onClick={() => cb.current.onSkip()}
-      className="fixed inset-0 z-[100] flex cursor-pointer flex-col items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_50%_45%,rgb(40_20_70/0.92),rgb(5_2_15/0.97)_75%)] legendary-in"
+      className="fixed inset-0 z-100 flex cursor-pointer flex-col items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_50%_45%,rgb(40_20_70/0.92),rgb(5_2_15/0.97)_75%)] legendary-in"
     >
       <canvas ref={canvas} aria-hidden className="pointer-events-none absolute inset-0 size-full" />
       <div className="legendary-flash" aria-hidden />

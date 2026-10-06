@@ -111,7 +111,7 @@ export function MarketView({ data, apiUrl }: { data: MarketResponse; apiUrl: str
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher une carte…"
             aria-label="Rechercher une carte par nom"
-            className="w-full rounded-[20px] border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
+            className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
           />
           {search && (
             <button
@@ -164,7 +164,7 @@ export function MarketView({ data, apiUrl }: { data: MarketResponse; apiUrl: str
               onChange={(e) =>
                 router.push(marketHref({ ...base, sort: e.target.value as MarketSort }))
               }
-              className="rounded-[20px] border border-line bg-background px-2 py-1.5 text-sm"
+              className="rounded-lg border border-line bg-background px-2 py-1.5 text-sm"
             >
               {MARKET_SORTS.map((s) => (
                 <option key={s.value} value={s.value}>

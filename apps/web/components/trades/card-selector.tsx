@@ -77,7 +77,7 @@ export function CardSelector({
           }}
           placeholder="Rechercher une carte…"
           aria-label="Rechercher une carte"
-          className="w-full rounded-[20px] border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
+          className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
         />
       </div>
 

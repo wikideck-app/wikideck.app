@@ -39,7 +39,7 @@ export function WishButton({ apiUrl, cardId }: { apiUrl: string; cardId: string 
         onClick={toggle}
         disabled={busy || wished === null}
         aria-pressed={wished ?? false}
-        className={`${buttonClass} ${wished ? "!border-danger !text-danger" : ""}`}
+        className={`${buttonClass} ${wished ? "border-danger! text-danger!" : ""}`}
       >
         {wished ? <HeartFill className="size-4" /> : <Heart className="size-4" />}
         {wished ? "Dans mes envies" : "Ajouter à mes envies"}

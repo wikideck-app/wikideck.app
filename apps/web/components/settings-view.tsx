@@ -115,7 +115,7 @@ export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: 
             id="section-select"
             value={section}
             onChange={(e) => isSection(e.target.value) && choose(e.target.value)}
-            className="w-full rounded-[20px] border border-line bg-background px-3 py-2.5 text-sm outline-none focus:border-accent"
+            className="w-full rounded-lg border border-line bg-background px-3 py-2.5 text-sm outline-none focus:border-accent"
           >
             {SECTIONS.map((s) => (
               <option key={s.id} value={s.id}>
@@ -235,7 +235,7 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
               maxLength={USERNAME_MAX + 8}
               aria-label="Pseudonyme"
               aria-invalid={!valid}
-              className="min-w-0 flex-1 rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent aria-[invalid=true]:border-danger"
+              className="min-w-0 flex-1 rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent aria-invalid:border-danger"
             />
             <button
               type="submit"
@@ -278,7 +278,7 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
           {showcase ? (
             <WikiCard card={showcase} compact className="w-28" />
           ) : (
-            <div className="flex aspect-[2/3] w-28 items-center justify-center rounded-xl border border-dashed border-line text-center text-[11px] text-fog bg-surface">
+            <div className="flex aspect-2/3 w-28 items-center justify-center rounded-xl border border-dashed border-line text-center text-[11px] text-fog bg-surface">
               Aucune carte
             </div>
           )}

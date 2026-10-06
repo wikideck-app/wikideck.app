@@ -223,7 +223,7 @@ export function AchievementsView({ data, apiUrl }: { data: AchievementsResponse;
               type="button"
               disabled={busy !== null}
               onClick={() => claim(def.key)}
-              className="mt-3 inline-flex items-center gap-2 rounded-[20px] bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-50"
+              className="mt-3 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-50"
             >
               Récupérer +{fmt.format(def.reward)}
             </button>
@@ -255,7 +255,7 @@ export function AchievementsView({ data, apiUrl }: { data: AchievementsResponse;
       </section>
 
       {pending.length > 0 && (
-        <section className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-accent bg-accent/[0.06] px-5 py-4">
+        <section className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-accent bg-accent/6 px-5 py-4">
           <p className="text-sm">
             <strong>
               {pending.length} récompense{pending.length > 1 ? "s" : ""} à récupérer
@@ -268,7 +268,7 @@ export function AchievementsView({ data, apiUrl }: { data: AchievementsResponse;
             type="button"
             disabled={busy !== null}
             onClick={() => claim()}
-            className="rounded-[20px] bg-accent px-5 py-2 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-50"
+            className="rounded-lg bg-accent px-5 py-2 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-50"
           >
             {busy === "all" ? "…" : "Tout récupérer"}
           </button>
@@ -321,7 +321,7 @@ export function AchievementsView({ data, apiUrl }: { data: AchievementsResponse;
 
       <div
         aria-live="polite"
-        className="pointer-events-none fixed bottom-4 right-4 z-[60] flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2"
+        className="pointer-events-none fixed bottom-4 right-4 z-60 flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2"
       >
         {toasts.map((t) => (
           <div

@@ -65,7 +65,7 @@ export function CatalogView({ data, apiUrl }: { data: CatalogResponse; apiUrl: s
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher une carte par nom…"
           aria-label="Rechercher une carte par nom"
-          className="w-full rounded-[20px] border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
+          className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
         />
         {search && (
           <button
@@ -117,7 +117,7 @@ export function CatalogView({ data, apiUrl }: { data: CatalogResponse; apiUrl: s
               key={o.value}
               href={catalogHref({ ...base, ownership: o.value })}
               aria-current={data.ownership === o.value}
-              className="rounded-full bg-foreground/10 px-3 py-1 text-xs font-semibold aria-[current=true]:bg-foreground aria-[current=true]:text-background"
+              className="rounded-full bg-foreground/10 px-3 py-1 text-xs font-semibold aria-current:bg-foreground aria-current:text-background"
             >
               {o.label}
             </Link>
@@ -131,7 +131,7 @@ export function CatalogView({ data, apiUrl }: { data: CatalogResponse; apiUrl: s
             onChange={(e) =>
               router.push(catalogHref({ ...base, sort: e.target.value as CatalogSort }))
             }
-            className="rounded-[20px] border border-line bg-background px-2 py-1.5 text-sm"
+            className="rounded-lg border border-line bg-background px-2 py-1.5 text-sm"
           >
             {CATALOG_SORTS.map((s) => (
               <option key={s.value} value={s.value}>

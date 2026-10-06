@@ -21,7 +21,7 @@ export function SiteHeader() {
   return (
     <header
       data-scrolled={scrolled}
-      className="on-grape fade-up sticky top-0 z-50 -mb-[72px] h-[72px] border-b border-transparent transition-colors duration-500 data-[scrolled=true]:border-white/20 data-[scrolled=true]:bg-[var(--theme-bar-solid)]"
+      className="on-grape fade-up sticky top-0 z-50 mb-[-72px] h-[72px] border-b border-transparent transition-colors duration-500 data-[scrolled=true]:border-white/20 data-[scrolled=true]:bg-(--theme-bar-solid)"
     >
       <div className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-4 px-6">
         <a
@@ -55,7 +55,7 @@ export function SiteHeader() {
           </ul>
           <a
             href="#login"
-            className="rounded-full border-2 border-[var(--deep-concord)] bg-white px-5 py-2 text-sm font-semibold text-[var(--deep-concord)] shadow-[inset_0_0_0_2px_#fff] transition-colors hover:bg-[var(--deep-concord)] hover:text-white"
+            className="rounded-full border-2 border-(--deep-concord) bg-white px-5 py-2 text-sm font-semibold text-(--deep-concord) shadow-[inset_0_0_0_2px_#fff] transition-colors hover:bg-(--deep-concord) hover:text-white"
           >
             Se connecter
           </a>

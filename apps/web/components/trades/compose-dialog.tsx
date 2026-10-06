@@ -147,11 +147,11 @@ export function ComposeDialog({
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Pseudonyme du joueur…"
                 aria-label="Pseudonyme du joueur"
-                className="w-full rounded-[20px] border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
+                className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
               />
             </div>
             {[...search.trim()].length >= 2 && (
-              <ul className="mt-2 divide-y divide-line rounded-[20px] border border-line">
+              <ul className="mt-2 divide-y divide-line rounded-lg border border-line">
                 {results.length === 0 && <li className="p-3 text-sm text-fog">Aucun joueur.</li>}
                 {results.map((p) => (
                   <li key={p.id}>

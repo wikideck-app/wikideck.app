@@ -29,7 +29,7 @@ export default async function Page({ searchParams }: PageProps<"/">) {
     >
       <SiteHeader />
 
-      <div className="on-grape relative bg-[image:var(--grape-gradient)] [clip-path:inset(0)]">
+      <div className="on-grape relative bg-(image:--grape-gradient) [clip-path:inset(0)]">
         <Starfield />
         <section className="relative z-10 flex min-h-svh flex-col pt-[72px]">
           <div className="relative mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-6 py-6">
@@ -115,13 +115,13 @@ export default async function Page({ searchParams }: PageProps<"/">) {
         </section>
 
         <section className="mx-auto w-full max-w-[1200px] px-6 pb-28">
-          <Reveal className="on-grape rounded-[25px] bg-[image:var(--grape-gradient)] px-7 py-16 text-center">
+          <Reveal className="on-grape rounded-xl bg-(image:--grape-gradient) px-7 py-16 text-center">
             <h2 className="font-display mx-auto max-w-xl text-3xl font-medium sm:text-5xl">
               Prêt à ouvrir votre premier paquet ?
             </h2>
             <a
               href="#login"
-              className="mt-8 inline-flex rounded-full border-2 border-[var(--deep-concord)] bg-white px-6 py-3 text-base font-semibold text-[var(--deep-concord)] shadow-[inset_0_0_0_2px_#fff] transition hover:bg-[var(--deep-concord)] hover:text-white"
+              className="mt-8 inline-flex rounded-full border-2 border-(--deep-concord) bg-white px-6 py-3 text-base font-semibold text-(--deep-concord) shadow-[inset_0_0_0_2px_#fff] transition hover:bg-(--deep-concord) hover:text-white"
             >
               Commencer avec Discord
             </a>

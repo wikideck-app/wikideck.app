@@ -299,15 +299,15 @@ function SoloBattle({
       {phase === "playing" &&
         game.puzzle &&
         createPortal(
-          <div className="fixed inset-0 z-[90] flex flex-col bg-background text-foreground">
+          <div className="fixed inset-0 z-90 flex flex-col bg-background text-foreground">
             <div className="flex flex-col gap-1.5 border-b border-line bg-surface px-3 py-2 sm:px-4">
               <div className="flex justify-center">
-                <span className="rounded-[20px] bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
+                <span className="rounded-lg bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
                   Cible : {game.puzzle.target}
                 </span>
               </div>
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <div className="flex min-w-0 flex-1 items-center overflow-x-auto whitespace-nowrap text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex min-w-0 flex-1 items-center overflow-x-auto whitespace-nowrap text-xs scrollbar-none [&::-webkit-scrollbar]:hidden">
                   {game.history.map((title, i) => (
                     <span key={i} className="flex shrink-0 items-center">
                       {i > 0 && <span className="px-1 opacity-40">›</span>}

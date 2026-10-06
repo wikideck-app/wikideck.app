@@ -219,7 +219,7 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
                   <WikiCard card={profile.showcase} />
                 </div>
               ) : (
-                <div className="mt-3 flex aspect-[250/370] w-64 items-center justify-center rounded-[9.6%/6.5%] border-2 border-dashed border-line px-6 text-center text-sm text-fog">
+                <div className="mt-3 flex aspect-250/370 w-64 items-center justify-center rounded-[9.6%/6.5%] border-2 border-dashed border-line px-6 text-center text-sm text-fog">
                   {profile.isSelf
                     ? "Choisissez une carte vitrine dans les paramètres."
                     : "Pas de carte vitrine."}
@@ -315,7 +315,7 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
                         disabled={busy}
                         onClick={() => setPicking(true)}
                         aria-label="Ajouter une carte en vedette"
-                        className="flex aspect-[250/370] w-full flex-col items-center justify-center gap-2 rounded-[9.6%/6.5%] border-2 border-dashed border-line text-sm font-semibold text-fog transition-colors hover:border-accent hover:text-foreground disabled:opacity-50"
+                        className="flex aspect-250/370 w-full flex-col items-center justify-center gap-2 rounded-[9.6%/6.5%] border-2 border-dashed border-line text-sm font-semibold text-fog transition-colors hover:border-accent hover:text-foreground disabled:opacity-50"
                       >
                         <Plus className="size-6" />
                         Ajouter

@@ -385,7 +385,7 @@ function RankingTab({ apiUrl }: { apiUrl: string }) {
   const row = (e: RankingResponse["entries"][number]) => (
     <li
       key={e.guildId}
-      className={`flex items-center gap-4 px-4 py-3 text-sm ${e.isMine ? "bg-accent/[0.06]" : ""}`}
+      className={`flex items-center gap-4 px-4 py-3 text-sm ${e.isMine ? "bg-accent/6" : ""}`}
     >
       <span className="w-8 text-center font-bold tabular-nums text-pale-mist">{e.rank}</span>
       <span className="min-w-0 flex-1 truncate font-bold">

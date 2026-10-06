@@ -4,7 +4,7 @@ export function Ticker() {
   return (
     <div
       aria-hidden
-      className="relative z-10 overflow-hidden border-y border-line py-4 [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]"
+      className="relative z-10 overflow-hidden border-y border-line py-4 mask-[linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]"
     >
       <div className="animate-ticker flex w-max">
         {[0, 1].map((copy) => (

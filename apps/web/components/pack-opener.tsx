@@ -101,7 +101,7 @@ function PackHalf({
 
 const PackStage3D = dynamic(() => import("@/components/pack-stage-3d").then((m) => m.PackStage3D), {
   ssr: false,
-  loading: () => <div className="h-[26rem] w-[22rem] max-w-full" />,
+  loading: () => <div className="h-104 w-88 max-w-full" />,
 });
 
 type Phase = "idle" | "shaking" | "bursting" | "reveal";
@@ -421,7 +421,7 @@ export function PackOpener({
         <button
           type="button"
           onClick={() => (last ? backToIdle() : go(index + 1))}
-          className="rounded-[20px] bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70"
+          className="rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70"
         >
           {last ? "Terminer" : `Encore ${left} carte${left > 1 ? "s" : ""}`}
         </button>
@@ -520,7 +520,7 @@ export function PackOpener({
               onPointerMove={dragMove}
               onPointerUp={dragEnd}
               onPointerCancel={dragEnd}
-              className={`relative aspect-[1101/1426] h-80 touch-none select-none ${
+              className={`relative aspect-1101/1426 h-80 touch-none select-none ${
                 canTear ? "cursor-grab active:cursor-grabbing" : ""
               } ${phase === "shaking" && !skip ? "animate-pack-shake" : ""}`}
             >
@@ -582,7 +582,7 @@ export function PackOpener({
         type="button"
         onClick={open}
         disabled={busy || status.packs < 1}
-        className="mt-6 rounded-[20px] bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70 disabled:opacity-40"
+        className="mt-6 rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70 disabled:opacity-40"
       >
         {busy ? "Ouverture…" : "Ouvrir"}
       </button>

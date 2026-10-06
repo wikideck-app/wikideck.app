@@ -148,7 +148,7 @@ export function SellDialog({
                 max={MARKET_MAX_PRICE}
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="mt-2 w-full rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+                className="mt-2 w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
               />
             </label>
             <div>

@@ -80,7 +80,7 @@ export function TagColorField({
           } else setText(null);
         }}
         onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
-        className="w-24 rounded-[20px] border border-line bg-transparent px-3 py-1 font-mono text-sm uppercase outline-none focus:border-accent aria-[invalid=true]:border-danger"
+        className="w-24 rounded-lg border border-line bg-transparent px-3 py-1 font-mono text-sm uppercase outline-none focus:border-accent aria-invalid:border-danger"
       />
       {invalid && (
         <span role="alert" className="text-xs text-danger">

@@ -93,7 +93,7 @@ function CardStrip({
     cards.length > 4 ? "w-28 sm:w-32" : cards.length > 2 ? "w-32 sm:w-36" : "w-36 sm:w-44";
   return (
     <section
-      className={`trade-side-${side} min-w-0 rounded-2xl border border-line bg-accent/[0.03] px-5 pb-5 pt-4`}
+      className={`trade-side-${side} min-w-0 rounded-2xl border border-line bg-accent/3 px-5 pb-5 pt-4`}
     >
       <h4 className="flex items-baseline justify-between text-xs font-bold uppercase tracking-[0.15em] text-fog">
         {title}
@@ -169,7 +169,7 @@ function TradeRow({
       )}
       {trade.status === "PENDING" && (
         <span aria-hidden className="absolute inset-x-0 top-0 h-px overflow-hidden">
-          <i className="trade-glint absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-accent to-transparent" />
+          <i className="trade-glint absolute inset-y-0 left-0 w-1/3 bg-linear-to-r from-transparent via-accent to-transparent" />
         </span>
       )}
       <div className="flex flex-wrap items-center justify-between gap-3">

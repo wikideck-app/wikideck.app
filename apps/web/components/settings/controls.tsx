@@ -122,7 +122,7 @@ export function SelectField<T extends string>({
       aria-label={label}
       value={value}
       onChange={(e) => onChange(e.target.value as T)}
-      className="rounded-[20px] border border-line bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+      className="rounded-lg border border-line bg-background px-3 py-2 text-sm outline-none focus:border-accent"
     >
       {options.map((o) => (
         <option key={o.value} value={o.value}>
@@ -183,6 +183,6 @@ export function Panel({
 export const buttonClass =
   "inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent bg-surface px-5 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40";
 export const primaryButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-[20px] bg-accent px-5 py-2 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/80 disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/80 disabled:cursor-not-allowed disabled:opacity-40";
 export const dangerButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-[20px] bg-danger px-5 py-2 text-sm font-bold text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex items-center justify-center gap-2 rounded-lg bg-danger px-5 py-2 text-sm font-bold text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40";

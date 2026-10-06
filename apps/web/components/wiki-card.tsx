@@ -115,7 +115,7 @@ export function FlipCard({
   className?: string;
 }) {
   return (
-    <div className={`flip-scene aspect-[250/370] ${className}`}>
+    <div className={`flip-scene aspect-250/370 ${className}`}>
       <div
         className="flip-inner cursor-pointer"
         data-flipped={flipped}

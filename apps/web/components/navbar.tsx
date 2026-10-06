@@ -19,7 +19,7 @@ const chip =
   "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-2 border-white/40 px-3.5 py-1.5 text-sm font-bold transition-colors hover:border-white";
 
 const iconButton =
-  "flex size-10 items-center justify-center rounded-full border-2 border-white/40 transition-colors hover:border-white hover:bg-white hover:text-[var(--deep-concord)]";
+  "flex size-10 items-center justify-center rounded-full border-2 border-white/40 transition-colors hover:border-white hover:bg-white hover:text-(--deep-concord)";
 
 function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
   const ratio = Math.min(1, packs.packs / packs.max);
@@ -86,7 +86,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           className={`flex items-center gap-3 rounded-[15px] px-4 py-3 text-sm font-bold transition-colors ${
             active
               ? "bg-accent text-accent-foreground"
-              : "bg-[var(--theme-pill)] text-[var(--theme-pill-ink)] hover:bg-[var(--theme-pill-hover)]"
+              : "bg-(--theme-pill) text-(--theme-pill-ink) hover:bg-(--theme-pill-hover)"
           }`}
         >
           <Icon className="size-[18px]" strokeWidth={active ? 2.2 : 1.9} />
@@ -94,7 +94,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           {count > 0 && (
             <span
               title={`${count} en attente`}
-              className="ml-auto min-w-5 rounded-full bg-[var(--bubblegum)] px-1.5 text-center text-[11px] font-bold leading-5 text-white"
+              className="ml-auto min-w-5 rounded-full bg-(--bubblegum) px-1.5 text-center text-[11px] font-bold leading-5 text-white"
             >
               {count}
             </span>
@@ -118,7 +118,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           onClick={() => setOpen(expanded ? null : group)}
           className={`relative flex h-10 items-center gap-2 rounded-full border-2 px-3.5 text-sm font-bold transition-colors ${
             expanded
-              ? "border-white bg-white text-[var(--deep-concord)]"
+              ? "border-white bg-white text-(--deep-concord)"
               : here
                 ? "border-white/80 bg-white/15"
                 : "border-white/40 hover:border-white"
@@ -132,7 +132,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           {!expanded && pending > 0 && (
             <span
               aria-hidden
-              className="absolute -right-1 -top-1 size-3 rounded-full border-2 border-[var(--theme-bar-solid)] bg-[var(--bubblegum)]"
+              className="absolute -right-1 -top-1 size-3 rounded-full border-2 border-(--theme-bar-solid) bg-(--bubblegum)"
             />
           )}
         </button>
@@ -140,7 +140,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           <nav
             id={`menu-${group}`}
             aria-label={group}
-            className="on-light toast-in absolute left-0 top-[calc(100%+10px)] z-10 w-64 rounded-[25px] bg-surface p-4 shadow-[var(--shadow-float)]"
+            className="on-light toast-in absolute left-0 top-[calc(100%+10px)] z-10 w-64 rounded-xl bg-surface p-4 shadow-(--shadow-float)"
           >
             <ul className="flex flex-col gap-1.5">{items(group).map(link)}</ul>
           </nav>
@@ -177,7 +177,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             onClick={() => setOpen(open === "all" ? null : "all")}
             className={`relative flex size-10 items-center justify-center rounded-full border-2 transition-colors xl:hidden ${
               open === "all"
-                ? "border-white bg-white text-[var(--deep-concord)]"
+                ? "border-white bg-white text-(--deep-concord)"
                 : "border-white/40 hover:border-white"
             }`}
           >
@@ -185,7 +185,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             {open !== "all" && allPending > 0 && (
               <span
                 aria-hidden
-                className="absolute -right-1 -top-1 size-3 rounded-full border-2 border-[var(--theme-bar-solid)] bg-[var(--bubblegum)]"
+                className="absolute -right-1 -top-1 size-3 rounded-full border-2 border-(--theme-bar-solid) bg-(--bubblegum)"
               />
             )}
           </button>
@@ -230,7 +230,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             >
               <ShieldCheck className="size-4" />
               {user.staffAlerts > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[var(--bubblegum)] px-1 text-[10px] font-bold leading-none text-white">
+                <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-(--bubblegum) px-1 text-[10px] font-bold leading-none text-white">
                   {user.staffAlerts > 99 ? "99+" : user.staffAlerts}
                 </span>
               )}
@@ -258,7 +258,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           tabIndex={-1}
           aria-label="Fermer le menu"
           onClick={() => setOpen(null)}
-          className="fixed inset-0 top-16 -z-10 cursor-default bg-[var(--theme-scrim)]"
+          className="fixed inset-0 top-16 -z-10 cursor-default bg-(--theme-scrim)"
         />
       )}
 
@@ -266,7 +266,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
         <nav
           id="menu-all"
           aria-label="Navigation principale"
-          className="on-light toast-in absolute left-3 right-3 top-[68px] max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-[25px] bg-surface p-5 shadow-[var(--shadow-float)] xl:hidden"
+          className="on-light toast-in absolute left-3 right-3 top-[68px] max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-xl bg-surface p-5 shadow-(--shadow-float) xl:hidden"
         >
           <div className="flex flex-col gap-5">
             {MENU_GROUPS.map((group) => (

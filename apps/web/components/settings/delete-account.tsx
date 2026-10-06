@@ -71,7 +71,7 @@ export function DeleteAccount({ apiUrl }: { apiUrl: string }) {
           onChange={(e) => setTyped(e.target.value)}
           autoComplete="off"
           spellCheck={false}
-          className="mt-2 w-full rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-danger"
+          className="mt-2 w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-danger"
         />
         {error && (
           <p role="alert" className="mt-3 text-sm text-danger">

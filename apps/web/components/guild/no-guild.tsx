@@ -74,7 +74,7 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
               value={name}
               maxLength={GUILD_NAME_MAX}
               onChange={(e) => setName(e.target.value)}
-              className="mt-2 w-full rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+              className="mt-2 w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
             />
           </label>
           <label className="block">
@@ -86,7 +86,7 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
               maxLength={GUILD_DESCRIPTION_MAX}
               rows={2}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-2 w-full resize-none rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+              className="mt-2 w-full resize-none rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
             />
           </label>
           <button
@@ -109,7 +109,7 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Rechercher par nom…"
             aria-label="Rechercher une guilde"
-            className="w-full rounded-[20px] border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
+            className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
           />
         </div>
         {guilds === null ? (

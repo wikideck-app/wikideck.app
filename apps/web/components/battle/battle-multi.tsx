@@ -27,7 +27,7 @@ import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components
 const panel = "rounded-xl border border-line bg-surface p-5";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
 const field =
-  "rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent";
+  "rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent";
 
 const MODES: { value: BattleGameMode; label: string; hint: string }[] = [
   { value: "race", label: "Course", hint: "Le premier arrivé gagne la manche." },
@@ -348,7 +348,7 @@ function Lobby({
 
 function Countdown({ room, count }: { room: BattleRoom; count: number | null }) {
   return createPortal(
-    <div className="fixed inset-0 z-[90] flex flex-col items-center justify-center gap-10 bg-background px-4 text-center text-foreground">
+    <div className="fixed inset-0 z-90 flex flex-col items-center justify-center gap-10 bg-background px-4 text-center text-foreground">
       <div className="text-xs uppercase tracking-[0.3em] text-fog">
         Manche {room.round} / {room.totalRounds}
       </div>
@@ -424,13 +424,13 @@ function Playing({ game }: { game: ReturnType<typeof useBattleRoom> }) {
   const clicks = Math.max(0, path.length - 1);
 
   return createPortal(
-    <div className="fixed inset-0 z-[90] flex flex-col bg-background text-foreground">
+    <div className="fixed inset-0 z-90 flex flex-col bg-background text-foreground">
       <div className="flex flex-col gap-1.5 border-b border-line bg-surface px-3 py-2 sm:px-4">
         <div className="flex items-center justify-center gap-3 text-xs text-fog">
           <span>
             Manche {room.round}/{room.totalRounds}
           </span>
-          <span className="rounded-[20px] bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
+          <span className="rounded-lg bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
             Cible : {room.targetArticle}
           </span>
           {game.timeLeft !== null && (
@@ -442,7 +442,7 @@ function Playing({ game }: { game: ReturnType<typeof useBattleRoom> }) {
           )}
         </div>
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <div className="flex min-w-0 flex-1 items-center overflow-x-auto whitespace-nowrap text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex min-w-0 flex-1 items-center overflow-x-auto whitespace-nowrap text-xs scrollbar-none [&::-webkit-scrollbar]:hidden">
             {path.map((t, i) => (
               <span key={i} className="flex shrink-0 items-center">
                 {i > 0 && <span className="px-1 opacity-40">›</span>}

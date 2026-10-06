@@ -87,7 +87,7 @@ export function CatalogPicker({
           }}
           placeholder="Rechercher une carte par nom…"
           aria-label="Rechercher une carte par nom"
-          className="w-full rounded-[20px] border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
+          className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
         />
       </div>
       {error && (

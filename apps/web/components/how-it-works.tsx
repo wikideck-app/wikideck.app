@@ -60,7 +60,7 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
             </h3>
             <table className="mt-2 w-full text-sm">
               <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-fog">
+                <tr className="text-left text-[11px] uppercase tracking-widest text-fog">
                   <th className="pb-1.5 font-bold">Rareté</th>
                   <th className="pb-1.5 text-right font-bold">Vues / mois</th>
                   {drops && <th className="pb-1.5 text-right font-bold">Par carte</th>}
@@ -139,7 +139,7 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
         <button
           type="button"
           onClick={() => dialog.current?.close()}
-          className="mt-6 w-full rounded-[20px] bg-accent px-[18px] py-2.5 text-sm font-bold text-accent-foreground sm:w-auto sm:px-10"
+          className="mt-6 w-full rounded-lg bg-accent px-[18px] py-2.5 text-sm font-bold text-accent-foreground sm:w-auto sm:px-10"
         >
           Compris
         </button>

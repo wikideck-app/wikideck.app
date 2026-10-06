@@ -232,8 +232,8 @@ function Thread({
                 )}
                 <div className={`flex ${m.mine ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-sm ${
-                      m.mine ? "rounded-br-md bg-accent/[0.12]" : "rounded-bl-md border border-line"
+                    className={`max-w-[80%] whitespace-pre-wrap wrap-break-word rounded-2xl px-3.5 py-2 text-sm ${
+                      m.mine ? "rounded-br-md bg-accent/12" : "rounded-bl-md border border-line"
                     }`}
                     title={timeFmt.format(new Date(m.createdAt))}
                   >
@@ -315,7 +315,7 @@ function Thread({
               }}
               placeholder="Écrire un message…"
               aria-label="Message"
-              className="max-h-32 min-h-10 flex-1 resize-none rounded-xl border border-line bg-transparent px-3 py-2 text-sm outline-none [field-sizing:content] focus:border-accent"
+              className="max-h-32 min-h-10 flex-1 resize-none rounded-xl border border-line bg-transparent px-3 py-2 text-sm outline-none field-sizing-content focus:border-accent"
             />
             <button
               type="submit"
@@ -393,7 +393,7 @@ export function MessagesView({
   }
 
   return (
-    <div className="mt-8 flex h-[calc(100dvh-14rem)] min-h-[28rem] overflow-hidden rounded-xl border border-line bg-surface">
+    <div className="mt-8 flex h-[calc(100dvh-14rem)] min-h-112 overflow-hidden rounded-xl border border-line bg-surface">
       <aside
         className={`${active ? "hidden md:flex" : "flex"} w-full shrink-0 flex-col border-line md:w-80 md:border-r`}
       >
@@ -421,7 +421,7 @@ export function MessagesView({
                 type="button"
                 onClick={() => open(c.player)}
                 aria-current={active?.id === c.player.id}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-accent/5 aria-[current=true]:bg-accent/[0.07]"
+                className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-accent/5 aria-current:bg-accent/[0.07]"
               >
                 <Avatar player={c.player} />
                 <div className="min-w-0 flex-1">
@@ -437,7 +437,7 @@ export function MessagesView({
                       {c.last.body}
                     </p>
                     {c.unread > 0 && (
-                      <span className="min-w-5 shrink-0 rounded-[20px] bg-accent px-1.5 text-center text-[10px] font-bold leading-5 text-accent-foreground">
+                      <span className="min-w-5 shrink-0 rounded-lg bg-accent px-1.5 text-center text-[10px] font-bold leading-5 text-accent-foreground">
                         {c.unread}
                       </span>
                     )}

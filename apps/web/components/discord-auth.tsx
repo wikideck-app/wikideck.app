@@ -22,7 +22,7 @@ export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string 
   }
 
   return (
-    <div className="on-light w-full max-w-sm rounded-[25px] bg-surface p-8 shadow-[var(--shadow-float)]">
+    <div className="on-light w-full max-w-sm rounded-xl bg-surface p-8 shadow-(--shadow-float)">
       <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-fog">Connexion</p>
       <h2 className="font-display mt-3 text-3xl font-medium">Rejoignez Wikideck</h2>
       <p className="mt-3 font-serif text-[15px] leading-[1.7] text-pale-mist">
@@ -30,13 +30,13 @@ export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string 
       </p>
 
       {error && (
-        <p role="alert" className="mt-5 rounded-[20px] bg-danger/10 p-3 text-sm text-danger">
+        <p role="alert" className="mt-5 rounded-lg bg-danger/10 p-3 text-sm text-danger">
           {ERRORS[error] ?? "Une erreur est survenue."}
         </p>
       )}
 
       <label
-        className={`mt-6 flex cursor-pointer items-start gap-3 rounded-[20px] border p-4 transition-colors ${
+        className={`mt-6 flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${
           missing && !accepted
             ? "border-danger"
             : accepted
@@ -55,7 +55,7 @@ export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string 
         />
         <span
           aria-hidden
-          className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-[20px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-fog ${
+          className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-lg border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-fog ${
             accepted ? "border-pale-mist bg-accent" : "border-fog"
           }`}
         >

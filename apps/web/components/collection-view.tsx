@@ -171,7 +171,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher une carte par nom…"
           aria-label="Rechercher une carte par nom"
-          className="w-full rounded-[20px] border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
+          className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
         />
         {search && (
           <button
@@ -246,7 +246,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
               fav: data.favoritesOnly,
             })}
             aria-current={!data.tag}
-            className="rounded-full px-3 py-1 text-xs font-semibold aria-[current=true]:bg-foreground aria-[current=true]:text-background bg-foreground/10"
+            className="rounded-full px-3 py-1 text-xs font-semibold aria-current:bg-foreground aria-current:text-background bg-foreground/10"
           >
             Toutes
           </Link>
@@ -295,7 +295,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             type="button"
             aria-pressed={selectMode}
             onClick={() => (selectMode ? exitSelect() : setSelectMode(true))}
-            className={`${buttonClass} !py-1.5 ${selectMode ? "!bg-accent !text-accent-foreground" : ""}`}
+            className={`${buttonClass} py-1.5! ${selectMode ? "bg-accent! text-accent-foreground!" : ""}`}
           >
             <Recycle className="size-4" /> {selectMode ? "Terminer" : "Recycler des cartes"}
           </button>
@@ -303,7 +303,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             type="button"
             aria-expanded={bulkOpen}
             onClick={() => setBulkOpen((o) => !o)}
-            className={`${buttonClass} !py-1.5 ${bulkOpen ? "!bg-accent !text-accent-foreground" : ""}`}
+            className={`${buttonClass} py-1.5! ${bulkOpen ? "bg-accent! text-accent-foreground!" : ""}`}
           >
             <Recycle className="size-4" /> Recyclage groupé
           </button>
@@ -459,7 +459,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
         <div
           role="region"
           aria-label="Recyclage de cartes"
-          className="fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-[28px] border border-line bg-surface px-5 py-3 shadow-2xl"
+          className="fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-2xl border border-line bg-surface px-5 py-3 shadow-2xl"
         >
           <span className="text-sm font-semibold">
             {picked.size === 0

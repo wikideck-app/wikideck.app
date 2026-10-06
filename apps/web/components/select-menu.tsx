@@ -89,7 +89,7 @@ export function SelectMenu<T extends string>({
         aria-controls={`${id}-list`}
         aria-activedescendant={open ? `${id}-${active}` : undefined}
         onClick={() => (open ? setOpen(false) : show())}
-        className="flex items-center gap-2 rounded-[20px] border border-line bg-surface py-1.5 pl-4 pr-3 text-sm font-semibold transition-colors hover:border-accent focus-visible:border-accent focus-visible:outline-none aria-expanded:border-accent"
+        className="flex items-center gap-2 rounded-lg border border-line bg-surface py-1.5 pl-4 pr-3 text-sm font-semibold transition-colors hover:border-accent focus-visible:border-accent focus-visible:outline-none aria-expanded:border-accent"
       >
         {options[current]?.label}
         <ChevronDown

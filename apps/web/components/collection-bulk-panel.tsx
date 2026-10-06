@@ -204,7 +204,7 @@ export function CollectionBulkPanel({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" className={`${buttonClass} !py-1.5`} onClick={onDuplicates}>
+          <button type="button" className={`${buttonClass} py-1.5!`} onClick={onDuplicates}>
             Doublons{duplicates !== null && ` (${num.format(duplicates)})`}
           </button>
           <button
@@ -270,7 +270,7 @@ export function CollectionBulkPanel({
             value={toSlider(maxViews)}
             onChange={(e) => setViews(fromSlider(Number(e.target.value)))}
             aria-label="Seuil de vues"
-            className="min-w-0 flex-1 accent-[var(--accent)]"
+            className="min-w-0 flex-1 accent-(--accent)"
           />
           <label className="flex items-center gap-1.5 whitespace-nowrap">
             <input
@@ -285,7 +285,7 @@ export function CollectionBulkPanel({
               }}
               onBlur={() => setViews(Number(viewsText) || 1)}
               aria-label="Nombre de vues"
-              className="w-20 rounded-[20px] border border-line bg-transparent px-2.5 py-1 text-right text-sm outline-none focus:border-accent"
+              className="w-20 rounded-lg border border-line bg-transparent px-2.5 py-1 text-right text-sm outline-none focus:border-accent"
             />
             <span className="text-fog">vues sur 30 jours</span>
           </label>
@@ -371,7 +371,7 @@ export function CollectionBulkPanel({
               }}
               placeholder="Un mot, puis Entrée (ou une liste séparée par des virgules)"
               aria-label="Mot à toujours garder"
-              className="min-w-0 flex-1 rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+              className="min-w-0 flex-1 rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
             />
             <button
               type="submit"
@@ -495,13 +495,13 @@ export function CollectionBulkPanel({
               {excluded.size > 0 && (
                 <button
                   type="button"
-                  className={`${buttonClass} !py-1.5`}
+                  className={`${buttonClass} py-1.5!`}
                   onClick={() => setExcluded(new Set())}
                 >
                   Tout remettre
                 </button>
               )}
-              <button type="button" className={`${buttonClass} !py-1.5`} onClick={resetReview}>
+              <button type="button" className={`${buttonClass} py-1.5!`} onClick={resetReview}>
                 Annuler
               </button>
             </div>
@@ -512,7 +512,7 @@ export function CollectionBulkPanel({
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Chercher dans la liste"
             aria-label="Chercher dans la liste"
-            className="mt-3 w-full max-w-sm rounded-[20px] border border-line bg-transparent px-3 py-1.5 text-sm outline-none focus:border-accent"
+            className="mt-3 w-full max-w-sm rounded-lg border border-line bg-transparent px-3 py-1.5 text-sm outline-none focus:border-accent"
           />
           {review.truncated && (
             <p className="mt-2 text-xs text-fog">

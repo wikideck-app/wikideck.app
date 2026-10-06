@@ -1,7 +1,10 @@
 import { cookies } from "next/headers";
-import type { MeResponse } from "@wikideck/shared";
+import { API_VERSION, type MeResponse } from "@wikideck/shared";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+
+// toutes les requêtes passent par /v1 : un changement incompatible aura son /v2, sans casser l'ancien site
+export const API_URL = `${API_ORIGIN}/v${API_VERSION}`;
 
 export async function getCurrentUser() {
   const cookie = (await cookies()).toString();

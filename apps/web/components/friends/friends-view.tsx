@@ -122,7 +122,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Nom d'utilisateur Discord (@nom)…"
             aria-label="Rechercher un joueur par nom d'utilisateur Discord"
-            className="w-full rounded-[20px] border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
+            className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
           />
         </div>
         {searching && (
@@ -198,7 +198,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
           >
             {label}
             {key === "requests" && data.incoming.length > 0 && (
-              <span className="min-w-5 rounded-[20px] bg-accent px-1.5 text-center text-[10px] leading-5 text-accent-foreground">
+              <span className="min-w-5 rounded-lg bg-accent px-1.5 text-center text-[10px] leading-5 text-accent-foreground">
                 {data.incoming.length}
               </span>
             )}

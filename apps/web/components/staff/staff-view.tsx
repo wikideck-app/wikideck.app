@@ -29,7 +29,7 @@ type Tab =
 const panel = "rounded-xl border border-line bg-surface p-5";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
 const field =
-  "rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent";
+  "rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent";
 const dateFmt = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 const dayFmt = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 const num = new Intl.NumberFormat("fr-FR");
@@ -1501,7 +1501,7 @@ export function StaffView({
     <div className="mt-6">
       <div className="flex flex-wrap items-center justify-center gap-3">
         <div
-          className="flex flex-wrap justify-center gap-1 rounded-[28px] border border-line p-1"
+          className="flex flex-wrap justify-center gap-1 rounded-2xl border border-line p-1"
           role="tablist"
         >
           {tabs.map((t) => (

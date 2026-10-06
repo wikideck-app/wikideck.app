@@ -184,7 +184,7 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
                   e.preventDefault();
                   setHint(true);
                 }}
-                className="mt-3 inline-flex cursor-grab rounded-[20px] bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground"
+                className="mt-3 inline-flex cursor-grab rounded-lg bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground"
               >
                 Importer vers Wikideck
               </a>
@@ -260,7 +260,7 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
               type="button"
               onClick={runImport}
               disabled={importable === 0}
-              className="mt-4 rounded-[20px] bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-40"
+              className="mt-4 rounded-lg bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-40"
             >
               Importer {fmt.format(importable)} carte{importable > 1 ? "s" : ""}
             </button>
@@ -295,7 +295,7 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
             {phase === "done" && (
               <Link
                 href="/collection"
-                className="mt-4 inline-flex rounded-[20px] bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70"
+                className="mt-4 inline-flex rounded-lg bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70"
               >
                 Voir ma collection
               </Link>

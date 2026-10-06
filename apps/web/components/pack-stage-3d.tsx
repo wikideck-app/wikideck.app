@@ -1276,8 +1276,8 @@ export function PackStage3D(props: PackStageProps) {
       aria-label="Paquet Wikideck"
       className={`
         relative
-        h-[26rem]
-        w-[22rem]
+        h-104
+        w-88
         max-w-full
         overflow-clip
         touch-none

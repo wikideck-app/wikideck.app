@@ -92,7 +92,7 @@ export function TagEditor({
             void add();
           }
         }}
-        className="mt-2 w-full rounded-[20px] border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+        className="mt-2 w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
       />
 
       {name && !match && (
@@ -110,7 +110,7 @@ export function TagEditor({
               type="button"
               onClick={() => void add()}
               disabled={busy}
-              className="ml-auto rounded-[20px] bg-accent px-[18px] py-1 text-xs font-bold text-accent-foreground disabled:opacity-50"
+              className="ml-auto rounded-lg bg-accent px-[18px] py-1 text-xs font-bold text-accent-foreground disabled:opacity-50"
             >
               Créer
             </button>

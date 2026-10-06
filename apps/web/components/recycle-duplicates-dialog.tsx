@@ -122,12 +122,12 @@ export function RecycleDuplicatesDialog({
                 const info = RARITIES.find((x) => x.value === r.rarity)!;
                 return (
                   <li key={r.rarity}>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-line px-3.5 py-2.5 text-sm has-[:checked]:border-accent">
+                    <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-line px-3.5 py-2.5 text-sm has-checked:border-accent">
                       <input
                         type="checkbox"
                         checked={checked.has(r.rarity)}
                         onChange={() => toggle(r.rarity)}
-                        className="size-4 accent-[var(--accent)]"
+                        className="size-4 accent-(--accent)"
                       />
                       <span className="min-w-0 flex-1">
                         <strong className="inline-block w-8">{info.code}</strong>

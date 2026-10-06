@@ -162,7 +162,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
           </div>
 
           {!active && (
-            <div className={`${panel} mt-6 border-accent/30 bg-accent/[0.04]`}>
+            <div className={`${panel} mt-6 border-accent/30 bg-accent/4`}>
               {a.status === "SOLD" && a.currentBid !== null && (
                 <>
                   <p className="font-bold">
@@ -329,7 +329,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                 <li
                   key={b.id}
                   className={`flex items-center justify-between gap-3 px-4 py-2.5 text-sm ${
-                    i === 0 && active ? "bg-accent/[0.04]" : ""
+                    i === 0 && active ? "bg-accent/4" : ""
                   }`}
                 >
                   <span className="flex min-w-0 items-center gap-2">
