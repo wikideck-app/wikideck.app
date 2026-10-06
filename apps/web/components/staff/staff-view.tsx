@@ -4,6 +4,7 @@ import { ArrowLeft, Ban, Check, Search, ShieldCheck } from "@/components/icons";
 import { useCallback, useEffect, useState } from "react";
 import type {
   AuctionStatus,
+  DeletedAccountRow,
   StaffAlert,
   StaffAuctionRow,
   StaffAuditRow,
@@ -17,11 +18,13 @@ import type {
   StaffUserAction,
   TrustLevel,
 } from "@wikideck/shared";
+import { useConfirm } from "@/components/confirm-dialog";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
 import { Wikibits } from "@/components/wikibit";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
-type Tab = "overview" | "members" | "alerts" | "reports" | "auctions" | "guilds" | "audit";
+type Tab =
+  "overview" | "members" | "alerts" | "reports" | "auctions" | "guilds" | "deleted" | "audit";
 
 const panel = "rounded-xl border border-line bg-surface p-5";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
@@ -51,6 +54,8 @@ const SIGNAL_LABEL: Record<string, string> = {
 const ACTION_LABEL: Record<string, string> = {
   ban: "Suspension",
   unban: "Réactivation",
+  delete_user: "Compte supprimé",
+  self_delete: "Compte supprimé par le joueur",
   rename: "Changement de pseudo",
   wikibits: "Wikibits",
   packs: "Paquets offerts",
@@ -113,6 +118,7 @@ function describe(row: StaffAuditRow) {
   const d = (row.detail ?? {}) as Record<string, unknown>;
   switch (row.action) {
     case "ban":
+    case "delete_user":
       return `motif : ${d.reason}`;
     case "rename":
       return `${d.from} → ${d.to}`;
@@ -359,6 +365,9 @@ function Member({
   const [username, setUsername] = useState("");
   const [amount, setAmount] = useState("");
   const [bitsReason, setBitsReason] = useState("");
+  const [delReason, setDelReason] = useState("");
+  const [delConfirm, setDelConfirm] = useState("");
+  const { confirm, dialog: confirmDialog } = useConfirm();
   const [packs, setPacks] = useState("1");
 
   const load = useCallback(async () => {
@@ -390,6 +399,28 @@ function Member({
     }
     setNotice({ ok: false, text: res.message });
     return false;
+  };
+
+  const deleteAccount = async () => {
+    if (!m) return;
+    const ok = await confirm({
+      title: `Supprimer définitivement ${m.username} ?`,
+      message:
+        "Le compte, ses cartes, ses messages et ses amis sont effacés. Cette action est irréversible.",
+      confirmLabel: "Supprimer le compte",
+      danger: true,
+    });
+    if (!ok) return;
+    setBusy(true);
+    setNotice(null);
+    const res = await apiCall(apiUrl, `/staff/users/${id}`, "POST", {
+      action: "delete",
+      reason: delReason,
+      confirm: delConfirm,
+    } satisfies StaffUserAction);
+    setBusy(false);
+    if (res.ok) onBack();
+    else setNotice({ ok: false, text: res.message });
   };
 
   if (!m)
@@ -701,6 +732,45 @@ function Member({
           )}
         </section>
       </div>
+
+      {isAdmin && outranks && (
+        <section className={`${panel} border-danger/50`}>
+          <h3 className={`${heading} text-danger`}>Zone dangereuse</h3>
+          <p className="mt-2 text-sm text-pale-mist">
+            Supprime définitivement le compte et ses données, sans retour possible. Si le joueur a
+            des enchères en cours, annulez-les d&apos;abord. Pour une simple sanction, préférez la
+            suspension.
+          </p>
+          <form
+            className="mt-3 flex flex-col gap-2 sm:max-w-md"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void deleteAccount();
+            }}
+          >
+            <input
+              value={delReason}
+              onChange={(e) => setDelReason(e.target.value)}
+              placeholder="Motif (obligatoire)"
+              className={field}
+            />
+            <input
+              value={delConfirm}
+              onChange={(e) => setDelConfirm(e.target.value)}
+              placeholder={`Tapez « ${m.username} » pour confirmer`}
+              className={field}
+            />
+            <button
+              type="submit"
+              className={dangerButtonClass}
+              disabled={busy || delReason.trim().length < 3 || delConfirm !== m.username}
+            >
+              Supprimer le compte
+            </button>
+          </form>
+        </section>
+      )}
+      {confirmDialog}
 
       <section className={panel}>
         <h3 className={heading}>Actions du staff sur ce compte</h3>
@@ -1293,6 +1363,73 @@ function Guilds({
   );
 }
 
+function Deleted({ apiUrl }: { apiUrl: string }) {
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState<{
+    accounts: DeletedAccountRow[];
+    total: number;
+    totalPages: number;
+  } | null>(null);
+  useEffect(() => {
+    void apiFetch<{ accounts: DeletedAccountRow[]; total: number; totalPages: number }>(
+      apiUrl,
+      `/staff/deleted?page=${page}`,
+    ).then((r) => r.ok && setData(r.data));
+  }, [apiUrl, page]);
+  if (!data) return <p className="mt-6 text-sm text-fog">Chargement…</p>;
+  if (data.accounts.length === 0)
+    return (
+      <p className="mt-6 text-sm text-fog">
+        Aucun compte supprimé depuis la mise en place du suivi.
+      </p>
+    );
+  return (
+    <div className="mt-6">
+      <p className="text-sm text-fog">{data.total} compte(s) supprimé(s)</p>
+      <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface">
+        {data.accounts.map((a) => (
+          <li key={a.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm">
+            <strong className="min-w-0 flex-1 truncate">{a.username}</strong>
+            <span className="text-fog">
+              {a.by ? `supprimé par ${a.by}` : "supprimé par le joueur lui-même"}
+              {a.reason && ` · motif : ${a.reason}`}
+            </span>
+            {a.discordId && (
+              <span className="font-mono text-xs text-fog">Discord {a.discordId}</span>
+            )}
+            <time className="text-xs text-fog" dateTime={a.at}>
+              {new Date(a.at).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" })}
+            </time>
+          </li>
+        ))}
+      </ul>
+      {data.totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-3 text-sm">
+          <button
+            type="button"
+            className={buttonClass}
+            disabled={page <= 1}
+            onClick={() => setPage(page - 1)}
+          >
+            Plus récent
+          </button>
+          <span className="text-fog">
+            Page {page} / {data.totalPages}
+          </span>
+          <button
+            type="button"
+            className={buttonClass}
+            disabled={page >= data.totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            Plus ancien
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Audit({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => void }) {
   const [page, setPage] = useState(1);
   const [data, setData] = useState<{ actions: StaffAuditRow[]; totalPages: number } | null>(null);
@@ -1356,6 +1493,7 @@ export function StaffView({
     { value: "reports", label: "Signalements" },
     { value: "auctions", label: "Enchères" },
     { value: "guilds", label: "Guildes" },
+    { value: "deleted", label: "Supprimés" },
     { value: "audit", label: "Journal" },
   ];
 
@@ -1406,6 +1544,7 @@ export function StaffView({
       {tab === "reports" && <Reports apiUrl={apiUrl} onOpen={open} />}
       {tab === "auctions" && <Auctions apiUrl={apiUrl} onOpen={open} />}
       {tab === "guilds" && <Guilds apiUrl={apiUrl} role={role} onOpen={open} />}
+      {tab === "deleted" && <Deleted apiUrl={apiUrl} />}
       {tab === "audit" && <Audit apiUrl={apiUrl} onOpen={open} />}
     </div>
   );

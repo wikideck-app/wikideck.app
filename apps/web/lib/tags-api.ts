@@ -51,6 +51,8 @@ const ERRORS: Record<string, string> = {
   outbid: "Quelqu'un vient de surenchérir. Réessayez avec le nouveau montant.",
   too_many_listings: "Vous avez déjà trop de ventes en cours.",
   has_bids: "Des mises ont déjà été placées : la vente ne peut plus être annulée.",
+  target_active_auctions:
+    "Ce compte a des enchères en cours (en vente ou en tête) : annulez-les d'abord depuis l'onglet Enchères.",
   active_auctions:
     "Terminez d'abord vos enchères en cours (ventes et mises en tête) avant de supprimer le compte.",
 };
