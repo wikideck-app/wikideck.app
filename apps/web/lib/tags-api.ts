@@ -1,6 +1,7 @@
 const ERRORS: Record<string, string> = {
   exists: "Cette étiquette existe déjà.",
   too_many: "Limite d'étiquettes atteinte.",
+  too_many_reports: "Vous avez déjà plusieurs signalements en attente, merci de patienter.",
   invalid: "Nom ou couleur invalide.",
   rate_limited: "Trop de requêtes, patientez un instant.",
   unauthorized: "Votre session a expiré, reconnectez-vous.",

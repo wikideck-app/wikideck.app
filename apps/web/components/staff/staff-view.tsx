@@ -13,6 +13,7 @@ import type {
   StaffMemberDetail,
   StaffMemberRow,
   StaffOverview,
+  StaffBugReportRow,
   StaffReportRow,
   StaffRole,
   StaffUserAction,
@@ -24,7 +25,7 @@ import { Wikibits } from "@/components/wikibit";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
 type Tab =
-  "overview" | "members" | "alerts" | "reports" | "auctions" | "guilds" | "deleted" | "audit";
+  "overview" | "members" | "alerts" | "reports" | "bugs" | "auctions" | "guilds" | "deleted" | "audit";
 
 const panel = "rounded-xl border border-line bg-surface p-5";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
@@ -68,6 +69,8 @@ const ACTION_LABEL: Record<string, string> = {
   guild_dissolve: "Guilde dissoute",
   report_dismiss: "Signalement classé",
   report_delete: "Message supprimé",
+  bug_resolve: "Bug résolu",
+  bug_dismiss: "Bug classé",
 };
 const AUCTION_STATUS: Record<AuctionStatus, string> = {
   ACTIVE: "En cours",
@@ -982,6 +985,107 @@ function Reports({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => v
   );
 }
 
+function Bugs({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => void }) {
+  const [all, setAll] = useState(false);
+  const [page, setPage] = useState(1);
+  const [reload, setReload] = useState(0);
+  const [data, setData] = useState<{ reports: StaffBugReportRow[]; totalPages: number } | null>(
+    null,
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void apiFetch<{ reports: StaffBugReportRow[]; totalPages: number }>(
+      apiUrl,
+      `/staff/bug-reports?page=${page}${all ? "&status=all" : ""}`,
+    ).then((res) => {
+      if (cancelled) return;
+      if (res.ok) setData(res.data);
+      else setError(res.message);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [apiUrl, page, all, reload]);
+
+  const handle = async (id: string, action: "resolve" | "dismiss") => {
+    const res = await apiCall(apiUrl, `/staff/bug-reports/${id}`, "POST", { action });
+    setError(res.ok ? null : res.message);
+    setReload((n) => n + 1);
+  };
+
+  if (!data) return <p className="mt-6 text-sm text-fog">{error ?? "Chargement…"}</p>;
+  return (
+    <div className="mt-6">
+      <p className="prose-serif text-pale-mist">Rapports de bug envoyés par les joueurs.</p>
+      <label className="mt-3 flex items-center gap-2 text-sm text-fog">
+        <input
+          type="checkbox"
+          checked={all}
+          onChange={(e) => {
+            setAll(e.target.checked);
+            setPage(1);
+          }}
+        />
+        Afficher aussi les rapports traités
+      </label>
+      {error && <p className="mt-3 text-sm text-danger">{error}</p>}
+      <ul className="mt-4 flex flex-col gap-3">
+        {data.reports.map((r) => (
+          <li key={r.id} className={`${panel} flex flex-col gap-3`}>
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <button
+                type="button"
+                className="font-semibold text-accent hover:underline"
+                onClick={() => onOpen(r.reporter.id)}
+              >
+                {r.reporter.username}
+              </button>
+              {r.page && <span className="text-fog">sur {r.page}</span>}
+              <span className="ml-auto text-xs text-fog">
+                {dateFmt.format(new Date(r.createdAt))}
+              </span>
+              {r.status !== "OPEN" && (
+                <Badge className="bg-foreground/10 text-fog">
+                  {r.status === "RESOLVED" ? "Résolu" : "Classé sans suite"}
+                  {r.handledBy && ` · ${r.handledBy}`}
+                </Badge>
+              )}
+            </div>
+            <p className="whitespace-pre-wrap break-words rounded-xl border border-line p-3 text-sm">
+              {r.message}
+            </p>
+            {r.userAgent && <p className="break-all text-[11px] text-fog">{r.userAgent}</p>}
+            {r.status === "OPEN" && (
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className={primaryButtonClass}
+                  onClick={() => void handle(r.id, "resolve")}
+                >
+                  Marquer comme résolu
+                </button>
+                <button
+                  type="button"
+                  className={buttonClass}
+                  onClick={() => void handle(r.id, "dismiss")}
+                >
+                  Classer sans suite
+                </button>
+              </div>
+            )}
+          </li>
+        ))}
+        {!data.reports.length && (
+          <li className="prose-serif py-6 text-center text-pale-mist">Aucun rapport de bug.</li>
+        )}
+      </ul>
+      <Pager page={page} totalPages={data.totalPages} onPage={setPage} />
+    </div>
+  );
+}
+
 function Auctions({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => void }) {
   const [q, setQ] = useState("");
   const [all, setAll] = useState(false);
@@ -1491,6 +1595,7 @@ export function StaffView({
     { value: "members", label: "Membres" },
     { value: "alerts", label: "Alertes" },
     { value: "reports", label: "Signalements" },
+    { value: "bugs", label: "Bugs" },
     { value: "auctions", label: "Enchères" },
     { value: "guilds", label: "Guildes" },
     { value: "deleted", label: "Supprimés" },
@@ -1542,6 +1647,7 @@ export function StaffView({
         ))}
       {tab === "alerts" && <Alerts apiUrl={apiUrl} onOpen={open} />}
       {tab === "reports" && <Reports apiUrl={apiUrl} onOpen={open} />}
+      {tab === "bugs" && <Bugs apiUrl={apiUrl} onOpen={open} />}
       {tab === "auctions" && <Auctions apiUrl={apiUrl} onOpen={open} />}
       {tab === "guilds" && <Guilds apiUrl={apiUrl} role={role} onOpen={open} />}
       {tab === "deleted" && <Deleted apiUrl={apiUrl} />}

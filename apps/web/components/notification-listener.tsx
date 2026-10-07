@@ -61,6 +61,7 @@ function describe(event: LiveEvent): { text: string; href: string } {
     case "achievement":
       return { text: "Nouveau succès débloqué", href: "/achievements" };
     case "staff":
+      if (event.kind === "bug") return { text: "Nouveau rapport de bug à traiter", href: "/staff" };
       return event.kind === "report"
         ? { text: "Nouveau signalement de message à traiter", href: "/staff" }
         : { text: "Un compte vient d'être signalé comme suspect", href: "/staff" };
