@@ -140,6 +140,14 @@ export const USER_DOCS: DocSection[] = [
         limit: "60 / min",
       },
       {
+        method: "GET",
+        path: "/wheel/history",
+        summary:
+          "Tes 30 derniers tours et les 20 derniers de la communauté. Un joueur au profil privé apparaît sans pseudo.",
+        returns: "{ mine, recent }",
+        limit: "30 / min",
+      },
+      {
         method: "POST",
         path: "/wheel/spin",
         summary: "Tourne la roue (un tour par jour, heure de Paris) et verse le gain.",

@@ -6,6 +6,9 @@ import {
   BOOST_MYTHIC_RATE,
   MYTHIC_RATE,
   WHEEL_PRIZES,
+  wheelPrizeLabel,
+  type WheelHistoryEntry,
+  type WheelHistoryResponse,
   type WheelPrize,
   type WheelSpinResponse,
 } from "@wikideck/shared";
@@ -49,12 +52,41 @@ const prizeText = (p: WheelPrize) =>
       ? { big: "✦", small: "booster" }
       : { big: `+${p.amount}`, small: p.amount > 1 ? "paquets" : "paquet" };
 
+const dateFmt = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" });
+
+function HistoryList({ title, entries }: { title: string; entries: WheelHistoryEntry[] }) {
+  return (
+    <section className="min-w-0">
+      <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-fog">{title}</h2>
+      {entries.length ? (
+        <ul className="mt-2 flex flex-col gap-1.5 text-sm">
+          {entries.map((e, i) => (
+            <li key={`${e.at}-${i}`} className="flex flex-wrap items-baseline gap-x-2">
+              {e.player !== undefined && (
+                <span className="font-semibold">{e.player ?? "Un joueur"}</span>
+              )}
+              <span className="text-pale-mist">{wheelPrizeLabel(e.prize)}</span>
+              <span className="ml-auto text-xs tabular-nums text-fog">
+                {dateFmt.format(new Date(e.at))}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-2 text-sm text-fog">Aucun tour pour le moment.</p>
+      )}
+    </section>
+  );
+}
+
 export function WheelView({
   apiUrl,
   canSpin: initialCanSpin,
+  history,
 }: {
   apiUrl: string;
   canSpin: boolean;
+  history: WheelHistoryResponse | null;
 }) {
   const router = useRouter();
   const [canSpin, setCanSpin] = useState(initialCanSpin);
@@ -297,6 +329,13 @@ export function WheelView({
           lieu de {percentFmt.format(MYTHIC_RATE * 100)} %.
         </p>
       </details>
+
+      {history && (
+        <div className="grid w-full gap-6 rounded-xl border border-line bg-surface p-5 sm:grid-cols-2">
+          <HistoryList title="Mes derniers tours" entries={history.mine} />
+          <HistoryList title="Derniers gains de la communauté" entries={history.recent} />
+        </div>
+      )}
     </div>
   );
 }
