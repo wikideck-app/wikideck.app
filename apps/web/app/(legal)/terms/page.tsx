@@ -10,7 +10,7 @@ import { Fill, LegalHeader, Section, legalTags } from "@/components/legal/legal-
 import { LEGAL } from "@/lib/legal";
 import { pageMetadata } from "@/i18n/metadata";
 
-export const generateMetadata = pageMetadata("terms");
+export const generateMetadata = pageMetadata("terms", { path: "/terms" });
 
 export default async function TermsPage() {
   const t = await getTranslations("terms");

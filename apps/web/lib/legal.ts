@@ -1,9 +1,11 @@
 // valeur sentinelle : tant qu'elle reste, la page affiche un repère « à compléter »
+import { SITE_URL } from "@/lib/site";
+
 export const TODO = "__TODO__";
 
 export const LEGAL = {
   siteName: "Wikideck",
-  siteUrl: "https://wikideck.fr",
+  siteUrl: SITE_URL,
   updatedAt: "2026-10-04",
 
   publisher: {

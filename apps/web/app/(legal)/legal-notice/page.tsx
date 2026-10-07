@@ -3,7 +3,7 @@ import { Fill, LegalHeader, Section, legalTags } from "@/components/legal/legal-
 import { LEGAL } from "@/lib/legal";
 import { pageMetadata } from "@/i18n/metadata";
 
-export const generateMetadata = pageMetadata("legalNotice");
+export const generateMetadata = pageMetadata("legalNotice", { path: "/legal-notice" });
 
 export default async function LegalNoticePage() {
   const t = await getTranslations("legalNotice");

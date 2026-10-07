@@ -4,7 +4,7 @@ import { API_URL } from "@/lib/api";
 import { USER_DOCS } from "@/lib/api-docs";
 import { pageMetadata } from "@/i18n/metadata";
 
-export const generateMetadata = pageMetadata("docs");
+export const generateMetadata = pageMetadata("docs", { path: "/docs" });
 
 const code = "rounded bg-foreground/10 px-1.5 py-0.5 text-xs";
 const tags = { code: (chunks: React.ReactNode) => <code className={code}>{chunks}</code> };

@@ -1,7 +1,7 @@
 {
   "siteName": "Wikideck",
   "titleTemplate": "%s — Wikideck",
-  "description": "Cartes Wikipédia, paquets à ouvrir et courses Wikipédia entre amis.",
+  "description": "Wikideck est un jeu de cartes gratuit : ouvrez des paquets d’articles Wikipédia, complétez votre album, échangez, vendez aux enchères et défiez vos amis dans des courses Wikipédia.",
   "pages": {
     "notFound": "Page introuvable",
     "collection": "Collection",
@@ -29,5 +29,8 @@
     "terms": "Conditions générales d’utilisation",
     "docs": "API",
     "docsStaff": "API staff"
-  }
+  },
+  "homeTitle": "Wikideck — Collectionnez les articles de Wikipédia en cartes",
+  "tagline": "Cartes Wikipédia, paquets à ouvrir et courses entre amis",
+  "category": "Jeu de cartes"
 }

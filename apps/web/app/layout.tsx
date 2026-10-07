@@ -4,6 +4,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Atkinson_Hyperlegible, Newsreader, Outfit } from "next/font/google";
 import { THEME_STORAGE_KEY } from "@wikideck/shared";
 import { ApiErrorMessages } from "@/components/api-error-messages";
+import { SITE_URL } from "@/lib/site";
 import { localeDirection } from "@/i18n/config";
 import { landingMessages } from "@/i18n/client-messages";
 import "./globals.css";
@@ -26,17 +27,25 @@ const readable = Atkinson_Hyperlegible({
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("meta"), getLocale()]);
+  const { language, region } = new Intl.Locale(locale).maximize();
   return {
-    title: { default: t("siteName"), template: t("titleTemplate") },
+    metadataBase: new URL(SITE_URL),
+    applicationName: t("siteName"),
+    title: { default: t("homeTitle"), template: t("titleTemplate") },
     description: t("description"),
+    category: t("category"),
+    alternates: { canonical: "/" },
+    robots: { index: true, follow: true },
     openGraph: {
       type: "website",
+      url: "/",
       siteName: t("siteName"),
-      title: t("siteName"),
+      title: t("homeTitle"),
       description: t("description"),
       // fr -> fr_FR : le format Open Graph est langue_PAYS
-      locale: new Intl.Locale(locale).maximize().toString().replace("-", "_"),
+      locale: `${language}_${region}`,
     },
+    twitter: { card: "summary_large_image", title: t("homeTitle"), description: t("description") },
   };
 }
 

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { LegalLinks } from "@/components/legal/legal-links";
 import { DiscordAuth } from "@/components/discord-auth";
 import { Features } from "@/components/features";
@@ -11,6 +11,7 @@ import { Starfield } from "@/components/starfield";
 import { Ticker } from "@/components/ticker";
 import { API_URL, getCurrentUser } from "@/lib/api";
 import { getShowcase } from "@/lib/showcase";
+import { SITE_URL } from "@/lib/site";
 
 export default async function Page({ searchParams }: PageProps<"/">) {
   const [user, { auth_error }, showcase, t] = await Promise.all([
@@ -20,6 +21,19 @@ export default async function Page({ searchParams }: PageProps<"/">) {
     getTranslations("home"),
   ]);
   const headline = t("headline").split(" ");
+  const tm = await getTranslations("meta");
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: tm("siteName"),
+    url: SITE_URL,
+    description: tm("description"),
+    applicationCategory: "GameApplication",
+    operatingSystem: "Any",
+    inLanguage: await getLocale(),
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+  };
 
   if (user) redirect("/packs");
 
@@ -28,6 +42,11 @@ export default async function Page({ searchParams }: PageProps<"/">) {
       id="top"
       className="relative flex flex-1 flex-col overflow-x-clip bg-background text-foreground"
     >
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       <SiteHeader />
 
       <div className="on-grape relative bg-(image:--grape-gradient) [clip-path:inset(0)]">

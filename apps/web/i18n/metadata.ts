@@ -5,10 +5,17 @@ import type { Messages } from "next-intl";
 type PageKey = keyof Messages["meta"]["pages"];
 
 // export const generateMetadata = pageMetadata("collection");
-// le titre passe par le template du layout racine (« %s — Wikideck »)
-export function pageMetadata(key: PageKey) {
+// Le titre passe par le template du layout racine (« %s — Wikideck »). Avec `path`, la page est
+// publique : adresse canonique et Open Graph en plus.
+export function pageMetadata(key: PageKey, options: { path?: string } = {}) {
   return async (): Promise<Metadata> => {
     const t = await getTranslations("meta.pages");
-    return { title: t(key) };
+    const title = t(key);
+    if (!options.path) return { title };
+    return {
+      title,
+      alternates: { canonical: options.path },
+      openGraph: { title, url: options.path },
+    };
   };
 }
