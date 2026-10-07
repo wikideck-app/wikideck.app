@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BookBookmark,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -169,7 +170,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
           value={search}
           maxLength={COLLECTION_SEARCH_MAX}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher une carte par nom…"
+          placeholder="Rechercher par nom ou sous-titre (ex. chanteur français)…"
           aria-label="Rechercher une carte par nom"
           className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
         />
@@ -271,7 +272,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-2 text-sm">
             <span className="opacity-60">Trier</span>
             <SelectMenu
@@ -352,6 +353,14 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                         ≈ {card.estimate} wikibits aux enchères
                       </span>
                     ) : null}
+                  </span>
+                )}
+                {card.inAlbum && !selectMode && (
+                  <span
+                    title="Rangée dans un album"
+                    className="pointer-events-none absolute left-1.5 top-1.5 z-10 flex size-7 items-center justify-center rounded-full bg-black/55 text-white/90 shadow"
+                  >
+                    <BookBookmark className="size-4" />
                   </span>
                 )}
                 {!selectMode && (

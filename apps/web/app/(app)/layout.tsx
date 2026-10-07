@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
     <SettingsProvider initial={user.settings} apiUrl={API_URL}>
       <div className="flex min-h-screen flex-col">
         <Navbar user={user} logoutUrl={`${API_URL}/auth/logout`} packs={packs} />
-        <main className="min-w-0 flex-1 p-4 sm:p-6 md:p-8">{children}</main>
+        <main className="min-w-0 flex-1 overflow-x-clip p-4 sm:p-6 md:p-8">{children}</main>
         <footer className="px-6 pb-8 pt-4 text-center text-xs text-fog">
           <LegalLinks className="justify-center" />
         </footer>

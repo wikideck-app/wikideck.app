@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { RARITIES, RECYCLE_VALUES, type CardDto } from "@wikideck/shared";
 import { buttonClass, primaryButtonClass } from "@/components/settings/controls";
 import { WikiCard } from "@/components/wiki-card";
+import { AlbumPicker } from "@/components/albums/album-picker";
 import { WishButton } from "@/components/wish-button";
 import { Wikibits } from "@/components/wikibit";
 import { apiFetch } from "@/lib/tags-api";
@@ -65,7 +66,9 @@ export function CardDetail({
 
         <div className="w-full min-w-0 flex-1">
           <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 pr-9">
-            <h2 className="min-w-0 flex-1 text-2xl font-bold">{card.title}</h2>
+            <h2 className="min-w-0 grow basis-48 wrap-break-word text-2xl font-bold">
+              {card.title}
+            </h2>
             {onSell && quantity > 0 && (
               <button
                 type="button"
@@ -114,6 +117,8 @@ export function CardDetail({
               <Lock className="size-3.5" /> {lock} : cette carte ne peut être ni vendue ni recyclée.
             </p>
           )}
+
+          {apiUrl && quantity > 0 && <AlbumPicker apiUrl={apiUrl} cardId={card.id} />}
 
           {apiUrl && (
             <div className="mt-4">

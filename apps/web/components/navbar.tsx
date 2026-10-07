@@ -19,7 +19,7 @@ const chip =
   "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-2 border-white/40 px-3.5 py-1.5 text-sm font-bold transition-colors hover:border-white";
 
 const iconButton =
-  "flex size-10 items-center justify-center rounded-full border-2 border-white/40 transition-colors hover:border-white hover:bg-white hover:text-(--deep-concord)";
+  "flex aspect-square size-10 shrink-0 items-center justify-center rounded-full border-2 border-white/40 transition-colors hover:border-white hover:bg-white hover:text-(--deep-concord)";
 
 function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
   const ratio = Math.min(1, packs.packs / packs.max);
@@ -41,6 +41,9 @@ function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
     </Link>
   );
 }
+
+const menuLink =
+  "flex items-center gap-3 rounded-[15px] bg-(--theme-pill) px-4 py-3 text-sm font-bold text-(--theme-pill-ink) transition-colors hover:bg-(--theme-pill-hover)";
 
 const MENU_GROUPS = NAV_GROUPS.filter((g) => g !== "Compte");
 
@@ -175,7 +178,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             aria-expanded={open === "all"}
             aria-controls="menu-all"
             onClick={() => setOpen(open === "all" ? null : "all")}
-            className={`relative flex size-10 items-center justify-center rounded-full border-2 transition-colors xl:hidden ${
+            className={`relative flex aspect-square size-10 shrink-0 items-center justify-center rounded-full border-2 transition-colors xl:hidden ${
               open === "all"
                 ? "border-white bg-white text-(--deep-concord)"
                 : "border-white/40 hover:border-white"
@@ -208,10 +211,10 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
               <img
                 src={user.avatarUrl}
                 alt=""
-                className="size-9 rounded-full ring-2 ring-white/40"
+                className="size-9 shrink-0 rounded-full ring-2 ring-white/40"
               />
             ) : (
-              <span className="flex size-9 items-center justify-center rounded-full border-2 border-white/40 text-sm font-bold">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-white/40 text-sm font-bold">
                 {user.username.slice(0, 1).toUpperCase()}
               </span>
             )}
@@ -226,7 +229,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
                 user.staffAlerts ? `Espace staff : ${user.staffAlerts} à traiter` : "Espace staff"
               }
               title="Espace staff"
-              className={`${iconButton} relative`}
+              className={`${iconButton} relative max-md:hidden`}
             >
               <ShieldCheck className="size-4" />
               {user.staffAlerts > 0 && (
@@ -236,10 +239,15 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
               )}
             </Link>
           )}
-          <Link href="/settings" aria-label="Paramètres" title="Paramètres" className={iconButton}>
+          <Link
+            href="/settings"
+            aria-label="Paramètres"
+            title="Paramètres"
+            className={`${iconButton} max-md:hidden`}
+          >
             <Settings className="size-4" />
           </Link>
-          <form action={logoutUrl} method="post">
+          <form action={logoutUrl} method="post" className="max-md:hidden">
             <button
               type="submit"
               aria-label="Se déconnecter"
@@ -277,6 +285,36 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
                 <ul className="mt-2.5 flex flex-col gap-1.5">{items(group).map(link)}</ul>
               </section>
             ))}
+            {/* sous 768 px les boutons du compte quittent la barre : ils sont ici */}
+            <section className="md:hidden">
+              <h2 className="px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-fog">
+                Compte
+              </h2>
+              <ul className="mt-2.5 flex flex-col gap-1.5">
+                {items("Compte").map(link)}
+                {user.staff && (
+                  <li>
+                    <Link href="/staff" onClick={() => setOpen(null)} className={menuLink}>
+                      <ShieldCheck className="size-[18px]" />
+                      Espace staff
+                      {user.staffAlerts > 0 && (
+                        <span className="ml-auto min-w-5 rounded-full bg-(--bubblegum) px-1.5 text-center text-[11px] font-bold leading-5 text-white">
+                          {user.staffAlerts}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                )}
+                <li>
+                  <form action={logoutUrl} method="post">
+                    <button type="submit" className={`${menuLink} w-full`}>
+                      <LogOut className="size-[18px]" />
+                      Se déconnecter
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </section>
           </div>
         </nav>
       )}

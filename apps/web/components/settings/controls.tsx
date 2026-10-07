@@ -1,3 +1,4 @@
+import { SelectMenu } from "@/components/select-menu";
 import type { IconType } from "@/components/icons";
 import type { ReactNode } from "react";
 
@@ -117,20 +118,7 @@ export function SelectField<T extends string>({
   onChange: (value: T) => void;
   label: string;
 }) {
-  return (
-    <select
-      aria-label={label}
-      value={value}
-      onChange={(e) => onChange(e.target.value as T)}
-      className="rounded-lg border border-line bg-background px-3 py-2 text-sm outline-none focus:border-accent"
-    >
-      {options.map((o) => (
-        <option key={o.value} value={o.value}>
-          {o.label}
-        </option>
-      ))}
-    </select>
-  );
+  return <SelectMenu label={label} value={value} options={options} onChange={onChange} />;
 }
 
 export function SettingRow({

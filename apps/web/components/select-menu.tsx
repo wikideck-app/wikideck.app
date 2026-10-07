@@ -8,11 +8,14 @@ export function SelectMenu<T extends string>({
   value,
   options,
   onChange,
+  block = false,
 }: {
   label: string;
   value: T;
   options: readonly { value: T; label: string }[];
   onChange: (value: T) => void;
+  /** Prend toute la largeur de son conteneur (sélecteur de section sur mobile) */
+  block?: boolean;
 }) {
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
@@ -79,7 +82,7 @@ export function SelectMenu<T extends string>({
   }
 
   return (
-    <div ref={root} className="relative" onKeyDown={onKeyDown}>
+    <div ref={root} className={`relative ${block ? "w-full" : ""}`} onKeyDown={onKeyDown}>
       <button
         type="button"
         role="combobox"
@@ -89,7 +92,7 @@ export function SelectMenu<T extends string>({
         aria-controls={`${id}-list`}
         aria-activedescendant={open ? `${id}-${active}` : undefined}
         onClick={() => (open ? setOpen(false) : show())}
-        className="flex items-center gap-2 rounded-lg border border-line bg-surface py-1.5 pl-4 pr-3 text-sm font-semibold transition-colors hover:border-accent focus-visible:border-accent focus-visible:outline-none aria-expanded:border-accent"
+        className={`flex items-center gap-2 rounded-lg border border-line bg-surface py-1.5 pl-4 pr-3 text-sm font-semibold transition-colors hover:border-accent focus-visible:border-accent focus-visible:outline-none aria-expanded:border-accent ${block ? "w-full justify-between py-2.5" : ""}`}
       >
         {options[current]?.label}
         <ChevronDown
@@ -101,7 +104,7 @@ export function SelectMenu<T extends string>({
           id={`${id}-list`}
           role="listbox"
           aria-label={label}
-          className="absolute right-0 z-30 mt-2 min-w-full overflow-hidden rounded-xl border border-line bg-surface p-1 shadow-xl"
+          className={`absolute z-30 mt-2 min-w-full overflow-hidden rounded-xl border border-line bg-surface p-1 shadow-xl ${block ? "left-0 right-0" : "right-0"}`}
         >
           {options.map((o, i) => (
             <li

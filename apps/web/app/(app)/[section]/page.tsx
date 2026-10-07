@@ -19,6 +19,7 @@ export function generateStaticParams() {
         "achievements",
         "profile",
         "battle",
+        "albums",
       ].includes(item.slug),
   ).map(({ slug }) => ({ section: slug }));
 }

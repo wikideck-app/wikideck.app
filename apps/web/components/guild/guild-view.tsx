@@ -10,7 +10,7 @@ import {
   GUILD_MAX_MEMBERS,
   GUILD_PARTICIPATION_REWARD,
   GUILD_REWARDS,
-  RARITIES,
+  DROP_RARITIES,
   type CatalogCard,
   type GuildHome,
   type RankingResponse,
@@ -188,7 +188,7 @@ function HomeTab({ home, apiUrl }: { home: GuildHome; apiUrl: string }) {
           donateurs ne compte que la semaine en cours.
         </p>
         <ul className="mt-4 grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
-          {RARITIES.map((r) => (
+          {DROP_RARITIES.map((r) => (
             <li
               key={r.value}
               className="rounded-xl border border-line px-3 py-2 text-sm bg-surface"

@@ -99,7 +99,10 @@ export function unlockAudio() {
   unlocked = true;
   if (current && (current.bgm || current.sfx)) {
     const c = context();
-    if (c && current.sfx) preload(c, LEGENDARY_SOUND);
+    if (c && current.sfx) {
+      preload(c, LEGENDARY_SOUND);
+      preload(c, MYTHIC_SOUND);
+    }
   }
   syncAmbient();
 }
@@ -108,6 +111,7 @@ function ready() {
   const c = context();
   if (!c || !current?.sfx || current.master <= 0 || current.sfxVolume <= 0) return null;
   preload(c, LEGENDARY_SOUND);
+  preload(c, MYTHIC_SOUND);
   return c;
 }
 
@@ -136,6 +140,7 @@ function playSample(c: AudioContext, url: string, volume = 1) {
 }
 
 const LEGENDARY_SOUND = "/legendary.mp3";
+const MYTHIC_SOUND = "/mystic.mp3";
 
 function tone(
   c: AudioContext,
@@ -165,14 +170,17 @@ const NOTES: Record<Rarity, number> = {
   SUPER_RARE: 4,
   ULTRA_RARE: 5,
   LEGENDARY: 7,
+  MYTHIC: 7,
 };
 
+// seconde où le son atteint son pic, c'est là que la carte se retourne
 export const LEGENDARY_IMPACT_S = 4;
+export const MYTHIC_IMPACT_S = 3.6;
 
-export function playLegendary(): { duration: number; stop: () => void } | null {
+export function playLegendary(mythic = false): { duration: number; stop: () => void } | null {
   const c = ready();
   if (!c) return null;
-  const buffer = samples.get(LEGENDARY_SOUND);
+  const buffer = samples.get(mythic ? MYTHIC_SOUND : LEGENDARY_SOUND);
   if (!buffer || buffer === "loading") return null;
   const source = c.createBufferSource();
   source.buffer = buffer;
@@ -235,6 +243,7 @@ export const sfx = {
     const c = ready();
     if (!c) return;
     if (rarity === "LEGENDARY" && playSample(c, LEGENDARY_SOUND)) return;
+    if (rarity === "MYTHIC" && playSample(c, MYTHIC_SOUND)) return;
     const t = c.currentTime;
     const count = NOTES[rarity];
     for (let i = 0; i < count; i++) {

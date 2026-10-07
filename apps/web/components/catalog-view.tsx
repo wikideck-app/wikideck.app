@@ -8,7 +8,7 @@ import {
   CATALOG_OWNERSHIP,
   CATALOG_SORTS,
   COLLECTION_SEARCH_MAX,
-  RARITIES,
+  DROP_RARITIES,
   type CatalogResponse,
   type CatalogSort,
 } from "@wikideck/shared";
@@ -63,7 +63,7 @@ export function CatalogView({ data, apiUrl }: { data: CatalogResponse; apiUrl: s
           value={search}
           maxLength={COLLECTION_SEARCH_MAX}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher une carte par nom…"
+          placeholder="Rechercher dans le titre (3 lettres minimum)…"
           aria-label="Rechercher une carte par nom"
           className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
         />
@@ -80,7 +80,7 @@ export function CatalogView({ data, apiUrl }: { data: CatalogResponse; apiUrl: s
       </div>
 
       <nav aria-label="Filtrer par rareté" className="mt-4 flex flex-wrap items-center gap-1">
-        {[...RARITIES].reverse().map((r) => {
+        {[...DROP_RARITIES].reverse().map((r) => {
           const active = data.rarities.includes(r.value);
           const next = active
             ? data.rarities.filter((v) => v !== r.value)

@@ -1,3 +1,5 @@
+// Fichier généré par scripts/build-icons.mjs (pnpm icons) : ne pas modifier à la main.
+// Icônes Iconify (ph), intégrées au code.
 import { Icon, type IconifyIcon } from "@iconify/react/offline";
 import type { ComponentProps, ComponentType } from "react";
 
@@ -54,6 +56,11 @@ const DATA: Record<string, IconifyIcon> = {
     width: 256,
     height: 256,
     body: '<path fill="currentColor" d="M225.29 165.93C216.61 151 212 129.57 212 104a84 84 0 0 0-168 0c0 25.58-4.59 47-13.27 61.93a20.08 20.08 0 0 0-.07 20.07A19.77 19.77 0 0 0 48 196h36.18a44 44 0 0 0 87.64 0H208a19.77 19.77 0 0 0 17.31-10a20.08 20.08 0 0 0-.02-20.07M128 212a20 20 0 0 1-19.6-16h39.2a20 20 0 0 1-19.6 16m-73.34-40C63.51 154 68 131.14 68 104a60 60 0 0 1 120 0c0 27.13 4.48 50 13.33 68Z"/>',
+  },
+  BookBookmark: {
+    width: 256,
+    height: 256,
+    body: '<path fill="currentColor" d="M208 20H72a36 36 0 0 0-36 36v168a12 12 0 0 0 12 12h144a12 12 0 0 0 0-24H60v-4a12 12 0 0 1 12-12h136a12 12 0 0 0 12-12V32a12 12 0 0 0-12-12m-88 24h36v59l-10.51-8.41a12 12 0 0 0-15 0L120 103Zm76 128H72a35.6 35.6 0 0 0-12 2.06V56a12 12 0 0 1 12-12h24v84a12 12 0 0 0 19.5 9.37l22.49-18l22.51 18A12 12 0 0 0 180 128V44h16Z"/>',
   },
   BookOpen: {
     width: 256,
@@ -225,6 +232,11 @@ const DATA: Record<string, IconifyIcon> = {
     height: 256,
     body: '<path fill="currentColor" d="M228 128a12 12 0 0 1-12 12H40a12 12 0 0 1 0-24h176a12 12 0 0 1 12 12"/>',
   },
+  Notebook: {
+    width: 256,
+    height: 256,
+    body: '<path fill="currentColor" d="M108 108a12 12 0 0 1 12-12h56a12 12 0 0 1 0 24h-56a12 12 0 0 1-12-12m68 28h-56a12 12 0 0 0 0 24h56a12 12 0 0 0 0-24m52-88v160a20 20 0 0 1-20 20H48a20 20 0 0 1-20-20V48a20 20 0 0 1 20-20h160a20 20 0 0 1 20 20M52 204h16V52H52ZM204 52H92v152h112Z"/>',
+  },
   Monitor: {
     width: 256,
     height: 256,
@@ -388,6 +400,7 @@ const DATA: Record<string, IconifyIcon> = {
 };
 
 function make(name: string): IconType {
+  // strokeWidth n'a pas de sens pour ces icônes pleines : accepté et ignoré, pour rester interchangeable
   const Component = ({ strokeWidth: _ignored, ...props }: IconProps) => (
     <Icon
       icon={DATA[name]}
@@ -411,6 +424,7 @@ export const Award = make("Award");
 export const BadgeCheck = make("BadgeCheck");
 export const Ban = make("Ban");
 export const Bell = make("Bell");
+export const BookBookmark = make("BookBookmark");
 export const BookOpen = make("BookOpen");
 export const Castle = make("Castle");
 export const Check = make("Check");
@@ -445,6 +459,7 @@ export const Menu = make("Menu");
 export const MessageCircle = make("MessageCircle");
 export const MessageCirclePlus = make("MessageCirclePlus");
 export const Minus = make("Minus");
+export const Notebook = make("Notebook");
 export const Monitor = make("Monitor");
 export const Moon = make("Moon");
 export const Package = make("Package");

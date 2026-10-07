@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { CardDto } from "@wikideck/shared";
 import { FlipCard } from "@/components/wiki-card";
-import { LEGENDARY_IMPACT_S } from "@/lib/audio";
+import { LEGENDARY_IMPACT_S, MYTHIC_IMPACT_S } from "@/lib/audio";
 
 type Props = {
   card: CardDto;
@@ -38,6 +38,7 @@ export function LegendaryReveal({
   onDone,
   flipped,
 }: Props) {
+  const mythic = card.rarity === "MYTHIC";
   const canvas = useRef<HTMLCanvasElement>(null);
   const root = useRef<HTMLDivElement>(null);
   const cardBox = useRef<HTMLDivElement>(null);
@@ -66,7 +67,9 @@ export function LegendaryReveal({
     resize();
     window.addEventListener("resize", resize);
 
-    const impactAt = LEGENDARY_IMPACT_S;
+    // la mythique passe par tout le spectre au lieu de l'or
+    const spectrum = (k: number, l = 72) => `hsl(${((k % 1) * 360 + 360) % 360},100%,${l}%)`;
+    const impactAt = mythic ? MYTHIC_IMPACT_S : LEGENDARY_IMPACT_S;
     const endAt = Math.max(impactAt + 2, duration - FADE_OUT_S);
     const start = performance.now();
     let impacted = false;
@@ -80,7 +83,7 @@ export function LegendaryReveal({
       spin: (Math.random() < 0.5 ? -1 : 1) * (1.2 + Math.random() * 1.6),
       delay: Math.random() * 1.6,
       size: 1 + Math.random() * 2.2,
-      hue: i % 5 === 0 ? 0 : 40 + Math.random() * 12,
+      hue: mythic ? Math.random() * 360 : i % 5 === 0 ? 0 : 40 + Math.random() * 12,
     }));
     const sparks: Dot[] = [];
     const burst = (cx: number, cy: number) => {
@@ -95,7 +98,11 @@ export function LegendaryReveal({
           life: 0,
           max: 1.2 + Math.random() * 2.4,
           size: 1 + Math.random() * 3.2,
-          hue: Math.random() < 0.25 ? 320 + Math.random() * 60 : 36 + Math.random() * 18,
+          hue: mythic
+            ? Math.random() * 360
+            : Math.random() < 0.25
+              ? 320 + Math.random() * 60
+              : 36 + Math.random() * 18,
         });
       }
     };
@@ -118,7 +125,7 @@ export function LegendaryReveal({
 
       const rayLen =
         base * (0.35 + 0.75 * energy) * (t >= impactAt ? 1 + Math.max(0, 0.6 - (t - impactAt)) : 1);
-      const rays = 20;
+      const rays = mythic ? 32 : 20;
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate(t * 0.22);
@@ -127,8 +134,14 @@ export function LegendaryReveal({
         const half = 0.035 + (i % 3) * 0.012;
         const len = rayLen * (0.7 + ((i * 53) % 7) / 14);
         const g = ctx.createRadialGradient(0, 0, base * 0.1, 0, 0, len);
-        g.addColorStop(0, `rgba(255,236,170,${0.32 * energy})`);
-        g.addColorStop(1, "rgba(255,170,40,0)");
+        if (mythic) {
+          const hue = ((i / rays) * 360 + t * 50) % 360;
+          g.addColorStop(0, `hsla(${hue},100%,78%,${0.34 * energy})`);
+          g.addColorStop(1, `hsla(${hue},100%,60%,0)`);
+        } else {
+          g.addColorStop(0, `rgba(255,236,170,${0.32 * energy})`);
+          g.addColorStop(1, "rgba(255,170,40,0)");
+        }
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.moveTo(0, 0);
@@ -140,9 +153,15 @@ export function LegendaryReveal({
 
       const haloR = base * (0.18 + 0.32 * energy);
       const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, haloR);
-      halo.addColorStop(0, `rgba(255,236,170,${0.4 * energy})`);
-      halo.addColorStop(0.5, `rgba(255,170,40,${0.22 * energy})`);
-      halo.addColorStop(1, "rgba(255,120,0,0)");
+      if (mythic) {
+        halo.addColorStop(0, `rgba(255,255,255,${0.5 * energy})`);
+        halo.addColorStop(0.5, `rgba(160,120,255,${0.26 * energy})`);
+        halo.addColorStop(1, "rgba(80,200,255,0)");
+      } else {
+        halo.addColorStop(0, `rgba(255,236,170,${0.4 * energy})`);
+        halo.addColorStop(0.5, `rgba(255,170,40,${0.22 * energy})`);
+        halo.addColorStop(1, "rgba(255,120,0,0)");
+      }
       ctx.fillStyle = halo;
       ctx.beginPath();
       ctx.arc(cx, cy, haloR, 0, Math.PI * 2);
@@ -171,11 +190,16 @@ export function LegendaryReveal({
       }
       if (impacted) {
         const s = t - impactAt;
-        for (let ring = 0; ring < 3; ring++) {
+        const rings = mythic ? 5 : 3;
+        for (let ring = 0; ring < rings; ring++) {
           const k = s - ring * 0.18;
           if (k <= 0 || k > 1.3) continue;
           const r = base * 0.9 * (1 - Math.pow(1 - Math.min(1, k / 1.3), 3));
-          ctx.strokeStyle = `rgba(255,${220 - ring * 30},${150 - ring * 40},${(1 - k / 1.3) * 0.85})`;
+          ctx.strokeStyle = mythic
+            ? spectrum(ring / rings + t * 0.2, 70)
+                .replace(")", `,${(1 - k / 1.3) * 0.85})`)
+                .replace("hsl(", "hsla(")
+            : `rgba(255,${220 - ring * 30},${150 - ring * 40},${(1 - k / 1.3) * 0.85})`;
           ctx.lineWidth = 6 - ring * 1.6;
           ctx.beginPath();
           ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -191,7 +215,7 @@ export function LegendaryReveal({
             life: 0,
             max: 1 + Math.random() * 1.8,
             size: 1 + Math.random() * 2.4,
-            hue: 38 + Math.random() * 14,
+            hue: mythic ? Math.random() * 360 : 38 + Math.random() * 14,
           });
         }
       }
@@ -244,7 +268,7 @@ export function LegendaryReveal({
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, [duration]);
+  }, [duration, card.rarity]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -262,16 +286,21 @@ export function LegendaryReveal({
     <div
       ref={root}
       role="dialog"
-      aria-label="Carte légendaire"
+      aria-label={mythic ? "Carte mythique" : "Carte légendaire"}
       onClick={() => cb.current.onSkip()}
-      className="fixed inset-0 z-100 flex cursor-pointer flex-col items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_50%_45%,rgb(40_20_70/0.92),rgb(5_2_15/0.97)_75%)] legendary-in"
+      style={
+        {
+          "--impact": `${mythic ? MYTHIC_IMPACT_S : LEGENDARY_IMPACT_S}s`,
+        } as React.CSSProperties
+      }
+      className={`fixed inset-0 z-100 flex cursor-pointer flex-col items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_50%_45%,rgb(40_20_70/0.92),rgb(5_2_15/0.97)_75%)] legendary-in ${mythic ? "is-mythic" : ""}`}
     >
       <canvas ref={canvas} aria-hidden className="pointer-events-none absolute inset-0 size-full" />
       <div className="legendary-flash" aria-hidden />
 
       <div className="relative z-10 flex flex-col items-center gap-5 text-center">
         <p className="legendary-title" aria-live="polite">
-          Légendaire
+          {mythic ? "Mythique" : "Légendaire"}
         </p>
         <div ref={cardBox} className="will-change-transform">
           <FlipCard

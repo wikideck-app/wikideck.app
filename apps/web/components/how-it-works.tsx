@@ -5,6 +5,8 @@ import {
   PACK_MAX,
   PACK_REGEN_MS,
   PACK_SIZE,
+  DROP_RARITIES,
+  MYTHIC_RATE,
   RARITIES,
   type DropRatesResponse,
 } from "@wikideck/shared";
@@ -68,7 +70,7 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
                 </tr>
               </thead>
               <tbody>
-                {RARITIES.map((r, i) => {
+                {DROP_RARITIES.map((r, i) => {
                   const rate = rateOf(r.value);
                   return (
                     <tr key={r.value} className="border-t border-line">
@@ -96,6 +98,11 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
                 })}
               </tbody>
             </table>
+            <p className="mt-2 text-[11px] leading-relaxed text-fog">
+              <strong>M · Mythique</strong> : une carte légendaire sur{" "}
+              {Math.round(1 / MYTHIC_RATE)} sort en version mythique, la même carte en « full
+              art ». Elle ne se trouve que dans les paquets.
+            </p>
             {drops && (
               <p className="mt-2 text-[11px] leading-relaxed text-fog">
                 Chaque carte est tirée au hasard parmi les {fmt.format(drops.total)} articles de

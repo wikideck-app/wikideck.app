@@ -6,6 +6,7 @@ import {
   PROTECTED_WORDS_MAX,
   PROTECTED_WORD_MAX,
   PROTECTED_WORD_MIN,
+  DROP_RARITIES,
   RARITIES,
   cleanWord,
   foldText,
@@ -428,7 +429,7 @@ export function CollectionBulkPanel({
             Cochez les raretés concernées. Le chiffre compte les cartes sous le seuil.
           </p>
           <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
-            {RARITIES.map((r) => (
+            {DROP_RARITIES.map((r) => (
               <button
                 key={r.value}
                 type="button"

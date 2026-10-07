@@ -131,7 +131,10 @@ export function PackOpener({
   const [tear, setTear] = useState(0);
   const [torn, setTorn] = useState(false);
   const [godpack, setGodpack] = useState(false);
-  const [cinematic, setCinematic] = useState<{ index: number; duration: number } | null>(null);
+  const [cinematic, setCinematic] = useState<{
+    index: number;
+    duration: number;
+  } | null>(null);
   const legendaryAudio = useRef<ReturnType<typeof playLegendary>>(null);
   const [fallback2d, setFallback2d] = useState(false);
   const drag = useRef<{ x: number; y: number; w: number; h: number } | null>(null);
@@ -183,8 +186,8 @@ export function PackOpener({
   const reveal = useCallback(
     (i: number) => {
       const card = cards[i];
-      if (card.rarity === "LEGENDARY" && !skip) {
-        const audio = playLegendary();
+      if ((card.rarity === "LEGENDARY" || card.rarity === "MYTHIC") && !skip) {
+        const audio = playLegendary(card.rarity === "MYTHIC");
         if (audio) {
           legendaryAudio.current = audio;
           setCinematic({ index: i, duration: audio.duration });
@@ -219,7 +222,10 @@ export function PackOpener({
     try {
       let res: Response;
       for (let tries = 0; ; tries++) {
-        res = await fetch(`${apiUrl}/packs/open`, { method: "POST", credentials: "include" });
+        res = await fetch(`${apiUrl}/packs/open`, {
+          method: "POST",
+          credentials: "include",
+        });
         if (res.status !== 503) break;
         if (tries >= QUEUE_MAX_TRIES) {
           setError(

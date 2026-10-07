@@ -17,6 +17,7 @@ import {
   Volume2,
   type IconType,
 } from "@/components/icons";
+import { SelectMenu } from "@/components/select-menu";
 import { useRouter } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
 import {
@@ -105,24 +106,16 @@ export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: 
 
       <div className="mt-8 grid gap-6 md:grid-cols-[230px_minmax(0,1fr)] md:gap-8">
         <div className="md:hidden">
-          <label
-            htmlFor="section-select"
-            className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-fog"
-          >
+          <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-fog">
             Section
-          </label>
-          <select
-            id="section-select"
+          </span>
+          <SelectMenu
+            block
+            label="Section des paramètres"
             value={section}
-            onChange={(e) => isSection(e.target.value) && choose(e.target.value)}
-            className="w-full rounded-lg border border-line bg-background px-3 py-2.5 text-sm outline-none focus:border-accent"
-          >
-            {SECTIONS.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+            options={SECTIONS.map((s) => ({ value: s.id, label: s.label }))}
+            onChange={choose}
+          />
         </div>
 
         <div

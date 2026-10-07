@@ -5,6 +5,7 @@ import {
   Globe,
   Handshake,
   Medal,
+  Notebook,
   MessageCircle,
   Puzzle,
   Settings,
@@ -24,6 +25,7 @@ export const NAV_GROUPS: NavGroup[] = ["Jouer", "Communauté", "Compétition", "
 export const NAV: NavItem[] = [
   { slug: "packs", label: "Paquets", icon: Puzzle, group: "Jouer" },
   { slug: "collection", label: "Collection", icon: BookOpen, group: "Jouer" },
+  { slug: "albums", label: "Albums", icon: Notebook, group: "Jouer" },
   { slug: "cards", label: "Toutes les cartes", icon: Globe, group: "Jouer" },
   { slug: "wishlist", label: "Envies", icon: Heart, group: "Jouer" },
   { slug: "trades", label: "Échanges", icon: Handshake, group: "Communauté" },
