@@ -48,6 +48,7 @@ const ERRORS: Record<string, string> = {
   album_full: "Cet album est plein (500 cartes).",
   wishlist_full: "Votre liste d'envies est pleine (3 cartes). Retirez-en une pour en ajouter.",
   nothing_to_recycle: "Vous n'avez aucun doublon à recycler dans ces raretés.",
+  already_spun: "Vous avez déjà tourné la roue aujourd'hui.",
   already_resolved: "Cet élément a déjà été traité.",
   ended: "Cette enchère est terminée.",
   own_auction: "Vous ne pouvez pas miser sur votre propre vente.",

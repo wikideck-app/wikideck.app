@@ -20,6 +20,7 @@ const ERRORS: Record<string, string> = {
   busy: "Un paquet est déjà en cours d'ouverture.",
   wikipedia_unavailable: "Wikipédia ne répond pas, réessayez (aucun paquet consommé).",
   unauthorized: "Votre session a expiré, reconnectez-vous.",
+  no_boost: "Vous n'avez plus de booster de chance.",
   rate_limited: "Trop de requêtes, patientez quelques secondes avant de réessayer.",
 };
 
@@ -119,6 +120,7 @@ export function PackOpener({
   const { settings } = useSettings();
   const { skip, speed } = settings.animations;
   const [status, setStatus] = useState(initial);
+  const [useBoost, setUseBoost] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [cards, setCards] = useState<OpenPackResponse["cards"]>([]);
   const [index, setIndex] = useState(0);
@@ -225,6 +227,8 @@ export function PackOpener({
         res = await fetch(`${apiUrl}/packs/open`, {
           method: "POST",
           credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ boost: useBoost }),
         });
         if (res.status !== 503) break;
         if (tries >= QUEUE_MAX_TRIES) {
@@ -257,6 +261,7 @@ export function PackOpener({
       setFlipped(skip ? new Set(result.cards.map((_, i) => i)) : new Set());
       if (skip) sfx.reveal(result.cards[result.cards.length - 1].rarity);
       applyStatus(result);
+      setUseBoost(false);
       if (result.godpack && !skip) sfx.reveal("ULTRA_RARE");
       setPhase("reveal");
     } catch {
@@ -265,7 +270,7 @@ export function PackOpener({
     } finally {
       setQueued(false);
     }
-  }, [apiUrl, applyStatus, backToIdle, skip, speed]);
+  }, [apiUrl, applyStatus, backToIdle, skip, speed, useBoost]);
 
   const revealCurrent = useCallback(() => reveal(index), [reveal, index]);
 
@@ -592,6 +597,24 @@ export function PackOpener({
       >
         {busy ? "Ouverture…" : "Ouvrir"}
       </button>
+      {(status.boosts ?? 0) > 0 && (
+        <label className="mt-4 flex cursor-pointer items-center gap-2 rounded-lg border border-line bg-surface px-4 py-2 text-sm">
+          <input
+            type="checkbox"
+            checked={useBoost}
+            disabled={busy}
+            onChange={(e) => setUseBoost(e.target.checked)}
+          />
+          <span>
+            Booster de chance <span className="opacity-60">({status.boosts} en stock)</span>
+          </span>
+        </label>
+      )}
+      {useBoost && (
+        <p className="mt-1 max-w-xs text-center text-xs opacity-60">
+          Le prochain paquet contiendra une carte légendaire, plus souvent en version mythique.
+        </p>
+      )}
       {queued && (
         <p role="status" className="mt-2 text-xs opacity-60">
           Beaucoup de joueurs ouvrent des paquets, vous êtes en file d&apos;attente…
