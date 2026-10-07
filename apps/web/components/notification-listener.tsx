@@ -6,7 +6,17 @@ import { useEffect, useRef, useState } from "react";
 import type { LiveEvent, LiveNotify } from "@wikideck/shared";
 import { emitLive, setPushConnected } from "@/lib/push";
 
-const TYPES = ["message", "friend", "trade", "outbid", "auction", "gift", "achievement", "staff"];
+const TYPES = [
+  "message",
+  "friend",
+  "trade",
+  "outbid",
+  "auction",
+  "wishlist",
+  "gift",
+  "achievement",
+  "staff",
+];
 
 type Toast = { id: number; text: string; href: string };
 
@@ -37,6 +47,13 @@ function describe(event: LiveEvent): { text: string; href: string } {
     case "auction":
       return {
         text: "Une de vos enchères a évolué",
+        href: `/market/${encodeURIComponent(event.auction)}`,
+      };
+    case "wishlist":
+      return {
+        text: `${String(event.card)
+          .replace(/[\u0000-\u001f]/g, "")
+          .slice(0, 80)} (votre liste d'envies) est en vente`,
         href: `/market/${encodeURIComponent(event.auction)}`,
       };
     case "gift":
