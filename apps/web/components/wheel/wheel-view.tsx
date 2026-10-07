@@ -63,13 +63,14 @@ export function WheelView({
   const [result, setResult] = useState<WheelSpinResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const angleRef = useRef(0);
-  const reduced = useRef(false);
+  const [spinMs, setSpinMs] = useState(SPIN_MS);
 
   const spin = async () => {
     setError(null);
     setResult(null);
     setSpinning(true);
-    reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 600 : SPIN_MS;
+    setSpinMs(duration);
     const res = await apiCall<WheelSpinResponse>(apiUrl, "/wheel/spin", "POST");
     if (!res.ok) {
       setSpinning(false);
@@ -84,19 +85,16 @@ export function WheelView({
     angleRef.current = base + 360 * 5 + ((360 - won.index * STEP) % 360) + jitter;
     setAngle(angleRef.current);
     sfx.click();
-    setTimeout(
-      () => {
-        setSpinning(false);
-        setCanSpin(false);
-        setResult(won);
-        const big =
-          won.prize.kind === "boost" ||
-          (won.prize.kind === "packs" ? won.prize.amount >= 2 : won.prize.amount >= 50);
-        sfx.reveal(big ? "SUPER_RARE" : "UNCOMMON");
-        router.refresh();
-      },
-      reduced.current ? 700 : SPIN_MS,
-    );
+    setTimeout(() => {
+      setSpinning(false);
+      setCanSpin(false);
+      setResult(won);
+      const big =
+        won.prize.kind === "boost" ||
+        (won.prize.kind === "packs" ? won.prize.amount >= 2 : won.prize.amount >= 50);
+      sfx.reveal(big ? "SUPER_RARE" : "UNCOMMON");
+      router.refresh();
+    }, duration + 100);
   };
 
   return (
@@ -160,7 +158,7 @@ export function WheelView({
             transform: `rotate(${angle}deg)`,
             transformOrigin: `${CX}px ${CY}px`,
             transition: spinning
-              ? `transform ${reduced.current ? 0.6 : SPIN_MS / 1000}s cubic-bezier(0.12, 0.7, 0.1, 1)`
+              ? `transform ${spinMs / 1000}s cubic-bezier(0.12, 0.7, 0.1, 1)`
               : "none",
           }}
         >
