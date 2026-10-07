@@ -68,7 +68,13 @@ function describe(event: LiveEvent): { text: string; href: string } {
   }
 }
 
-export function NotificationListener({ live }: { live: LiveNotify | null }) {
+export function NotificationListener({
+  live,
+  dailyBonus = 0,
+}: {
+  live: LiveNotify | null;
+  dailyBonus?: number;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const path = useRef(pathname);
@@ -78,6 +84,18 @@ export function NotificationListener({ live }: { live: LiveNotify | null }) {
   useEffect(() => {
     path.current = pathname;
   }, [pathname]);
+
+  // le bonus n'est versé qu'une fois par jour : l'annonce ne s'affiche qu'à ce chargement
+  useEffect(() => {
+    if (!dailyBonus) return;
+    const id = Date.now() + Math.random();
+    setToasts((t) => [
+      ...t,
+      { id, text: `Bonus du jour : +${dailyBonus} wikibits`, href: path.current },
+    ]);
+    const timer = setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 7000);
+    return () => clearTimeout(timer);
+  }, [dailyBonus]);
 
   useEffect(() => {
     if (!live || typeof EventSource === "undefined") return;

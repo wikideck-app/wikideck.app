@@ -24,7 +24,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         </footer>
       </div>
       <PackWatcher initial={packs} apiUrl={API_URL} />
-      <NotificationListener live={user.live} />
+      <NotificationListener live={user.live} dailyBonus={user.dailyBonus} />
     </SettingsProvider>
   );
 }
