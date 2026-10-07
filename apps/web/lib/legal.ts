@@ -25,4 +25,5 @@ export const LEGAL_LINKS = [
   { href: "/legal-notice", label: "Mentions légales" },
   { href: "/privacy", label: "Confidentialité" },
   { href: "/terms", label: "CGU" },
+  { href: "/docs", label: "API" },
 ] as const;
