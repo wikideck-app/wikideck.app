@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { RARITIES, type CardDto, type TagColor } from "@wikideck/shared";
+import { useRarityLabel } from "@/lib/labels";
 import { swatchStyle } from "@/lib/tag-style";
-
-const fmt = new Intl.NumberFormat("fr-FR");
 
 export function WikiCard({
   card,
@@ -21,8 +21,10 @@ export function WikiCard({
   compact?: boolean;
   className?: string;
 }) {
+  const t = useTranslations("cards.wikiCard");
+  const rarityLabel = useRarityLabel();
   const info = RARITIES.find((x) => x.value === card.rarity)!;
-  const pill = isNew ? "Nouveau" : quantity !== undefined && quantity > 1 ? `×${quantity}` : "";
+  const pill = isNew ? t("new") : quantity !== undefined && quantity > 1 ? `×${quantity}` : "";
 
   const tilt = (e: React.PointerEvent<HTMLElement>) => {
     const el = e.currentTarget;
@@ -43,7 +45,7 @@ export function WikiCard({
         onPointerLeave={untilt}
       >
         <div className="top">
-          <span className="b" title={info.label}>
+          <span className="b" title={rarityLabel(info.value)}>
             {info.code}
           </span>
           <h3 className="t">
@@ -79,12 +81,12 @@ export function WikiCard({
           )}
           {tags && tags.length > 0 && (
             <div className="dots">
-              {tags.map((t) => (
-                <i key={t.name} title={t.name} style={swatchStyle(t.color)} />
+              {tags.map((tag) => (
+                <i key={tag.name} title={tag.name} style={swatchStyle(tag.color)} />
               ))}
             </div>
           )}
-          <span className="cr">Wikipédia · CC BY-SA</span>
+          <span className="cr">{t("credit")}</span>
         </div>
 
         <div className="tx">

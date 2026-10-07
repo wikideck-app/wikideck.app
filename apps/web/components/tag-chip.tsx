@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { X } from "@/components/icons";
 import type { TagDto } from "@wikideck/shared";
 import { tagStyle } from "@/lib/tag-style";
@@ -11,6 +12,7 @@ export function TagChip({
   onRemove?: () => void;
   active?: boolean;
 }) {
+  const t = useTranslations("tags");
   return (
     <span
       style={tagStyle(tag.color, active)}
@@ -20,7 +22,7 @@ export function TagChip({
       {onRemove && (
         <button
           type="button"
-          aria-label={`Retirer l'étiquette ${tag.name}`}
+          aria-label={t("remove", { name: tag.name })}
           onClick={onRemove}
           className="opacity-70 hover:opacity-100"
         >

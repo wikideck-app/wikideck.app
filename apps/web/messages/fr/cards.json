@@ -1,0 +1,56 @@
+{
+  "rarity": {
+    "COMMON": "Commune",
+    "UNCOMMON": "Peu commune",
+    "RARE": "Rare",
+    "SUPER_RARE": "Super rare",
+    "ULTRA_RARE": "Ultra rare",
+    "LEGENDARY": "Légendaire",
+    "MYTHIC": "Mythique"
+  },
+  "filterByRarity": "Filtrer par rareté",
+  "resetFilters": "Réinitialiser",
+  "sorts": {
+    "recent": "Plus récentes",
+    "oldest": "Moins récentes",
+    "rarity_desc": "Rareté : décroissante",
+    "rarity_asc": "Rareté : croissante",
+    "alpha": "Alphabétique (A → Z)"
+  },
+  "ownership": {
+    "all": "Toutes",
+    "mine": "Possédées",
+    "missing": "Manquantes",
+    "drawn": "Déjà tirées"
+  },
+  "sort": "Trier",
+  "wikiCard": {
+    "new": "Nouveau",
+    "credit": "Wikipédia · CC BY-SA"
+  },
+  "detail": {
+    "sell": "Mettre aux enchères",
+    "recycle": "Recycler un exemplaire",
+    "copies": "Exemplaires : {count}",
+    "views": "Vues (30j) : {count, number}",
+    "locked": "{reason} : cette carte ne peut être ni vendue ni recyclée.",
+    "viewOnWikipedia": "Voir l’article sur Wikipédia",
+    "noFreeImage": "Wikipédia n’a pas d’image libre de droits pour cet article.",
+    "license": "Texte de l’article : CC BY-SA 4.0 — crédits sur la page Wikipédia."
+  },
+  "catalog": {
+    "title": "Toutes les cartes",
+    "subtitle": "Chaque article de Wikipédia FR est une carte.",
+    "loadError": "Impossible de charger les cartes.",
+    "searchPlaceholder": "Rechercher dans le titre (3 lettres minimum)…",
+    "searchLabel": "Rechercher une carte par nom",
+    "clearSearch": "Effacer la recherche",
+    "total": "{count, plural, =0 {0 carte} one {# carte} other {# cartes}}",
+    "empty": "Aucune carte ne correspond à ces filtres.",
+    "view": "Voir {title}",
+    "owners": "{count, plural, =0 {Jamais tirée} one {# joueur} other {# joueurs}}",
+    "ownedBy": "{count, plural, =0 {Aucun joueur ne la possède pour l’instant} one {Possédée par # joueur} other {Possédée par # joueurs}}",
+    "youMiss": " · il vous manque cette carte",
+    "summary": "{catalog, plural, one {# carte} other {# cartes}} au total · vous en possédez {owned, number}"
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   BATTLE_COUNTDOWN_MS,
@@ -15,6 +16,7 @@ const HEARTBEAT_MS = 15_000;
 const STALE_MS = 12_000;
 
 export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }) {
+  const t = useTranslations("battle");
   const [room, setRoom] = useState<BattleRoom | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -77,7 +79,7 @@ export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }
   const join = useCallback(
     async (rawCode: string) => {
       const target = rawCode.trim().toUpperCase();
-      if (target.length !== 4) return setError("Le code d'un salon fait 4 lettres.");
+      if (target.length !== 4) return setError(t("codeLength"));
       setBusy(true);
       setError(null);
       const res = await apiCall<BattleRoomResponse>(apiUrl, `/battle/rooms/${target}`, "POST", {
@@ -85,9 +87,9 @@ export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }
       } satisfies BattleRoomAction);
       setBusy(false);
       if (res.ok) setRoom(res.data.room);
-      else setError(res.code === "not_found" ? "Aucun salon avec ce code." : res.message);
+      else setError(res.code === "not_found" ? t("roomNotFound") : res.message);
     },
-    [apiUrl],
+    [apiUrl, t],
   );
 
   const leave = useCallback(async () => {
@@ -134,7 +136,7 @@ export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }
           setRoom(res.data.room);
         } else if (res.status === 404) {
           setRoom(null);
-          setError("Ce salon n'existe plus.");
+          setError(t("roomGone"));
         }
       }
       if (beats >= HEARTBEAT_MS) {
@@ -143,7 +145,7 @@ export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }
       }
     }, 1000);
     return () => clearInterval(id);
-  }, [apiUrl, code, send]);
+  }, [apiUrl, code, send, t]);
 
   useEffect(() => {
     if (phase !== "countdown" && phase !== "playing") return;
@@ -159,13 +161,13 @@ export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }
     loadingRef.current = false;
     setLoading(false);
     if (!article) {
-      setLoadError(`Impossible de charger « ${target} ».`);
+      setLoadError(t("loadArticle", { title: target }));
       return null;
     }
     setHtml(article.html);
     setTitle(article.title);
     return article.title;
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (phase === "countdown" && roomRef.current) prefetchArticle(roomRef.current.startArticle);

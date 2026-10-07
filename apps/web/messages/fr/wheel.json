@@ -1,0 +1,35 @@
+{
+  "title": "Roue de la fortune",
+  "subtitle": "Un tour par jour, gratuit : des wikibits ou des paquets en plus.",
+  "loadError": "Impossible de charger la roue.",
+  "wheelLabel": "Roue de la fortune",
+  "prize": {
+    "wikibits": "{amount, plural, one {# wikibit} other {# wikibits}}",
+    "packs": "{amount, plural, one {# paquet} other {# paquets}}",
+    "boost": "un booster de chance",
+    "boostTitle": "Booster de chance"
+  },
+  "sector": {
+    "wikibitsSmall": "wikibits",
+    "boostBig": "✦",
+    "boostSmall": "booster",
+    "packsBig": "+{amount}",
+    "packsSmall": "{amount, plural, one {paquet} other {paquets}}"
+  },
+  "won": "Gagné : {prize}",
+  "wonBoost": "un booster de chance",
+  "wonPacks": "{amount, plural, one {# paquet} other {# paquets}}",
+  "spinning": "La roue tourne…",
+  "boostStock": "Le booster est dans votre stock ({count}). Activez-le sur la page Paquets quand vous voulez : il se cumule et ne s’utilise qu’à votre demande.",
+  "spin": "Tourner la roue",
+  "comeBack": "Revenez demain",
+  "alreadySpun": "Vous avez déjà tourné la roue aujourd’hui.",
+  "ratesTitle": "Taux de gain de la roue",
+  "ratesNote": "Un tour gratuit par jour (minuit, heure de Paris). Le booster de chance se garde en stock et s’active quand vous ouvrez un paquet : une carte légendaire est alors garantie, et elle sort en version mythique {boostRate, number, percent} du temps au lieu de {rate, number, percent}.",
+  "history": {
+    "mine": "Mes derniers tours",
+    "community": "Derniers gains de la communauté",
+    "anonymous": "Un joueur",
+    "empty": "Aucun tour pour le moment."
+  }
+}

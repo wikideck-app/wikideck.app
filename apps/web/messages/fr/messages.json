@@ -1,0 +1,22 @@
+{
+  "title": "Messages",
+  "subtitle": "Discutez en privé avec vos amis.",
+  "loadError": "Impossible de charger les messages.",
+  "conversations": "Conversations",
+  "new": "Nouvelle conversation",
+  "emptyList": "Aucune conversation. Écrivez à un ami avec le bouton ci-dessus.",
+  "pick": "Choisissez une conversation, ou démarrez-en une avec un ami.",
+  "you": "Vous : {body}",
+  "friendsOnly": "On ne peut écrire qu’à ses amis.",
+  "noFriends": "Vous n’avez pas encore d’ami. Ajoutez-en depuis la page Amis.",
+  "back": "Retour aux conversations",
+  "empty": "Aucun message. Dites bonjour à {name} !",
+  "read": " · Lu",
+  "reported": " · Signalé à l’équipe",
+  "confirmReport": "Envoyer le signalement à l’équipe ?",
+  "report": "Signaler",
+  "placeholder": "Écrire un message…",
+  "label": "Message",
+  "send": "Envoyer",
+  "notFriends": "Vous n’êtes plus amis : vous ne pouvez plus écrire à {name}."
+}

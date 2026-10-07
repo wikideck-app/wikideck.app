@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { ArticleView } from "@/components/battle/article-view";
 import { primaryButtonClass } from "@/components/settings/controls";
@@ -19,6 +20,7 @@ export function ArticlePane({
   onNavigate: (title: string) => void;
   onRetry: () => void;
 }) {
+  const t = useTranslations("battle");
   const scroller = useRef<HTMLDivElement>(null);
   useEffect(() => {
     scroller.current?.scrollTo({ top: 0 });
@@ -30,14 +32,14 @@ export function ArticlePane({
         {title && <h1 className="wp-title">{title}</h1>}
         {loading && (
           <div className="flex items-center gap-3 py-10 text-[#666]">
-            <span className="wp-spinner" /> Chargement…
+            <span className="wp-spinner" /> {t("loading")}
           </div>
         )}
         {loadError && (
           <div className="flex flex-col items-center gap-4 py-10 text-center">
             <p className="text-sm text-[#666]">{loadError}</p>
             <button type="button" className={primaryButtonClass} onClick={onRetry}>
-              Réessayer
+              {t("retry")}
             </button>
           </div>
         )}

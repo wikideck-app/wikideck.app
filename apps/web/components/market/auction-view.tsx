@@ -2,25 +2,25 @@
 
 import { ArrowLeft, LineChart, Minus, Plus } from "@/components/icons";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
   BID_EXTEND_S,
   BID_EXTEND_WINDOW_S,
   MARKET_FEE_PERCENT,
-  RARITIES,
   sellerProceeds,
   type AuctionDetail,
 } from "@wikideck/shared";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
 import { WikiCard } from "@/components/wiki-card";
 import { WikibitIcon, Wikibits } from "@/components/wikibit";
+import { useRarityLabel } from "@/lib/labels";
 import { pollDelay, useLiveEvents, usePushConnected } from "@/lib/push";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 import { Countdown } from "./countdown";
 import { StatsDialog } from "./stats-dialog";
 
-const dateFmt = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "medium" });
 const POLL_MS = 4000;
 
 function Avatar({ name, url }: { name: string; url: string | null }) {
@@ -38,6 +38,9 @@ const panel = "rounded-xl border border-line p-5 bg-surface";
 const label = "text-[10px] font-bold uppercase tracking-[0.2em] text-fog";
 
 export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUrl: string }) {
+  const t = useTranslations("market.auction");
+  const format = useFormatter();
+  const rarityLabel = useRarityLabel();
   const router = useRouter();
   const [a, setA] = useState(initial);
   const [amount, setAmount] = useState<string | null>(null);
@@ -45,7 +48,6 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState(false);
   const active = a.status === "ACTIVE";
-  const rarity = RARITIES.find((r) => r.value === a.card.rarity)!;
 
   const refresh = useCallback(async () => {
     const r = await apiFetch<AuctionDetail>(apiUrl, `/market/${initial.id}`);
@@ -115,7 +117,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
         href="/market"
         className="inline-flex items-center gap-2 text-sm text-pale-mist hover:text-foreground"
       >
-        <ArrowLeft className="size-4" /> Retour au marché
+        <ArrowLeft className="size-4" /> {t("back")}
       </Link>
 
       <div className="mt-6 grid gap-8 md:grid-cols-[18rem_1fr]">
@@ -129,7 +131,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
             rel="noreferrer"
             className="mt-3 block text-center text-xs text-fog underline hover:text-foreground"
           >
-            Voir l&apos;article sur Wikipédia
+            {t("viewArticle")}
           </a>
         </div>
 
@@ -139,9 +141,9 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
               <h1 className="font-display text-3xl font-medium">{a.card.title}</h1>
               <p className="mt-1 flex items-center gap-2 text-sm text-fog">
                 <span className="rounded-full border border-line px-2 py-px text-[11px] font-bold text-pale-mist">
-                  {rarity.label}
+                  {rarityLabel(a.card.rarity)}
                 </span>
-                Mis en vente par <Avatar name={a.seller.username} url={a.seller.avatarUrl} />
+                {t("soldBy")} <Avatar name={a.seller.username} url={a.seller.avatarUrl} />
                 <Link
                   href={`/profile/${a.seller.id}`}
                   className="font-bold text-pale-mist hover:underline"
@@ -152,8 +154,8 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
             </div>
             <button
               type="button"
-              aria-label="Vue du marché"
-              title="Vue du marché"
+              aria-label={t("marketViewLabel")}
+              title={t("marketViewLabel")}
               onClick={() => setStats(true)}
               className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-line text-pale-mist transition-colors hover:border-accent hover:text-foreground bg-surface"
             >
@@ -167,36 +169,32 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                 <>
                   <p className="font-bold">
                     {a.viewer.isLeader
-                      ? "Vous avez remporté cette carte !"
-                      : `Vendue à ${a.leader?.username ?? "un joueur"}`}
+                      ? t("won")
+                      : t("soldTo", { name: a.leader?.username ?? t("aPlayer") })}
                   </p>
                   <p className="mt-1 text-sm text-pale-mist">
-                    Prix final : <Wikibits amount={a.currentBid} className="font-bold" />
-                    {a.viewer.isSeller && (
-                      <>
-                        {" "}
-                        · vous avez reçu{" "}
-                        <Wikibits
-                          amount={sellerProceeds(a.currentBid)}
-                          className="font-bold"
-                        />{" "}
-                        (frais de {MARKET_FEE_PERCENT} % déduits)
-                      </>
-                    )}
-                    {a.viewer.isLeader && " · la carte est dans votre collection."}
+                    {t.rich("finalPrice", {
+                      amount: () => <Wikibits amount={a.currentBid!} className="font-bold" />,
+                    })}
+                    {a.viewer.isSeller &&
+                      t.rich("received", {
+                        fee: MARKET_FEE_PERCENT,
+                        amount: () => (
+                          <Wikibits amount={sellerProceeds(a.currentBid!)} className="font-bold" />
+                        ),
+                      })}
+                    {a.viewer.isLeader && t("inCollection")}
                   </p>
                 </>
               )}
               {a.status === "UNSOLD" && (
                 <p className="font-bold">
-                  Invendue
-                  <span className="ml-2 text-sm font-normal text-pale-mist">
-                    Aucune mise : la carte est revenue chez son vendeur.
-                  </span>
+                  {t("unsold")}
+                  <span className="ml-2 text-sm font-normal text-pale-mist">{t("unsoldText")}</span>
                 </p>
               )}
               {a.status === "CANCELLED" && (
-                <p className="font-bold">Vente annulée par le vendeur.</p>
+                <p className="font-bold">{t("cancelledBySeller")}</p>
               )}
             </div>
           )}
@@ -204,7 +202,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
           <div className={`${panel} mt-6`}>
             <div className="flex items-center justify-between gap-4">
               <span className={label}>
-                {a.currentBid === null ? "Mise de départ" : active ? "Mise actuelle" : "Prix final"}
+                {a.currentBid === null ? t("startBid") : active ? t("currentBid") : t("finalBid")}
               </span>
               <Wikibits
                 amount={a.currentBid ?? a.startPrice}
@@ -214,15 +212,15 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
             </div>
             {a.leader && (
               <p className="mt-2 flex items-center justify-end gap-2 text-xs text-fog">
-                {active ? "En tête :" : "Acheteur :"}
+                {active ? t("leading") : t("buyer")}
                 <Avatar name={a.leader.username} url={a.leader.avatarUrl} />
                 <span className="font-bold text-pale-mist">
-                  {a.viewer.isLeader ? "vous" : a.leader.username}
+                  {a.viewer.isLeader ? t("you") : a.leader.username}
                 </span>
               </p>
             )}
             <div className="mt-4 flex items-center justify-between gap-4 border-t border-line pt-4 text-sm">
-              <span className="text-pale-mist">Temps restant</span>
+              <span className="text-pale-mist">{t("timeLeft")}</span>
               <Countdown endsAt={a.endsAt} className="font-bold" />
             </div>
           </div>
@@ -231,11 +229,15 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
             <div className={`${panel} mt-4`}>
               <div className="flex items-baseline justify-between text-xs text-fog">
                 <span>
-                  Votre solde :{" "}
-                  <Wikibits amount={a.wikibits} className="font-bold text-foreground" />
+                  {t.rich("yourBalance", {
+                    amount: () => <Wikibits amount={a.wikibits} className="font-bold text-foreground" />,
+                  })}
                 </span>
                 <span>
-                  Mise minimum : <span className="font-bold text-foreground">{a.minBid}</span>
+                  {t.rich("minBid", {
+                    amount: a.minBid,
+                    strong: (chunks) => <span className="font-bold text-foreground">{chunks}</span>,
+                  })}
                 </span>
               </div>
               <form
@@ -248,7 +250,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                 <div className="flex min-w-0 flex-1 items-center rounded-xl border border-line focus-within:border-fog bg-surface">
                   <button
                     type="button"
-                    aria-label="Moins"
+                    aria-label={t("less")}
                     onClick={() => step(-Math.max(1, Math.round(a.minBid * 0.05)))}
                     className="px-3 py-2.5 text-pale-mist hover:text-foreground"
                   >
@@ -258,7 +260,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                   <input
                     type="number"
                     inputMode="numeric"
-                    aria-label="Montant de la mise"
+                    aria-label={t("amountLabel")}
                     min={a.minBid}
                     value={value}
                     onChange={(e) => setAmount(e.target.value)}
@@ -266,7 +268,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                   />
                   <button
                     type="button"
-                    aria-label="Plus"
+                    aria-label={t("more")}
                     onClick={() => step(Math.max(1, Math.round(a.minBid * 0.05)))}
                     className="px-3 py-2.5 text-pale-mist hover:text-foreground"
                   >
@@ -278,7 +280,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                   disabled={!valid || busy || (a.viewer.isLeader && numeric <= (a.currentBid ?? 0))}
                   className={`${primaryButtonClass} px-6`}
                 >
-                  {busy ? "…" : a.viewer.isLeader ? "Relancer" : "Miser"}
+                  {busy ? "…" : a.viewer.isLeader ? t("raise") : t("bid")}
                 </button>
               </form>
               {error && (
@@ -287,9 +289,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                 </p>
               )}
               <p className="mt-3 text-[11px] leading-relaxed text-fog">
-                La mise est débitée immédiatement. Si vous êtes surenchéri, elle vous est
-                intégralement remboursée. Une mise dans les {BID_EXTEND_WINDOW_S} dernières secondes
-                prolonge la fin de l&apos;enchère de {BID_EXTEND_S} secondes.
+                {t("bidRules", { window: BID_EXTEND_WINDOW_S, extend: BID_EXTEND_S })}
               </p>
             </div>
           )}
@@ -297,8 +297,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
           {active && a.viewer.isSeller && (
             <div className={`${panel} mt-4`}>
               <p className="text-sm text-pale-mist">
-                C&apos;est votre vente. Une fois terminée, vous recevrez le prix moins{" "}
-                {MARKET_FEE_PERCENT} % de frais ; sans mise, la carte vous revient.
+                {t("yourSale", { fee: MARKET_FEE_PERCENT })}
               </p>
               {a.bidCount === 0 && (
                 <button
@@ -307,7 +306,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                   onClick={cancel}
                   className={`${dangerButtonClass} mt-4`}
                 >
-                  Annuler la vente
+                  {t("cancel")}
                 </button>
               )}
               {error && (
@@ -319,10 +318,10 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
           )}
 
           <h2 className="mt-8 text-xs font-bold uppercase tracking-[0.2em] text-fog">
-            Historique des mises ({a.bidCount})
+            {t("history", { count: a.bidCount })}
           </h2>
           {a.bids.length === 0 ? (
-            <p className="mt-3 text-sm text-fog">Aucune mise placée pour l&apos;instant.</p>
+            <p className="mt-3 text-sm text-fog">{t("noBids")}</p>
           ) : (
             <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface">
               {a.bids.map((b, i) => (
@@ -336,7 +335,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                     <Avatar name={b.bidder.username} url={b.bidder.avatarUrl} />
                     <span className="truncate font-bold">{b.bidder.username}</span>
                     <span className="hidden text-xs text-fog sm:inline">
-                      {dateFmt.format(new Date(b.createdAt))}
+                      {format.dateTime(new Date(b.createdAt), "shortSeconds")}
                     </span>
                   </span>
                   <Wikibits amount={b.amount} className="font-bold" />
@@ -346,7 +345,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
           )}
           {!active && (
             <Link href="/market" className={`${buttonClass} mt-8`}>
-              Retour au marché
+              {t("back")}
             </Link>
           )}
         </div>

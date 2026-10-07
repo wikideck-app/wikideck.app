@@ -1,14 +1,18 @@
 "use client";
 
 import { ChevronDown } from "@/components/icons";
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { PULL_HISTORY_SIZE, RARITIES, type PullsResponse } from "@wikideck/shared";
+import { useRarityLabel } from "@/lib/labels";
 import { RARITY_COLOR } from "@/lib/rarity-ui";
 import { apiFetch } from "@/lib/tags-api";
 
-const dateFormat = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeStyle: "short" });
-
 export function PullHistory({ apiUrl }: { apiUrl: string }) {
+  const t = useTranslations("settings.pullHistory");
+  const tc = useTranslations("common");
+  const format = useFormatter();
+  const rarityLabel = useRarityLabel();
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<PullsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -36,9 +40,9 @@ export function PullHistory({ apiUrl }: { apiUrl: string }) {
         className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left"
       >
         <span>
-          <span className="block text-sm font-bold">Historique des tirages</span>
+          <span className="block text-sm font-bold">{t("title")}</span>
           <span className="block text-xs text-fog">
-            Les {PULL_HISTORY_SIZE} dernières cartes obtenues en ouvrant des paquets
+            {t("subtitle", { count: PULL_HISTORY_SIZE })}
           </span>
         </span>
         <ChevronDown
@@ -49,20 +53,17 @@ export function PullHistory({ apiUrl }: { apiUrl: string }) {
       {open && (
         <div id="pull-history" className="border-t border-line px-4 py-4">
           <p className="mb-4 text-xs leading-relaxed text-fog">
-            Transparence : chaque carte est un article Wikipédia tiré au hasard. Sa rareté dépend
-            uniquement du nombre de vues de l&apos;article sur les 30 derniers jours (C moins de 50,
-            PC dès 50, R dès 250, SR dès 1 000, UR dès 5 000, L dès 20 000). Aucune probabilité
-            n&apos;est truquée ni modifiée.
+            {t("transparency")}
           </p>
 
-          {loading && <p className="text-sm text-fog">Chargement…</p>}
+          {loading && <p className="text-sm text-fog">{tc("loading")}</p>}
           {error && (
             <p role="alert" className="text-sm text-danger">
               {error}
             </p>
           )}
           {data && data.openings.length === 0 && (
-            <p className="text-sm text-fog">Aucun tirage pour le moment. Ouvrez un paquet !</p>
+            <p className="text-sm text-fog">{t("empty")}</p>
           )}
           {data && data.openings.length > 0 && (
             <>
@@ -70,11 +71,10 @@ export function PullHistory({ apiUrl }: { apiUrl: string }) {
                 {data.openings.map((opening) => (
                   <li key={opening.id}>
                     <p className="text-xs font-bold uppercase tracking-wide text-fog">
-                      {dateFormat.format(new Date(opening.openedAt))}
+                      {format.dateTime(new Date(opening.openedAt), "longTime")}
                     </p>
                     <ul className="mt-2 flex flex-wrap gap-2">
                       {opening.cards.map((card, i) => {
-                        const rarity = RARITIES.find((r) => r.value === card.rarity)!;
                         return (
                           <li key={`${card.cardId}-${i}`}>
                             <a
@@ -83,8 +83,8 @@ export function PullHistory({ apiUrl }: { apiUrl: string }) {
                               rel="noreferrer"
                               className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1 text-xs hover:border-accent"
                             >
-                              <b style={{ color: RARITY_COLOR[card.rarity] }} title={rarity.label}>
-                                {rarity.code}
+                              <b style={{ color: RARITY_COLOR[card.rarity] }} title={rarityLabel(card.rarity)}>
+                                {RARITIES.find((r) => r.value === card.rarity)!.code}
                               </b>
                               <span className="max-w-[16rem] truncate">{card.title}</span>
                             </a>
@@ -96,8 +96,7 @@ export function PullHistory({ apiUrl }: { apiUrl: string }) {
                 ))}
               </ol>
               <p className="mt-4 text-xs text-fog">
-                {data.total} carte{data.total > 1 ? "s" : ""} tirée{data.total > 1 ? "s" : ""} au
-                total depuis la création du compte.
+                {t("total", { count: data.total })}
               </p>
             </>
           )}

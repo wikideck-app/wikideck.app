@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "@/components/icons";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -14,15 +15,6 @@ import { FlipCard } from "@/components/wiki-card";
 import { LegendaryReveal } from "@/components/legendary-reveal";
 import { playLegendary, sfx } from "@/lib/audio";
 import { useSettings } from "@/lib/settings-context";
-
-const ERRORS: Record<string, string> = {
-  no_packs: "Vous n'avez plus de paquet disponible.",
-  busy: "Un paquet est déjà en cours d'ouverture.",
-  wikipedia_unavailable: "Wikipédia ne répond pas, réessayez (aucun paquet consommé).",
-  unauthorized: "Votre session a expiré, reconnectez-vous.",
-  no_boost: "Vous n'avez plus de booster de chance.",
-  rate_limited: "Trop de requêtes, patientez quelques secondes avant de réessayer.",
-};
 
 const MIN_SHAKE_MS = 400;
 const BURST_MS = 1300;
@@ -86,10 +78,11 @@ function PackHalf({
   priority?: boolean;
   style?: React.CSSProperties;
 }) {
+  const t = useTranslations("packs");
   return (
     <Image
       src="/paquet.webp"
-      alt={priority ? "Paquet Wikideck" : ""}
+      alt={priority ? t("packAlt") : ""}
       width={1101}
       height={1426}
       priority={priority}
@@ -116,6 +109,8 @@ export function PackOpener({
   apiUrl: string;
   tags?: TagDto[];
 }) {
+  const t = useTranslations("packs");
+  const tc = useTranslations("common");
   const router = useRouter();
   const { settings } = useSettings();
   const { skip, speed } = settings.animations;
@@ -232,9 +227,7 @@ export function PackOpener({
         });
         if (res.status !== 503) break;
         if (tries >= QUEUE_MAX_TRIES) {
-          setError(
-            "Le serveur est très sollicité, réessayez dans un instant (aucun paquet consommé).",
-          );
+          setError(t("errors.overloaded"));
           backToIdle();
           return;
         }
@@ -244,7 +237,11 @@ export function PackOpener({
       setQueued(false);
       const data = await res.json();
       if (!res.ok) {
-        setError(ERRORS[data.error] ?? "Une erreur est survenue.");
+        setError(
+          typeof data.error === "string" && t.has(`errors.${data.error}` as never)
+            ? t(`errors.${data.error}` as never)
+            : tc("errors.generic"),
+        );
         if (typeof data.packs === "number") applyStatus(data);
         backToIdle();
         return;
@@ -265,12 +262,12 @@ export function PackOpener({
       if (result.godpack && !skip) sfx.reveal("ULTRA_RARE");
       setPhase("reveal");
     } catch {
-      setError("Impossible de joindre le serveur.");
+      setError(tc("errors.network"));
       backToIdle();
     } finally {
       setQueued(false);
     }
-  }, [apiUrl, applyStatus, backToIdle, skip, speed, useBoost]);
+  }, [apiUrl, applyStatus, backToIdle, skip, speed, useBoost, t, tc]);
 
   const revealCurrent = useCallback(() => reveal(index), [reveal, index]);
 
@@ -354,14 +351,17 @@ export function PackOpener({
           <>
             <div aria-hidden className="godpack-aura" />
             <div role="status" className="godpack-banner">
-              <span>God Pack</span>
-              <small>Cinq cartes rares dans un seul paquet !</small>
+              <span>{t("godPack")}</span>
+              <small>{t("godPackText")}</small>
             </div>
           </>
         )}
         <p className="text-sm opacity-60">
-          Carte <span className="text-lg font-bold text-foreground">{index + 1}</span> /{" "}
-          {cards.length}
+          {t.rich("cardOf", {
+            index: index + 1,
+            total: cards.length,
+            strong: (chunks) => <span className="text-lg font-bold text-foreground">{chunks}</span>,
+          })}
         </p>
 
         <FlipCard
@@ -394,16 +394,16 @@ export function PackOpener({
         )}
 
         {flipped.has(index) && (
-          <p className="-mt-3 text-xs opacity-50">Touchez la carte pour voir ses détails</p>
+          <p className="-mt-3 text-xs opacity-50">{t("tapDetails")}</p>
         )}
         <p className="hidden text-xs opacity-40 sm:block">
-          ← → cartes · ↑ ↓ début / fin · E détails · W Wikipédia · Espace terminer
+          {t("shortcuts")}
         </p>
 
         <div className="flex items-center gap-4">
           <button
             type="button"
-            aria-label="Carte précédente"
+            aria-label={t("previous")}
             onClick={() => go(index - 1)}
             disabled={index === 0}
             className="flex size-12 items-center justify-center rounded-full bg-foreground/10 disabled:opacity-30"
@@ -420,7 +420,7 @@ export function PackOpener({
           </div>
           <button
             type="button"
-            aria-label="Carte suivante"
+            aria-label={t("next")}
             onClick={() => go(index + 1)}
             disabled={last}
             className="flex size-12 items-center justify-center rounded-full bg-foreground/10 disabled:opacity-30"
@@ -434,7 +434,7 @@ export function PackOpener({
           onClick={() => (last ? backToIdle() : go(index + 1))}
           className="rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70"
         >
-          {last ? "Terminer" : `Encore ${left} carte${left > 1 ? "s" : ""}`}
+          {last ? t("finish") : t("more", { count: left })}
         </button>
 
         {detailOpen && (
@@ -585,7 +585,7 @@ export function PackOpener({
       </div>
       {canTear && (
         <p className="mt-3 text-xs opacity-60">
-          Faites glisser le haut du paquet vers la droite pour le déchirer
+          {t("dragHint")}
         </p>
       )}
 
@@ -595,7 +595,7 @@ export function PackOpener({
         disabled={busy || status.packs < 1}
         className="mt-6 rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70 disabled:opacity-40"
       >
-        {busy ? "Ouverture…" : "Ouvrir"}
+        {busy ? t("opening") : t("open")}
       </button>
       {(status.boosts ?? 0) > 0 && (
         <label className="mt-4 flex cursor-pointer items-center gap-2 rounded-lg border border-line bg-surface px-4 py-2 text-sm">
@@ -606,22 +606,25 @@ export function PackOpener({
             onChange={(e) => setUseBoost(e.target.checked)}
           />
           <span>
-            Booster de chance <span className="opacity-60">({status.boosts} en stock)</span>
+            {t.rich("boost", {
+              count: status.boosts ?? 0,
+              muted: (chunks) => <span className="opacity-60">{chunks}</span>,
+            })}
           </span>
         </label>
       )}
       {useBoost && (
         <p className="mt-1 max-w-xs text-center text-xs opacity-60">
-          Le prochain paquet contiendra une carte légendaire, plus souvent en version mythique.
+          {t("boostNext")}
         </p>
       )}
       {queued && (
         <p role="status" className="mt-2 text-xs opacity-60">
-          Beaucoup de joueurs ouvrent des paquets, vous êtes en file d&apos;attente…
+          {t("queued")}
         </p>
       )}
       {!busy && status.packs >= 1 && (
-        <p className="mt-1 hidden text-xs opacity-40 sm:block">ou appuyez sur Espace</p>
+        <p className="mt-1 hidden text-xs opacity-40 sm:block">{t("spaceHint")}</p>
       )}
 
       {error && (
@@ -635,11 +638,13 @@ export function PackOpener({
           <span>{status.packs}</span>
           <span className="opacity-50"> / {status.max}</span>
         </p>
-        <p className="text-xs opacity-60">paquets disponibles</p>
+        <p className="text-xs opacity-60">{t("available")}</p>
         {remaining !== null && (
           <p className="mt-1 text-xs opacity-60">
-            Prochain dans{" "}
-            <span className="font-mono text-foreground">{formatCountdown(remaining)}</span>
+            {t.rich("nextIn", {
+              time: formatCountdown(remaining),
+              mono: (chunks) => <span className="font-mono text-foreground">{chunks}</span>,
+            })}
           </p>
         )}
       </div>

@@ -1,0 +1,33 @@
+{
+  "title": "Amis",
+  "subtitle": "Retrouvez vos amis et échangez des cartes avec eux.",
+  "loadError": "Impossible de charger vos amis.",
+  "public": "Profil public",
+  "private": "Profil privé",
+  "add": "Ajouter un ami",
+  "searchPlaceholder": "Nom d’utilisateur Discord (@nom)…",
+  "searchLabel": "Rechercher un joueur par nom d’utilisateur Discord",
+  "noResult": "Aucun joueur trouvé : saisissez le nom d’utilisateur Discord exact (pas le pseudonyme affiché).",
+  "already": "Déjà ami",
+  "sent": "Demande envoyée",
+  "tabs": {
+    "friends": "Amis ({count})",
+    "requests": "Demandes"
+  },
+  "none": "Vous n’avez pas encore d’ami. Cherchez un joueur par pseudonyme ci-dessus.",
+  "count": "{count} / {max} amis",
+  "since": "Amis depuis le {date}",
+  "cards": "{count, plural, one {# carte} other {# cartes}}",
+  "trade": "Échanger",
+  "message": "Message",
+  "removeLabel": "Retirer {name} de mes amis",
+  "removeTitle": "Retirer {name} de vos amis ?",
+  "remove": "Retirer",
+  "showcase": "Carte vitrine",
+  "received": "Reçues ({count})",
+  "noReceived": "Aucune demande reçue.",
+  "refuse": "Refuser {name}",
+  "sentTitle": "Envoyées ({count})",
+  "noSent": "Aucune demande en attente.",
+  "waiting": "En attente de réponse"
+}

@@ -18,26 +18,31 @@ import {
   type IconType,
 } from "@/components/icons";
 
-export type NavGroup = "Jouer" | "Communauté" | "Compétition" | "Compte";
-export type NavItem = { slug: string; label: string; icon: IconType; group: NavGroup };
+// les libellés sont dans messages/fr/nav.json (nav.groups.<group>, nav.items.<slug>)
+export type NavGroup = "play" | "community" | "competition" | "account";
+export type NavSlug =
+  | "packs" | "collection" | "albums" | "cards" | "wheel" | "wishlist"
+  | "trades" | "market" | "guild" | "friends" | "messages"
+  | "battle" | "achievements" | "ranking" | "profile" | "settings";
+export type NavItem = { slug: NavSlug; icon: IconType; group: NavGroup };
 
-export const NAV_GROUPS: NavGroup[] = ["Jouer", "Communauté", "Compétition", "Compte"];
+export const NAV_GROUPS: NavGroup[] = ["play", "community", "competition", "account"];
 
 export const NAV: NavItem[] = [
-  { slug: "packs", label: "Paquets", icon: Puzzle, group: "Jouer" },
-  { slug: "collection", label: "Collection", icon: BookOpen, group: "Jouer" },
-  { slug: "albums", label: "Albums", icon: Notebook, group: "Jouer" },
-  { slug: "cards", label: "Toutes les cartes", icon: Globe, group: "Jouer" },
-  { slug: "wheel", label: "Roue", icon: Gift, group: "Jouer" },
-  { slug: "wishlist", label: "Envies", icon: Heart, group: "Jouer" },
-  { slug: "trades", label: "Échanges", icon: Handshake, group: "Communauté" },
-  { slug: "market", label: "Marché", icon: Gavel, group: "Communauté" },
-  { slug: "guild", label: "Guilde", icon: Castle, group: "Communauté" },
-  { slug: "friends", label: "Amis", icon: Users, group: "Communauté" },
-  { slug: "messages", label: "Messages", icon: MessageCircle, group: "Communauté" },
-  { slug: "battle", label: "Bataille", icon: Swords, group: "Compétition" },
-  { slug: "achievements", label: "Succès", icon: Trophy, group: "Compétition" },
-  { slug: "ranking", label: "Classement", icon: Medal, group: "Compétition" },
-  { slug: "profile", label: "Profil", icon: User, group: "Compte" },
-  { slug: "settings", label: "Paramètres", icon: Settings, group: "Compte" },
+  { slug: "packs", icon: Puzzle, group: "play" },
+  { slug: "collection", icon: BookOpen, group: "play" },
+  { slug: "albums", icon: Notebook, group: "play" },
+  { slug: "cards", icon: Globe, group: "play" },
+  { slug: "wheel", icon: Gift, group: "play" },
+  { slug: "wishlist", icon: Heart, group: "play" },
+  { slug: "trades", icon: Handshake, group: "community" },
+  { slug: "market", icon: Gavel, group: "community" },
+  { slug: "guild", icon: Castle, group: "community" },
+  { slug: "friends", icon: Users, group: "community" },
+  { slug: "messages", icon: MessageCircle, group: "community" },
+  { slug: "battle", icon: Swords, group: "competition" },
+  { slug: "achievements", icon: Trophy, group: "competition" },
+  { slug: "ranking", icon: Medal, group: "competition" },
+  { slug: "profile", icon: User, group: "account" },
+  { slug: "settings", icon: Settings, group: "account" },
 ];

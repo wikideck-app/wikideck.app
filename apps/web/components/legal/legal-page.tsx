@@ -1,10 +1,16 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { LEGAL, TODO } from "@/lib/legal";
 
-export function LegalHeader({ title, intro }: { title: string; intro?: string }) {
+export async function LegalHeader({ title, intro }: { title: string; intro?: string }) {
+  const [t, format] = await Promise.all([getTranslations("legal"), getFormatter()]);
   return (
     <header>
       <h1 className="font-display text-4xl font-medium sm:text-5xl">{title}</h1>
-      <p className="mt-3 text-xs text-fog">Dernière mise à jour : {LEGAL.updatedAt}</p>
+      <p className="mt-3 text-xs text-fog">
+        {t("updatedAt", { date: format.dateTime(new Date(LEGAL.updatedAt), "long") })}
+      </p>
       {intro && <p className="prose-serif mt-6 text-pale-mist">{intro}</p>}
     </header>
   );
@@ -29,12 +35,34 @@ export function Section({
   );
 }
 
-export function Fill({ value }: { value: string }) {
-  return value === TODO ? (
+export async function Fill({ value }: { value: string }) {
+  if (value !== TODO) return <>{value}</>;
+  const t = await getTranslations("legal");
+  return (
     <mark className="rounded bg-accent/15 px-1.5 py-0.5 text-xs font-bold not-italic text-foreground">
-      [{TODO}]
+      [{t("todo")}]
     </mark>
-  ) : (
-    <>{value}</>
   );
 }
+
+// balises communes des textes juridiques (t.rich)
+export const legalTags = {
+  strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
+  notice: (chunks: ReactNode) => <Link href="/legal-notice">{chunks}</Link>,
+  privacy: (chunks: ReactNode) => <Link href="/privacy">{chunks}</Link>,
+  terms: (chunks: ReactNode) => <Link href="/terms">{chunks}</Link>,
+  cnil: (chunks: ReactNode) => (
+    <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noreferrer">
+      {chunks}
+    </a>
+  ),
+  license: (chunks: ReactNode) => (
+    <a
+      href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr"
+      target="_blank"
+      rel="noreferrer"
+    >
+      {chunks}
+    </a>
+  ),
+};

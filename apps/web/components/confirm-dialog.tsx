@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useRef, useState, type ReactNode } from "react";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
 
@@ -12,6 +13,7 @@ type Options = {
 };
 
 export function useConfirm() {
+  const t = useTranslations("common");
   const [options, setOptions] = useState<Options | null>(null);
   const resolver = useRef<((ok: boolean) => void) | null>(null);
 
@@ -51,14 +53,14 @@ export function useConfirm() {
       </div>
       <div className="mt-6 flex justify-end gap-3">
         <button type="button" autoFocus className={buttonClass} onClick={() => settle(false)}>
-          Annuler
+          {t("cancel")}
         </button>
         <button
           type="button"
           className={options.danger ? dangerButtonClass : primaryButtonClass}
           onClick={() => settle(true)}
         >
-          {options.confirmLabel ?? "Confirmer"}
+          {options.confirmLabel ?? t("confirm")}
         </button>
       </div>
     </dialog>

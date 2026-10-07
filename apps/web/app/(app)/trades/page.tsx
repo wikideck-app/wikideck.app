@@ -2,8 +2,9 @@ import type { PlayerSummary, TradesResponse } from "@wikideck/shared";
 import { TradesView } from "@/components/trades/trades-view";
 import { TrustNotice } from "@/components/trust-notice";
 import { API_URL, apiGet } from "@/lib/api";
+import { pageMetadata } from "@/i18n/metadata";
 
-export const metadata = { title: "Échanges — Wikideck" };
+export const generateMetadata = pageMetadata("trades");
 
 export default async function TradesPage({ searchParams }: PageProps<"/trades">) {
   const { to } = await searchParams;

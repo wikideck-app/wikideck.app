@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, X } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import type { CollectionCard, CollectionResponse } from "@wikideck/shared";
 import { WikiCard } from "@/components/wiki-card";
@@ -11,8 +12,8 @@ export function ShowcasePicker({
   apiUrl,
   onSelect,
   onClose,
-  title = "Choisir ma carte vitrine",
-  description = "Elle sera mise en avant sur votre profil. Seules vos cartes sont proposées.",
+  title,
+  description,
 }: {
   title?: string;
   description?: string;
@@ -20,6 +21,8 @@ export function ShowcasePicker({
   onSelect: (card: CollectionCard) => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("settings.showcasePicker");
+  const tc = useTranslations("common");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [cards, setCards] = useState<CollectionCard[]>([]);
@@ -62,12 +65,12 @@ export function ShowcasePicker({
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold">{title}</h2>
-          <p className="mt-1 text-sm text-pale-mist">{description}</p>
+          <h2 className="text-xl font-bold">{title ?? t("title")}</h2>
+          <p className="mt-1 text-sm text-pale-mist">{description ?? t("description")}</p>
         </div>
         <button
           type="button"
-          aria-label="Fermer"
+          aria-label={tc("close")}
           onClick={(e) => e.currentTarget.closest("dialog")?.close()}
           className="opacity-60 hover:opacity-100"
         >
@@ -84,8 +87,8 @@ export function ShowcasePicker({
             setQuery(e.target.value);
             setPage(1);
           }}
-          placeholder="Rechercher une carte par nom…"
-          aria-label="Rechercher une carte par nom"
+          placeholder={t("search")}
+          aria-label={t("searchLabel")}
           className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
         />
       </div>
@@ -98,7 +101,7 @@ export function ShowcasePicker({
 
       <div className="mt-5 max-h-[55vh] overflow-y-auto pr-1">
         {!loading && cards.length === 0 && !error ? (
-          <p className="py-10 text-center text-sm text-fog">Aucune carte trouvée.</p>
+          <p className="py-10 text-center text-sm text-fog">{t("none")}</p>
         ) : (
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {cards.map((card) => (
@@ -109,7 +112,7 @@ export function ShowcasePicker({
                     onSelect(card);
                     e.currentTarget.closest("dialog")?.close();
                   }}
-                  aria-label={`Choisir ${card.title}`}
+                  aria-label={t("choose", { title: card.title })}
                   className="block w-full rounded-[9.6%/6.5%] text-left outline-none transition hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   <WikiCard card={card} compact />
@@ -118,11 +121,11 @@ export function ShowcasePicker({
             ))}
           </ul>
         )}
-        {loading && <p className="py-6 text-center text-sm text-fog">Chargement…</p>}
+        {loading && <p className="py-6 text-center text-sm text-fog">{tc("loading")}</p>}
         {!loading && page < totalPages && (
           <div className="mt-5 text-center">
             <button type="button" className={buttonClass} onClick={() => setPage((p) => p + 1)}>
-              Charger plus
+              {tc("loadMore")}
             </button>
           </div>
         )}

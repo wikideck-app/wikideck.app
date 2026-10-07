@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Atkinson_Hyperlegible, Newsreader, Outfit } from "next/font/google";
 import { THEME_STORAGE_KEY } from "@wikideck/shared";
+import { ApiErrorMessages } from "@/components/api-error-messages";
+import { localeDirection } from "@/i18n/config";
+import { landingMessages } from "@/i18n/client-messages";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -19,15 +24,29 @@ const readable = Atkinson_Hyperlegible({
   weight: ["400", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "Wikideck",
-  description: "Cartes Wikipédia, paquets à ouvrir et courses Wikipédia entre amis.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, locale] = await Promise.all([getTranslations("meta"), getLocale()]);
+  return {
+    title: { default: t("siteName"), template: t("titleTemplate") },
+    description: t("description"),
+    openGraph: {
+      type: "website",
+      siteName: t("siteName"),
+      title: t("siteName"),
+      description: t("description"),
+      // fr -> fr_FR : le format Open Graph est langue_PAYS
+      locale: new Intl.Locale(locale).maximize().toString().replace("-", "_"),
+    },
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const [locale, messages] = await Promise.all([getLocale(), landingMessages()]);
+
   return (
     <html
-      lang="fr"
+      lang={locale}
+      dir={localeDirection(locale)}
       suppressHydrationWarning
       className={`${outfit.variable} ${readable.variable} ${newsreader.variable} h-full antialiased`}
     >
@@ -38,7 +57,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <NextIntlClientProvider messages={messages}>
+          <ApiErrorMessages />
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }

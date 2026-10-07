@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import type { CollectionResponse } from "@wikideck/shared";
 import { CollectionView } from "@/components/collection-view";
 import { API_URL, apiGet } from "@/lib/api";
+import { pageMetadata } from "@/i18n/metadata";
 
-export const metadata = { title: "Collection — Wikideck" };
+export const generateMetadata = pageMetadata("collection");
 
 export default async function CollectionPage({ searchParams }: PageProps<"/collection">) {
-  const params = await searchParams;
+  const [params, t] = await Promise.all([searchParams, getTranslations("collection")]);
   const one = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
 
   const page = Math.max(1, Math.floor(Number(one(params.page))) || 1);
@@ -42,27 +44,29 @@ export default async function CollectionPage({ searchParams }: PageProps<"/colle
 
   return (
     <div className="mx-auto max-w-[1600px]">
-      <h1 className="text-center font-display text-5xl font-medium">Collection</h1>
+      <h1 className="text-center font-display text-5xl font-medium">{t("title")}</h1>
       <p className="mt-3 text-center text-xs text-fog">
-        Vous venez de Wiki-Masters ?{" "}
-        <Link href="/import" className="text-pale-mist underline hover:text-foreground">
-          Importez votre collection
-        </Link>
+        {t.rich("importHint", {
+          link: (chunks) => (
+            <Link href="/import" className="text-pale-mist underline hover:text-foreground">
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
       {data && (
         <p className="mt-2 text-center opacity-60">
-          {data.total} carte{data.total > 1 ? "s" : ""}{" "}
-          {tag ? "avec cette étiquette" : "différente" + (data.total > 1 ? "s" : "")}
+          {t(tag ? "countTagged" : "count", { count: data.total })}
         </p>
       )}
 
       {!data ? (
         <p className="mt-10 text-center text-sm text-danger">
-          Impossible de charger votre collection.
+          {t("loadError")}
         </p>
       ) : data.total === 0 && !tag && !data.rarities.length && !data.query && !fav ? (
         <p className="mt-10 text-center opacity-60">
-          Ouvrez un paquet pour commencer votre collection.
+          {t("emptyStart")}
         </p>
       ) : (
         <CollectionView data={data} apiUrl={API_URL} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Check, Search, Swords, X } from "@/components/icons";
+import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { BattleGameDto, BattleHistoryResponse, BattlePuzzle } from "@wikideck/shared";
@@ -11,7 +12,6 @@ import { buttonClass, primaryButtonClass } from "@/components/settings/controls"
 import { apiFetch } from "@/lib/tags-api";
 
 const SEARCH_KEY = "wikideck:battle-search";
-const dateFmt = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 const panel = "rounded-xl border border-line bg-surface p-5";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
 
@@ -45,6 +45,8 @@ function Path({ path, won }: { path: string[]; won?: boolean }) {
 }
 
 function GameRow({ game }: { game: BattleGameDto }) {
+  const t = useTranslations("battle");
+  const format = useFormatter();
   return (
     <li className="rounded-xl border border-line p-3.5">
       <div className="flex items-center gap-3">
@@ -52,14 +54,14 @@ function GameRow({ game }: { game: BattleGameDto }) {
           className={`flex size-7 shrink-0 items-center justify-center rounded-full ${
             game.won ? "bg-success/15 text-success" : "bg-foreground/10 text-fog"
           }`}
-          title={game.won ? "Cible atteinte" : "Abandon"}
+          title={game.won ? t("solo.reachedTitle") : t("solo.abandoned")}
         >
           {game.won ? <Check className="size-4" /> : <X className="size-4" />}
         </span>
         <div className="min-w-0 flex-1 text-sm">
           {game.mode === "multi" && (
             <span className="mr-2 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent">
-              Multi
+              {t("solo.multi")}
             </span>
           )}
           <span className="font-semibold">{game.start}</span>
@@ -68,9 +70,9 @@ function GameRow({ game }: { game: BattleGameDto }) {
         </div>
         <div className="shrink-0 text-right text-xs tabular-nums text-fog">
           <div>
-            {game.clicks} clic{game.clicks > 1 ? "s" : ""} · {fmt(game.timeSeconds)}
+            {t("solo.games", { count: game.clicks, time: fmt(game.timeSeconds) })}
           </div>
-          <div>{dateFmt.format(new Date(game.playedAt))}</div>
+          <div>{format.dateTime(new Date(game.playedAt), "mediumTime")}</div>
         </div>
       </div>
     </li>
@@ -84,6 +86,7 @@ function SoloBattle({
   initial: BattleHistoryResponse | null;
   apiUrl: string;
 }) {
+  const t = useTranslations("battle");
   const [data, setData] = useState(initial);
   const [preview, setPreview] = useState<BattlePuzzle | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
@@ -179,24 +182,24 @@ function SoloBattle({
     return (
       <div className={`${panel} mx-auto mt-8 max-w-xl text-center`}>
         <Swords className="mx-auto size-10 text-accent" />
-        <h2 className="mt-2 font-display text-4xl font-medium">Cible atteinte !</h2>
+        <h2 className="mt-2 font-display text-4xl font-medium">{t("solo.reached")}</h2>
         <p className="prose-serif mt-1 text-pale-mist">
           {game.puzzle.start} <span className="opacity-50">→</span>{" "}
           <strong className="text-foreground">{game.puzzle.target}</strong>
         </p>
         <div className="mt-5 flex justify-center gap-4">
-          <Stat value={game.clicks} label={game.clicks > 1 ? "clics" : "clic"} />
-          <Stat value={fmt(game.elapsed)} label="temps" />
+          <Stat value={game.clicks} label={t("clickLabel", { count: game.clicks })} />
+          <Stat value={fmt(game.elapsed)} label={t("solo.time")} />
         </div>
         {best != null && game.clicks <= best && data!.stats.wins > 0 && (
-          <p className="mt-3 text-sm font-bold text-accent">Votre meilleur nombre de clics !</p>
+          <p className="mt-3 text-sm font-bold text-accent">{t("solo.bestClicks")}</p>
         )}
         <div className="mt-5 rounded-xl border border-line p-3.5 text-left">
           <Path path={game.history} won />
         </div>
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           <button type="button" className={primaryButtonClass} onClick={game.reset}>
-            Nouvelle partie
+            {t("solo.newGame")}
           </button>
         </div>
       </div>
@@ -206,22 +209,21 @@ function SoloBattle({
   return (
     <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
       <section className={panel}>
-        <h2 className={heading}>Nouvelle partie</h2>
+        <h2 className={heading}>{t("solo.newGame")}</h2>
         <p className="prose-serif mt-2 text-pale-mist">
-          Rejoignez l&apos;article cible en cliquant uniquement sur les liens de chaque page. Le
-          chrono démarre à votre premier clic, et revenir en arrière compte pour un clic.
+          {t("solo.rules")}
         </p>
 
         <div className="mt-5 grid items-center gap-3 sm:grid-cols-[1fr_auto_1fr]">
           <div className="rounded-xl border border-line p-4 text-center">
-            <div className="text-[11px] uppercase tracking-[0.14em] text-fog">Départ</div>
+            <div className="text-[11px] uppercase tracking-[0.14em] text-fog">{t("start")}</div>
             <div className="mt-1 min-h-6 font-display text-xl font-medium">
               {preview?.start ?? (previewError ? "—" : "…")}
             </div>
           </div>
           <ArrowRight className="mx-auto size-5 rotate-90 text-fog sm:rotate-0" />
           <div className="rounded-xl border-2 border-accent p-4 text-center">
-            <div className="text-[11px] uppercase tracking-[0.14em] text-fog">Cible</div>
+            <div className="text-[11px] uppercase tracking-[0.14em] text-fog">{t("target")}</div>
             <div className="mt-1 min-h-6 font-display text-xl font-medium text-accent">
               {preview?.target ?? (previewError ? "—" : "…")}
             </div>
@@ -237,7 +239,7 @@ function SoloBattle({
             onClick={start}
             disabled={!preview || game.loading}
           >
-            {game.loading ? "Préparation…" : "Commencer"}
+            {game.loading ? t("solo.preparing") : t("solo.begin")}
           </button>
           <button
             type="button"
@@ -249,7 +251,7 @@ function SoloBattle({
             }}
             disabled={game.loading}
           >
-            Autre paire
+            {t("solo.another")}
           </button>
         </div>
 
@@ -260,30 +262,30 @@ function SoloBattle({
         >
           <span className="flex items-center gap-2">
             <Search className="size-4 text-fog" />
-            Recherche dans la page (Ctrl+F)
+            {t("searchInPage")}
           </span>
           <span
             className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
               searchAllowed ? "bg-accent/15 text-accent" : "bg-foreground/10 text-fog"
             }`}
           >
-            {searchAllowed ? "Autorisée" : "Bloquée"}
+            {searchAllowed ? t("allowed") : t("blocked")}
           </span>
         </button>
       </section>
 
       <section className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
-          <Stat value={data?.stats.played ?? 0} label="parties" />
-          <Stat value={data?.stats.wins ?? 0} label="victoires" />
-          <Stat value={data?.stats.bestClicks ?? "—"} label="meilleur (clics)" />
+          <Stat value={data?.stats.played ?? 0} label={t("solo.played")} />
+          <Stat value={data?.stats.wins ?? 0} label={t("solo.wins")} />
+          <Stat value={data?.stats.bestClicks ?? "—"} label={t("solo.bestClicksLabel")} />
           <Stat
             value={data?.stats.bestTime != null ? fmt(data.stats.bestTime) : "—"}
-            label="meilleur temps"
+            label={t("solo.bestTime")}
           />
         </div>
         <div className={panel}>
-          <h2 className={heading}>Dernières parties</h2>
+          <h2 className={heading}>{t("solo.last")}</h2>
           {data?.games.length ? (
             <ul className="mt-3 flex flex-col gap-2.5">
               {data.games.map((g) => (
@@ -291,7 +293,7 @@ function SoloBattle({
               ))}
             </ul>
           ) : (
-            <p className="prose-serif mt-3 text-pale-mist">Aucune partie pour le moment.</p>
+            <p className="prose-serif mt-3 text-pale-mist">{t("solo.none")}</p>
           )}
         </div>
       </section>
@@ -303,7 +305,7 @@ function SoloBattle({
             <div className="flex flex-col gap-1.5 border-b border-line bg-surface px-3 py-2 sm:px-4">
               <div className="flex justify-center">
                 <span className="rounded-lg bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
-                  Cible : {game.puzzle.target}
+                  {t("targetIs", { title: game.puzzle.target })}
                 </span>
               </div>
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -320,19 +322,17 @@ function SoloBattle({
                 </div>
                 <div className="flex shrink-0 items-center gap-2 text-xs font-bold tabular-nums text-fog">
                   <span>{fmt(game.elapsed)}</span>
-                  <span>
-                    {game.clicks} clic{game.clicks > 1 ? "s" : ""}
-                  </span>
+                  <span>{t("clicks", { count: game.clicks })}</span>
                 </div>
                 {game.canGoBack && (
                   <button
                     type="button"
                     onClick={() => void game.goBack()}
                     disabled={game.loading}
-                    title="Retour (Retour arrière) : compte pour un clic"
+                    title={t("backTitle")}
                     className="shrink-0 rounded-full border border-line px-2.5 py-1 text-xs font-semibold hover:bg-foreground/10 disabled:opacity-40"
                   >
-                    ← +1
+                    {t("back")}
                   </button>
                 )}
                 <button
@@ -340,7 +340,7 @@ function SoloBattle({
                   onClick={game.giveUp}
                   className="shrink-0 rounded-full border border-danger/50 px-2.5 py-1 text-xs font-semibold text-danger hover:bg-danger/10"
                 >
-                  Abandonner
+                  {t("solo.giveUp")}
                 </button>
               </div>
             </div>
@@ -350,7 +350,7 @@ function SoloBattle({
               html={game.html}
               loading={game.loading}
               loadError={game.loadError}
-              onNavigate={(t) => void game.navigate(t)}
+              onNavigate={(title) => void game.navigate(title)}
               onRetry={game.retry}
             />
           </div>,
@@ -373,26 +373,24 @@ export function BattleView({
   meId: string;
   initialCode?: string;
 }) {
+  const t = useTranslations("battle");
   const [tab, setTab] = useState<Tab>("multi");
-  const tabs: { value: Tab; label: string }[] = [
-    { value: "multi", label: "Multijoueur" },
-    { value: "solo", label: "Entraînement solo" },
-  ];
+  const tabs: Tab[] = ["multi", "solo"];
   return (
     <div className="mt-6">
       <div className="mx-auto flex w-fit gap-1 rounded-full border border-line p-1" role="tablist">
-        {tabs.map((t) => (
+        {tabs.map((value) => (
           <button
-            key={t.value}
+            key={value}
             type="button"
             role="tab"
-            aria-selected={tab === t.value}
-            onClick={() => setTab(t.value)}
+            aria-selected={tab === value}
+            onClick={() => setTab(value)}
             className={`rounded-full px-5 py-1.5 text-sm font-semibold transition-colors ${
-              tab === t.value ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
+              tab === value ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
             }`}
           >
-            {t.label}
+            {t(`tabs.${value}`)}
           </button>
         ))}
       </div>

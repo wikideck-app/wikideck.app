@@ -1,6 +1,5 @@
 import Image from "next/image";
-
-const fmt = new Intl.NumberFormat("fr-FR");
+import { useFormatter } from "next-intl";
 
 export function WikibitIcon({ className = "size-4" }: { className?: string }) {
   return (
@@ -24,10 +23,11 @@ export function Wikibits({
   className?: string;
   iconClass?: string;
 }) {
+  const format = useFormatter();
   return (
     <span className={`inline-flex items-center gap-1.5 tabular-nums ${className}`}>
       <WikibitIcon className={`${iconClass} shrink-0`} />
-      {fmt.format(amount)}
+      {format.number(amount)}
     </span>
   );
 }

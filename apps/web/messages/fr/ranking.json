@@ -1,0 +1,26 @@
+{
+  "title": "Classement",
+  "navLabel": "Classements",
+  "guilds": "Guildes",
+  "you": "vous",
+  "loadError": "Impossible de charger le classement.",
+  "empty": "Personne dans ce classement pour le moment.",
+  "publicOnly": "Seuls les joueurs dont la collection est publique apparaissent ici (réglable dans les paramètres).",
+  "boards": {
+    "collection": {
+      "label": "Collection",
+      "unit": "cartes",
+      "hint": "Cartes différentes possédées"
+    },
+    "points": {
+      "label": "Points de rareté",
+      "unit": "pts",
+      "hint": "Une carte vaut ce qu’elle rapporte au recyclage"
+    },
+    "battle": {
+      "label": "Bataille",
+      "unit": "victoires",
+      "hint": "Parties de Bataille gagnées"
+    }
+  }
+}

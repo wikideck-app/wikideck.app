@@ -18,6 +18,7 @@ import {
   type IconType,
 } from "@/components/icons";
 import { SelectMenu } from "@/components/select-menu";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
 import {
@@ -56,15 +57,15 @@ type SectionId =
   | "confidentialite"
   | "donnees";
 
-const SECTIONS: { id: SectionId; label: string; icon: IconType }[] = [
-  { id: "profil", label: "Profil & compte", icon: UserRound },
-  { id: "apparence", label: "Apparence", icon: Palette },
-  { id: "tirage", label: "Tirage & animations", icon: Sparkles },
-  { id: "collection", label: "Collection & accessibilité", icon: Eye },
-  { id: "audio", label: "Audio", icon: Volume2 },
-  { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "confidentialite", label: "Confidentialité", icon: ShieldCheck },
-  { id: "donnees", label: "Données (RGPD)", icon: Database },
+const SECTIONS: { id: SectionId; icon: IconType }[] = [
+  { id: "profil", icon: UserRound },
+  { id: "apparence", icon: Palette },
+  { id: "tirage", icon: Sparkles },
+  { id: "collection", icon: Eye },
+  { id: "audio", icon: Volume2 },
+  { id: "notifications", icon: Bell },
+  { id: "confidentialite", icon: ShieldCheck },
+  { id: "donnees", icon: Database },
 ];
 
 const isSection = (value: string): value is SectionId => SECTIONS.some((s) => s.id === value);
@@ -79,6 +80,7 @@ const readHash = (): SectionId => {
 };
 
 export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: string }) {
+  const t = useTranslations("settings");
   const section = useSyncExternalStore(subscribeHash, readHash, () => "profil" as SectionId);
   const { status } = useSettings();
 
@@ -90,16 +92,16 @@ export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: 
   return (
     <div className="mx-auto max-w-5xl">
       <header className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="font-display text-4xl font-medium sm:text-5xl">Paramètres</h1>
+        <h1 className="font-display text-4xl font-medium sm:text-5xl">{t("title")}</h1>
         <p role="status" aria-live="polite" className="text-xs text-fog">
-          {status === "saving" && "Enregistrement…"}
+          {status === "saving" && t("status.saving")}
           {status === "saved" && (
             <span className="inline-flex items-center gap-1.5">
-              <Check className="size-3.5" /> Préférences enregistrées
+              <Check className="size-3.5" /> {t("status.saved")}
             </span>
           )}
           {status === "error" && (
-            <span className="text-danger">Échec de l&apos;enregistrement</span>
+            <span className="text-danger">{t("status.error")}</span>
           )}
         </p>
       </header>
@@ -107,13 +109,13 @@ export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: 
       <div className="mt-8 grid gap-6 md:grid-cols-[230px_minmax(0,1fr)] md:gap-8">
         <div className="md:hidden">
           <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-fog">
-            Section
+            {t("section")}
           </span>
           <SelectMenu
             block
-            label="Section des paramètres"
+            label={t("sectionsLabel")}
             value={section}
-            options={SECTIONS.map((s) => ({ value: s.id, label: s.label }))}
+            options={SECTIONS.map((s) => ({ value: s.id, label: t(`sections.${s.id}`) }))}
             onChange={choose}
           />
         </div>
@@ -121,10 +123,10 @@ export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: 
         <div
           role="tablist"
           aria-orientation="vertical"
-          aria-label="Sections des paramètres"
+          aria-label={t("sectionsLabel")}
           className="sticky top-8 hidden h-fit flex-col gap-1 md:flex"
         >
-          {SECTIONS.map(({ id, label, icon: Icon }) => {
+          {SECTIONS.map(({ id, icon: Icon }) => {
             const active = id === section;
             return (
               <button
@@ -142,7 +144,7 @@ export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: 
                 }`}
               >
                 <Icon className="size-[18px] shrink-0" strokeWidth={active ? 2.2 : 1.8} />
-                {label}
+                {t(`sections.${id}`)}
               </button>
             );
           })}
@@ -169,6 +171,8 @@ export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: 
 }
 
 function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: string }) {
+  const t = useTranslations("settings.profile");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [username, setUsername] = useState(profile.username);
   const [saved, setSaved] = useState(profile.username);
@@ -190,7 +194,7 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
     if (!result.ok) return setMessage({ ok: false, text: result.message });
     setSaved(result.data.username);
     setUsername(result.data.username);
-    setMessage({ ok: true, text: "Pseudonyme mis à jour." });
+    setMessage({ ok: true, text: t("updated") });
     router.refresh();
   }
 
@@ -198,18 +202,18 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
     const result = await apiCall<MeProfile>(apiUrl, "/me", "PATCH", { showcaseCardId: id });
     if (!result.ok) return setMessage({ ok: false, text: result.message });
     setShowcase(card);
-    setMessage({ ok: true, text: card ? "Carte vitrine mise à jour." : "Carte vitrine retirée." });
+    setMessage({ ok: true, text: card ? t("showcaseUpdated") : t("showcaseRemoved") });
   }
 
   return (
     <Panel
       icon={UserRound}
-      title="Profil du joueur & compte"
-      description="Votre identité en jeu, telle que les autres joueurs la voient."
+      title={t("title")}
+      description={t("description")}
     >
       <SettingRow
-        title="Pseudonyme"
-        description={`${USERNAME_MIN} à ${USERNAME_MAX} caractères : lettres, chiffres, espace, point, tiret, tiret bas et apostrophe. Votre avatar vient de Discord.`}
+        title={t("username")}
+        description={t("usernameHelp", { min: USERNAME_MIN, max: USERNAME_MAX })}
       >
         <form
           onSubmit={(e) => {
@@ -226,7 +230,7 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
                 setMessage(null);
               }}
               maxLength={USERNAME_MAX + 8}
-              aria-label="Pseudonyme"
+              aria-label={t("username")}
               aria-invalid={!valid}
               className="min-w-0 flex-1 rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent aria-invalid:border-danger"
             />
@@ -235,49 +239,49 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
               disabled={!valid || busy || clean === saved}
               className={primaryButtonClass}
             >
-              Enregistrer
+              {tc("save")}
             </button>
           </div>
           {!valid && (
             <p role="alert" className="text-xs text-danger">
               {length < USERNAME_MIN || length > USERNAME_MAX
-                ? `Entre ${USERNAME_MIN} et ${USERNAME_MAX} caractères.`
-                : "Caractères non autorisés."}
+                ? t("lengthError", { min: USERNAME_MIN, max: USERNAME_MAX })
+                : t("charsError")}
             </p>
           )}
         </form>
       </SettingRow>
 
       <SettingRow
-        title="Nom d'utilisateur Discord"
-        description="Lié à votre compte Discord, non modifiable ici. C'est ce nom que vos amis saisissent pour vous retrouver et vous ajouter ; il est mis à jour à chaque connexion."
+        title={t("discordName")}
+        description={t("discordNameHelp")}
       >
         <p className="text-sm font-semibold sm:w-80">
           {profile.discordName ? (
             `@${profile.discordName}`
           ) : (
             <span className="font-normal text-fog">
-              Pas encore enregistré : il apparaîtra à votre prochaine connexion.
+              {t("discordUnknown")}
             </span>
           )}
         </p>
       </SettingRow>
 
       <SettingRow
-        title="Carte vitrine"
-        description="La carte mise en avant sur votre profil. Choisissez-en une parmi celles que vous possédez."
+        title={t("showcase")}
+        description={t("showcaseHelp")}
       >
         <div className="flex items-center gap-4">
           {showcase ? (
             <WikiCard card={showcase} compact className="w-28" />
           ) : (
             <div className="flex aspect-2/3 w-28 items-center justify-center rounded-xl border border-dashed border-line text-center text-[11px] text-fog bg-surface">
-              Aucune carte
+              {t("noCard")}
             </div>
           )}
           <div className="flex flex-col gap-2">
             <button type="button" className={buttonClass} onClick={() => setPicking(true)}>
-              {showcase ? "Changer" : "Choisir une carte"}
+              {showcase ? t("change") : t("choose")}
             </button>
             {showcase && (
               <button
@@ -285,7 +289,7 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
                 className={buttonClass}
                 onClick={() => setShowcaseCard(null, null)}
               >
-                Retirer
+                {t("remove")}
               </button>
             )}
           </div>
@@ -312,19 +316,20 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
 }
 
 function AppearanceSection() {
+  const t = useTranslations("settings.appearance");
   const { settings, update } = useSettings();
   return (
     <Panel
       icon={Palette}
-      title="Apparence"
-      description="Le thème de l'interface. Il s'applique tout de suite et vous suit sur vos appareils."
+      title={t("title")}
+      description={t("description")}
     >
       <SettingRow
-        title="Thème"
-        description="« Système » suit le réglage clair ou sombre de votre appareil et en change avec lui."
+        title={t("theme")}
+        description={t("themeHelp")}
       >
         <Segmented
-          label="Thème"
+          label={t("theme")}
           value={settings.appearance.theme}
           onChange={(theme) => update((s) => ({ ...s, appearance: { theme } }))}
           options={[
@@ -332,7 +337,7 @@ function AppearanceSection() {
               value: "system",
               label: (
                 <>
-                  <Monitor className="size-3.5" /> Système
+                  <Monitor className="size-3.5" /> {t("system")}
                 </>
               ),
             },
@@ -340,7 +345,7 @@ function AppearanceSection() {
               value: "light",
               label: (
                 <>
-                  <Sun className="size-3.5" /> Clair
+                  <Sun className="size-3.5" /> {t("light")}
                 </>
               ),
             },
@@ -348,7 +353,7 @@ function AppearanceSection() {
               value: "dark",
               label: (
                 <>
-                  <Moon className="size-3.5" /> Sombre
+                  <Moon className="size-3.5" /> {t("dark")}
                 </>
               ),
             },
@@ -360,30 +365,31 @@ function AppearanceSection() {
 }
 
 function DrawSection() {
+  const t = useTranslations("settings.draw");
   const { settings, update } = useSettings();
   const { animations, performance } = settings;
   return (
     <Panel
       icon={Sparkles}
-      title="Tirage & animations"
-      description="Pour ouvrir vos paquets plus vite, ou ménager votre appareil. Les réglages s'appliquent tout de suite."
+      title={t("title")}
+      description={t("description")}
     >
       <SettingRow
-        title="Passer les animations de tirage"
-        description="Les cartes s'affichent directement face visible, sans secousse du paquet ni retournement."
+        title={t("skip")}
+        description={t("skipHelp")}
       >
         <Toggle
-          label="Passer les animations de tirage"
+          label={t("skip")}
           checked={animations.skip}
           onChange={(skip) => update((s) => ({ ...s, animations: { ...s.animations, skip } }))}
         />
       </SettingRow>
       <SettingRow
-        title="Vitesse des animations"
-        description="Accélère les effets visuels du tirage et du menu. Sans effet si les animations sont passées."
+        title={t("speed")}
+        description={t("speedHelp")}
       >
         <Segmented
-          label="Vitesse des animations"
+          label={t("speed")}
           disabled={animations.skip}
           value={animations.speed}
           onChange={(speed) => update((s) => ({ ...s, animations: { ...s.animations, speed } }))}
@@ -395,33 +401,33 @@ function DrawSection() {
         />
       </SettingRow>
       <SettingRow
-        title="Qualité graphique"
-        description="Bas : peu d'étoiles, ni flou, ni halos, ni reflets. Moyen : sans reflets continus. Élevé : tous les effets."
+        title={t("quality")}
+        description={t("qualityHelp")}
       >
         <Segmented
-          label="Qualité graphique"
+          label={t("quality")}
           value={performance.quality}
           onChange={(quality) =>
             update((s) => ({ ...s, performance: { ...s.performance, quality } }))
           }
           options={[
-            { value: "low", label: "Bas" },
-            { value: "medium", label: "Moyen" },
-            { value: "high", label: "Élevé" },
+            { value: "low", label: t("low") },
+            { value: "medium", label: t("medium") },
+            { value: "high", label: t("high") },
           ]}
         />
       </SettingRow>
       <SettingRow
-        title="Images par seconde"
-        description="30 images par seconde chauffent moins et économisent la batterie, sur téléphone notamment."
+        title={t("fps")}
+        description={t("fpsHelp")}
       >
         <Segmented
-          label="Images par seconde"
+          label={t("fps")}
           value={performance.fps}
           onChange={(fps) => update((s) => ({ ...s, performance: { ...s.performance, fps } }))}
           options={[
-            { value: 30, label: "30 FPS" },
-            { value: 60, label: "60 FPS" },
+            { value: 30, label: t("fpsOption", { count: 30 }) },
+            { value: 60, label: t("fpsOption", { count: 60 }) },
           ]}
         />
       </SettingRow>
@@ -429,27 +435,24 @@ function DrawSection() {
   );
 }
 
-const SORT_OPTIONS: { value: DefaultSort; label: string }[] = [
-  { value: "rarity", label: "Par rareté" },
-  { value: "date", label: "Par date d'obtention" },
-  { value: "alpha", label: "Par ordre alphabétique" },
-];
+const SORT_OPTIONS: DefaultSort[] = ["rarity", "date", "alpha"];
 
 function CollectionSection() {
+  const t = useTranslations("settings.collection");
   const { settings, update } = useSettings();
   return (
     <Panel
       icon={Eye}
-      title="Collection & accessibilité"
-      description="Comment s'affiche votre collection, et comment rendre le texte plus confortable à lire."
+      title={t("title")}
+      description={t("description")}
     >
       <SettingRow
-        title="Tri par défaut de la collection"
-        description="Appliqué à l'ouverture de la collection. Vous pouvez toujours changer de tri sur la page."
+        title={t("defaultSort")}
+        description={t("defaultSortHelp")}
       >
         <SelectField
-          label="Tri par défaut de la collection"
-          options={SORT_OPTIONS}
+          label={t("defaultSort")}
+          options={SORT_OPTIONS.map((value) => ({ value, label: t(`sorts.${value}`) }))}
           value={settings.collection.defaultSort}
           onChange={(defaultSort) =>
             update((s) => ({ ...s, collection: { ...s.collection, defaultSort } }))
@@ -457,11 +460,11 @@ function CollectionSection() {
         />
       </SettingRow>
       <SettingRow
-        title="Police à haute lisibilité"
-        description="Remplace les polices par Atkinson Hyperlegible, aux lettres bien distinctes, avec plus d'espace. Utile pour la dyslexie ou une vue fatiguée."
+        title={t("readableFont")}
+        description={t("readableFontHelp")}
       >
         <Toggle
-          label="Police à haute lisibilité"
+          label={t("readableFont")}
           checked={settings.accessibility.readableFont}
           onChange={(readableFont) =>
             update((s) => ({ ...s, accessibility: { ...s.accessibility, readableFont } }))
@@ -469,11 +472,11 @@ function CollectionSection() {
         />
       </SettingRow>
       <SettingRow
-        title="Contrastes renforcés"
-        description="Textes secondaires plus clairs et filets plus visibles, pour lire les longs textes encyclopédiques."
+        title={t("highContrast")}
+        description={t("highContrastHelp")}
       >
         <Toggle
-          label="Contrastes renforcés"
+          label={t("highContrast")}
           checked={settings.accessibility.highContrast}
           onChange={(highContrast) =>
             update((s) => ({ ...s, accessibility: { ...s.accessibility, highContrast } }))
@@ -485,6 +488,7 @@ function CollectionSection() {
 }
 
 function AudioSection() {
+  const t = useTranslations("settings.audio");
   const { settings, update } = useSettings();
   const { audio } = settings;
   const set = (patch: Partial<typeof audio>) =>
@@ -492,24 +496,24 @@ function AudioSection() {
   return (
     <Panel
       icon={Volume2}
-      title="Audio"
-      description="Tous les sons sont synthétisés par votre navigateur : aucun fichier à télécharger."
+      title={t("title")}
+      description={t("description")}
     >
-      <SettingRow title="Volume général" description="S'applique à la musique et aux effets.">
+      <SettingRow title={t("master")} description={t("masterHelp")}>
         <Slider
-          label="Volume général"
+          label={t("master")}
           value={audio.master}
           onChange={(master) => set({ master })}
         />
       </SettingRow>
       <SettingRow
-        title="Musique d'ambiance"
-        description="Une nappe sonore douce en fond. Le navigateur ne la lance qu'après votre premier clic."
+        title={t("music")}
+        description={t("musicHelp")}
       >
         <div className="flex flex-col gap-3 sm:items-end">
-          <Toggle label="Musique d'ambiance" checked={audio.bgm} onChange={(bgm) => set({ bgm })} />
+          <Toggle label={t("music")} checked={audio.bgm} onChange={(bgm) => set({ bgm })} />
           <Slider
-            label="Volume de la musique"
+            label={t("musicVolume")}
             value={audio.bgmVolume}
             disabled={!audio.bgm}
             onChange={(bgmVolume) => set({ bgmVolume })}
@@ -517,13 +521,13 @@ function AudioSection() {
         </div>
       </SettingRow>
       <SettingRow
-        title="Effets sonores"
-        description="Bruitage des clics, souffle à l'ouverture d'un paquet et arpège à chaque carte révélée (plus long pour une carte plus rare)."
+        title={t("sfx")}
+        description={t("sfxHelp")}
       >
         <div className="flex flex-col gap-3 sm:items-end">
-          <Toggle label="Effets sonores" checked={audio.sfx} onChange={(sfx) => set({ sfx })} />
+          <Toggle label={t("sfx")} checked={audio.sfx} onChange={(sfx) => set({ sfx })} />
           <Slider
-            label="Volume des effets"
+            label={t("sfxVolume")}
             value={audio.sfxVolume}
             disabled={!audio.sfx}
             onChange={(sfxVolume) => set({ sfxVolume })}
@@ -534,7 +538,7 @@ function AudioSection() {
             onClick={() => sfx.reveal("LEGENDARY")}
             className={buttonClass}
           >
-            Tester un effet
+            {t("test")}
           </button>
         </div>
       </SettingRow>
@@ -545,6 +549,7 @@ function AudioSection() {
 type Permission = NotificationPermission | "unsupported";
 
 function NotificationsSection() {
+  const t = useTranslations("settings.notifications");
   const { settings, update } = useSettings();
   const current = useSyncExternalStore(
     () => () => {},
@@ -566,26 +571,21 @@ function NotificationsSection() {
     update((s) => ({ ...s, notifications: { ...s.notifications, boosterReady } }));
   }
 
-  const label: Record<Permission, string> = {
-    default: "Pas encore demandée",
-    granted: "Autorisées",
-    denied: "Refusées par le navigateur",
-    unsupported: "Non prises en charge par ce navigateur",
-  };
-
   return (
     <Panel
       icon={Bell}
-      title="Notifications & alertes de jeu"
-      description="Soyez prévenu quand un paquet est prêt, même depuis un autre onglet."
+      title={t("title")}
+      description={t("description")}
     >
       <SettingRow
-        title="Autorisation du navigateur"
+        title={t("permission")}
         description={
           <>
-            État : <b className="text-pale-mist">{label[permission]}</b>.
-            {permission === "denied" &&
-              " Réautorisez-les dans les réglages du site de votre navigateur (cadenas près de l'adresse)."}
+            {t.rich("state", {
+              state: t(`states.${permission}`),
+              b: (chunks) => <b className="text-pale-mist">{chunks}</b>,
+            })}
+            {permission === "denied" && t("deniedHelp")}
           </>
         }
       >
@@ -598,40 +598,40 @@ function NotificationsSection() {
             }
             onClick={() => void ask()}
           >
-            Autoriser les notifications
+            {t("allow")}
           </button>
           <button
             type="button"
             className={buttonClass}
             disabled={permission !== "granted"}
             onClick={() =>
-              new Notification("Wikideck", {
-                body: "Voici à quoi ressemblera une alerte : votre booster est prêt !",
+              new Notification(t("testTitle"), {
+                body: t("testBody"),
                 icon: "/logo.webp",
               })
             }
           >
-            Envoyer un test
+            {t("test")}
           </button>
         </div>
       </SettingRow>
       <SettingRow
-        title="Recharge de paquet disponible"
-        description="« Votre booster est prêt ! » : une alerte quand un nouveau paquet arrive. Elle s'affiche tant que Wikideck est ouvert dans un onglet, sans que ce soit celui que vous regardez."
+        title={t("booster")}
+        description={t("boosterHelp")}
       >
         <Toggle
-          label="Alerte de recharge de paquet"
+          label={t("boosterLabel")}
           checked={settings.notifications.boosterReady}
           disabled={permission === "denied" || permission === "unsupported"}
           onChange={(value) => void toggleBooster(value)}
         />
       </SettingRow>
       <SettingRow
-        title="Événements thématiques"
-        description="Début et fin d'un événement spécial sur un thème de Wikipédia (par exemple une semaine d'histoire de France). Aucun événement n'existe encore : votre choix est enregistré pour plus tard."
+        title={t("events")}
+        description={t("eventsHelp")}
       >
         <Toggle
-          label="Alertes d'événements thématiques"
+          label={t("eventsLabel")}
           checked={settings.notifications.events}
           onChange={(events) =>
             update((s) => ({ ...s, notifications: { ...s.notifications, events } }))
@@ -643,6 +643,7 @@ function NotificationsSection() {
 }
 
 function PrivacySection({ profile, apiUrl }: { profile: MeProfile; apiUrl: string }) {
+  const t = useTranslations("settings.privacy");
   const [isPublic, setIsPublic] = useState(profile.isPublic);
   const [error, setError] = useState<string | null>(null);
 
@@ -660,20 +661,20 @@ function PrivacySection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
   return (
     <Panel
       icon={ShieldCheck}
-      title="Confidentialité & données du joueur"
-      description="Ce que les autres joueurs peuvent voir, et la transparence sur vos tirages."
+      title={t("title")}
+      description={t("description")}
     >
       <SettingRow
-        title="Statistiques publiques"
-        description="Public : votre collection et votre taux de complétion pourront être vus par les autres joueurs. Privé : vous seul les voyez. Les profils publics arrivent bientôt : votre choix est déjà pris en compte."
+        title={t("public")}
+        description={t("publicHelp")}
       >
         <Segmented
-          label="Visibilité de la collection"
+          label={t("visibility")}
           value={isPublic ? "public" : "private"}
           onChange={(v) => void change(v === "public")}
           options={[
-            { value: "private", label: "Privé" },
-            { value: "public", label: "Public" },
+            { value: "private", label: t("private") },
+            { value: "public", label: t("publicOption") },
           ]}
         />
       </SettingRow>
@@ -690,6 +691,7 @@ function PrivacySection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
 }
 
 function DataSection({ apiUrl }: { apiUrl: string }) {
+  const t = useTranslations("settings.data");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -702,11 +704,11 @@ function DataSection({ apiUrl }: { apiUrl: string }) {
       const url = URL.createObjectURL(await res.blob());
       const link = document.createElement("a");
       link.href = url;
-      link.download = `wikideck-export-${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = t("exportFile", { date: new Date().toISOString().slice(0, 10) });
       link.click();
       URL.revokeObjectURL(url);
     } catch {
-      setError("Impossible de télécharger vos données pour le moment. Réessayez dans un instant.");
+      setError(t("downloadError"));
     }
     setBusy(false);
   }
@@ -714,16 +716,16 @@ function DataSection({ apiUrl }: { apiUrl: string }) {
   return (
     <Panel
       icon={Database}
-      title="Options RGPD : sécurité & données"
-      description="Vos données vous appartiennent : récupérez-les ou effacez-les à tout moment."
+      title={t("title")}
+      description={t("description")}
     >
       <SettingRow
-        title="Télécharger mes données personnelles"
-        description="Un fichier JSON avec votre profil, vos préférences, votre collection, vos étiquettes et l'historique de vos tirages."
+        title={t("download")}
+        description={t("downloadHelp")}
       >
         <button type="button" className={buttonClass} disabled={busy} onClick={download}>
           <Download className="size-4" />
-          {busy ? "Préparation…" : "Télécharger (JSON)"}
+          {busy ? t("preparing") : t("downloadButton")}
         </button>
       </SettingRow>
       {error && (
@@ -734,11 +736,10 @@ function DataSection({ apiUrl }: { apiUrl: string }) {
       <div className="mt-6 rounded-xl border border-danger/40 p-5">
         <h3 className="flex items-center gap-2 text-sm font-bold text-danger">
           <Trash2 className="size-4" />
-          Zone dangereuse
+          {t("danger")}
         </h3>
         <p className="mt-2 mb-4 text-xs leading-relaxed text-fog">
-          La suppression du compte efface définitivement toutes vos données. Elle ne peut pas être
-          annulée.
+          {t("dangerText")}
         </p>
         <DeleteAccount apiUrl={apiUrl} />
       </div>

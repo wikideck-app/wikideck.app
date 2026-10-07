@@ -1,0 +1,199 @@
+{
+  "title": "Succès",
+  "loadError": "Impossible de charger vos succès.",
+  "unlockedCount": "{count} / {total} débloqués",
+  "progress": "Progression",
+  "pendingTitle": "{count, plural, one {# récompense à récupérer} other {# récompenses à récupérer}}",
+  "pendingTotal": "<amount></amount> au total",
+  "claimAll": "Tout récupérer",
+  "claim": "Récupérer +{amount, number}",
+  "reward": "+{amount, number} wikibits",
+  "unlocked": "Débloqué",
+  "progressOf": "{value, number} / {goal, number}",
+  "filters": {
+    "all": "Tous",
+    "done": "Débloqués",
+    "todo": "À débloquer"
+  },
+  "categories": {
+    "collection": "Collection",
+    "rarities": "Raretés",
+    "packs": "Paquets",
+    "trades": "Échanges",
+    "market": "Marché",
+    "community": "Communauté"
+  },
+  "toasts": {
+    "unlockedOne": "Succès débloqué !",
+    "unlockedMany": "{count} succès débloqués !",
+    "claimed": "Récompense récupérée",
+    "claimedOne": "<amount></amount> pour « {name} »",
+    "claimedMany": "<amount></amount> pour {count} succès"
+  },
+  "items": {
+    "cards-50": {
+      "name": "Débutant",
+      "description": "Posséder 50 cartes"
+    },
+    "cards-100": {
+      "name": "Amateur",
+      "description": "Posséder 100 cartes"
+    },
+    "cards-250": {
+      "name": "Collectionneur",
+      "description": "Posséder 250 cartes"
+    },
+    "cards-500": {
+      "name": "Expert",
+      "description": "Posséder 500 cartes"
+    },
+    "cards-1000": {
+      "name": "Maître collectionneur",
+      "description": "Posséder 1 000 cartes"
+    },
+    "cards-2500": {
+      "name": "Encyclopédiste",
+      "description": "Posséder 2 500 cartes"
+    },
+    "cards-5000": {
+      "name": "Archiviste",
+      "description": "Posséder 5 000 cartes"
+    },
+    "cards-10000": {
+      "name": "Encyclopédie vivante",
+      "description": "Posséder 10 000 cartes"
+    },
+    "duplicate": {
+      "name": "Déjà vu",
+      "description": "Obtenir un doublon d’une carte"
+    },
+    "stock": {
+      "name": "Stockeur",
+      "description": "Avoir 5 copies de la même carte"
+    },
+    "showcase": {
+      "name": "Exposition",
+      "description": "Choisir une carte vitrine"
+    },
+    "tags": {
+      "name": "Organisé",
+      "description": "Créer 5 étiquettes"
+    },
+    "sr-1": {
+      "name": "Super trouvaille",
+      "description": "Obtenir votre première carte Super rare"
+    },
+    "ur-1": {
+      "name": "Ultra chanceux",
+      "description": "Obtenir votre première carte Ultra rare"
+    },
+    "l-1": {
+      "name": "Légendaire !",
+      "description": "Obtenir votre première carte Légendaire"
+    },
+    "sr-10": {
+      "name": "Collectionneur d’élite",
+      "description": "Posséder 10 cartes Super rares"
+    },
+    "ur-10": {
+      "name": "Ultra collectionneur",
+      "description": "Posséder 10 cartes Ultra rares"
+    },
+    "l-5": {
+      "name": "Trouvailles légendaires",
+      "description": "Posséder 5 cartes Légendaires"
+    },
+    "l-10": {
+      "name": "Panthéon",
+      "description": "Posséder 10 cartes Légendaires"
+    },
+    "packs-1": {
+      "name": "Premier paquet",
+      "description": "Ouvrir votre premier paquet"
+    },
+    "packs-25": {
+      "name": "Ouvreur",
+      "description": "Ouvrir 25 paquets"
+    },
+    "packs-100": {
+      "name": "Accro aux paquets",
+      "description": "Ouvrir 100 paquets"
+    },
+    "packs-500": {
+      "name": "Machine à paquets",
+      "description": "Ouvrir 500 paquets"
+    },
+    "trades-5": {
+      "name": "Troqueur",
+      "description": "Conclure 5 échanges"
+    },
+    "trades-10": {
+      "name": "Négociateur",
+      "description": "Conclure 10 échanges"
+    },
+    "trades-50": {
+      "name": "Pro des échanges",
+      "description": "Conclure 50 échanges"
+    },
+    "trades-100": {
+      "name": "Maître du troc",
+      "description": "Conclure 100 échanges"
+    },
+    "sold-3": {
+      "name": "Vendeur",
+      "description": "Vendre 3 cartes aux enchères"
+    },
+    "sold-10": {
+      "name": "Marchand d’expérience",
+      "description": "Vendre 10 cartes aux enchères"
+    },
+    "sold-100": {
+      "name": "Wikimilliardaire",
+      "description": "Vendre 100 cartes aux enchères"
+    },
+    "sold-legendary": {
+      "name": "Produit de qualité",
+      "description": "Vendre une carte Légendaire aux enchères"
+    },
+    "won-5": {
+      "name": "Acheteur",
+      "description": "Gagner 5 enchères"
+    },
+    "won-25": {
+      "name": "Trouveur de bonnes affaires",
+      "description": "Gagner 25 enchères"
+    },
+    "big-win": {
+      "name": "Mon précieux",
+      "description": "Gagner une enchère pour plus de 5 fois la mise de départ"
+    },
+    "balance-2500": {
+      "name": "Gestion de patrimoine",
+      "description": "Posséder 2 500 wikibits"
+    },
+    "guild": {
+      "name": "Camarade",
+      "description": "Rejoindre une guilde"
+    },
+    "gift-1": {
+      "name": "Généreux",
+      "description": "Offrir une carte à un camarade de guilde"
+    },
+    "gift-10": {
+      "name": "Mécène",
+      "description": "Offrir 10 cartes à vos camarades"
+    },
+    "friend-1": {
+      "name": "Sociable",
+      "description": "Avoir un ami"
+    },
+    "friend-10": {
+      "name": "Populaire",
+      "description": "Avoir 10 amis"
+    },
+    "messages-50": {
+      "name": "Bavard",
+      "description": "Envoyer 50 messages"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, X } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import {
@@ -16,8 +17,6 @@ import { WikiCard } from "@/components/wiki-card";
 import { Wikibits } from "@/components/wikibit";
 import { apiCall } from "@/lib/tags-api";
 
-const durationLabel = (h: number) => (h < 24 ? `${h} h` : `${h / 24} j`);
-
 export function SellDialog({
   apiUrl,
   onClose,
@@ -29,7 +28,10 @@ export function SellDialog({
   initialCard?: CollectionCard;
   onListed?: (card: CollectionCard, auctionId: string) => void;
 }) {
+  const t = useTranslations("market.sellDialog");
+  const tc = useTranslations("common");
   const router = useRouter();
+  const durationLabel = (h: number) => (h < 24 ? t("hours", { count: h }) : t("days", { count: h / 24 }));
   const [card, setCard] = useState<CollectionCard | null>(initialCard ?? null);
   const [listed, setListed] = useState<string | null>(null);
   const [price, setPrice] = useState("20");
@@ -52,8 +54,8 @@ export function SellDialog({
         onClose={() => {
           if (!picked.current) onClose();
         }}
-        title="Quelle carte mettre en vente ?"
-        description="Elle quitte votre collection jusqu'à la fin de l'enchère. Si personne ne mise, elle vous revient."
+        title={t("pickTitle")}
+        description={t("pickDescription")}
       />
     );
   }
@@ -85,10 +87,10 @@ export function SellDialog({
       className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-xl border border-line bg-surface p-6 text-foreground backdrop:bg-black/70"
     >
       <div className="flex items-start justify-between gap-4">
-        <h2 className="text-xl font-bold">Mettre en vente</h2>
+        <h2 className="text-xl font-bold">{t("title")}</h2>
         <button
           type="button"
-          aria-label="Fermer"
+          aria-label={tc("close")}
           onClick={(e) => e.currentTarget.closest("dialog")?.close()}
           className="opacity-60 hover:opacity-100"
         >
@@ -105,18 +107,17 @@ export function SellDialog({
               onClick={() => setCard(null)}
               className="mt-2 w-full text-center text-xs text-pale-mist underline"
             >
-              Changer de carte
+              {t("changeCard")}
             </button>
           )}
         </div>
         {listed ? (
           <div className="min-w-0 flex-1 space-y-3">
             <p className="flex items-center gap-2 text-lg font-bold text-success">
-              <Check className="size-5" /> Mise en vente !
+              <Check className="size-5" /> {t("listed")}
             </p>
             <p className="text-sm text-pale-mist">
-              « {card.title} » est aux enchères. Elle quitte votre collection jusqu&apos;à la fin de
-              la vente ; si personne ne mise, elle vous revient.
+              {t("listedText", { title: card.title })}
             </p>
             <div className="flex flex-wrap gap-3 pt-1">
               <button
@@ -124,14 +125,14 @@ export function SellDialog({
                 className={primaryButtonClass}
                 onClick={() => router.push(`/market/${listed}`)}
               >
-                Voir l&apos;enchère
+                {t("viewAuction")}
               </button>
               <button
                 type="button"
                 className={buttonClass}
                 onClick={(e) => e.currentTarget.closest("dialog")?.close()}
               >
-                Continuer
+                {t("continue")}
               </button>
             </div>
           </div>
@@ -139,7 +140,7 @@ export function SellDialog({
           <div className="min-w-0 flex-1 space-y-4">
             <label className="block">
               <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">
-                Prix de départ
+                {t("startPrice")}
               </span>
               <input
                 type="number"
@@ -152,7 +153,7 @@ export function SellDialog({
               />
             </label>
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">Durée</span>
+              <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">{t("duration")}</span>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {MARKET_DURATIONS.map((h) => (
                   <button
@@ -169,8 +170,12 @@ export function SellDialog({
             </div>
             {valid && (
               <p className="text-xs leading-relaxed text-pale-mist">
-                Frais de vente : {MARKET_FEE_PERCENT} %. Au prix de départ, vous toucheriez{" "}
-                <Wikibits amount={sellerProceeds(value)} className="font-bold text-foreground" />.
+                {t.rich("fees", {
+                  fee: MARKET_FEE_PERCENT,
+                  amount: () => (
+                    <Wikibits amount={sellerProceeds(value)} className="font-bold text-foreground" />
+                  ),
+                })}
               </p>
             )}
           </div>
@@ -189,7 +194,7 @@ export function SellDialog({
             className={buttonClass}
             onClick={(e) => e.currentTarget.closest("dialog")?.close()}
           >
-            Annuler
+            {tc("cancel")}
           </button>
           <button
             type="button"
@@ -197,7 +202,7 @@ export function SellDialog({
             disabled={!valid || busy}
             onClick={submit}
           >
-            {busy ? "Mise en vente…" : "Mettre en vente"}
+            {busy ? t("busy") : t("title")}
           </button>
         </div>
       )}

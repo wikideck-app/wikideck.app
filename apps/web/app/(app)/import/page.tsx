@@ -1,14 +1,17 @@
+import { getTranslations } from "next-intl/server";
 import { ImportWizard } from "@/components/import-wizard";
 import { API_URL } from "@/lib/api";
+import { pageMetadata } from "@/i18n/metadata";
 
-export const metadata = { title: "Importer ma collection — Wikideck" };
+export const generateMetadata = pageMetadata("import");
 
-export default function ImportPage() {
+export default async function ImportPage() {
+  const t = await getTranslations("importer");
   return (
     <div className="mx-auto max-w-3xl text-center">
-      <h1 className="font-display text-5xl font-medium">Importer ma collection</h1>
+      <h1 className="font-display text-5xl font-medium">{t("title")}</h1>
       <p className="prose-serif mt-3 text-pale-mist">
-        Retrouvez vos cartes de Wiki-Masters dans Wikideck.
+        {t("subtitle")}
       </p>
       <div className="text-left">
         <ImportWizard apiUrl={API_URL} />

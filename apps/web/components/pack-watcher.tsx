@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import type { PackStatus } from "@wikideck/shared";
 import { useSettings } from "@/lib/settings-context";
 
 export function PackWatcher({ initial, apiUrl }: { initial: PackStatus | null; apiUrl: string }) {
+  const t = useTranslations("notifications.boosterReady");
   const { settings } = useSettings();
   const enabled = settings.notifications.boosterReady;
   const known = useRef(initial?.packs ?? 0);
@@ -21,8 +23,8 @@ export function PackWatcher({ initial, apiUrl }: { initial: PackStatus | null; a
         const status = (await res.json()) as PackStatus;
         if (status.packs > known.current && document.visibilityState === "hidden") {
           if ("Notification" in window && Notification.permission === "granted") {
-            const n = new Notification("Wikideck", {
-              body: "Votre booster est prêt : un nouveau paquet vous attend !",
+            const n = new Notification(t("title"), {
+              body: t("body"),
               icon: "/logo.webp",
               tag: "booster-ready",
             });
@@ -44,7 +46,7 @@ export function PackWatcher({ initial, apiUrl }: { initial: PackStatus | null; a
       cancelled = true;
       clearTimeout(timer.current);
     };
-  }, [enabled, initial, apiUrl]);
+  }, [enabled, initial, apiUrl, t]);
 
   return null;
 }

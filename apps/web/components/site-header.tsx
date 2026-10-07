@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const LINKS = [
-  { href: "#cards", label: "Cartes" },
-  { href: "#game", label: "Le jeu" },
-];
+  { href: "#cards", key: "cards" },
+  { href: "#game", key: "game" },
+] as const;
 
 export function SiteHeader() {
+  const t = useTranslations("home.header");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-4 px-6">
         <a
           href="#top"
-          aria-label="Wikideck, retour en haut"
+          aria-label={t("homeLabel")}
           className="group flex items-center gap-3"
         >
           <Image
@@ -48,7 +50,7 @@ export function SiteHeader() {
                   href={l.href}
                   className="text-sm font-bold uppercase text-pale-mist transition-colors hover:text-foreground"
                 >
-                  {l.label}
+                  {t(`links.${l.key}`)}
                 </a>
               </li>
             ))}
@@ -57,7 +59,7 @@ export function SiteHeader() {
             href="#login"
             className="rounded-full border-2 border-(--deep-concord) bg-white px-5 py-2 text-sm font-semibold text-(--deep-concord) shadow-[inset_0_0_0_2px_#fff] transition-colors hover:bg-(--deep-concord) hover:text-white"
           >
-            Se connecter
+            {t("signIn")}
           </a>
         </nav>
       </div>

@@ -1,5 +1,6 @@
 import { SelectMenu } from "@/components/select-menu";
 import type { IconType } from "@/components/icons";
+import { useFormatter } from "next-intl";
 import type { ReactNode } from "react";
 
 export function Toggle({
@@ -46,6 +47,7 @@ export function Slider({
   label: string;
   disabled?: boolean;
 }) {
+  const format = useFormatter();
   return (
     <div className="flex items-center gap-3 sm:w-64">
       <input
@@ -60,7 +62,7 @@ export function Slider({
         className="h-1 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-accent/20 accent-white disabled:cursor-not-allowed disabled:opacity-40"
       />
       <output className="w-10 text-right text-xs font-bold tabular-nums text-pale-mist">
-        {value}%
+        {format.number(value / 100, "percent")}
       </output>
     </div>
   );

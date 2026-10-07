@@ -2,11 +2,13 @@
 
 import { BookBookmark, Check } from "@/components/icons";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import type { AlbumSummary, AlbumsResponse } from "@wikideck/shared";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
 export function AlbumPicker({ apiUrl, cardId }: { apiUrl: string; cardId: string }) {
+  const t = useTranslations("albums");
   const [albums, setAlbums] = useState<AlbumSummary[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -43,13 +45,13 @@ export function AlbumPicker({ apiUrl, cardId }: { apiUrl: string; cardId: string
   return (
     <div className="mt-4">
       <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide opacity-60">
-        <BookBookmark className="size-3.5" /> Albums
+        <BookBookmark className="size-3.5" /> {t("title")}
       </h3>
       {albums.length === 0 ? (
         <p className="mt-2 text-sm text-fog">
-          Aucun album.{" "}
+          {t("picker.none")}{" "}
           <Link href="/albums" className="underline hover:text-foreground">
-            En créer un
+            {t("picker.create")}
           </Link>
         </p>
       ) : (

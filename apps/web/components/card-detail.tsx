@@ -1,16 +1,16 @@
 "use client";
 
 import { ArrowUpRight, Gavel, Lock, Recycle, X } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useEffect, useState, type ReactNode } from "react";
-import { RARITIES, RECYCLE_VALUES, type CardDto } from "@wikideck/shared";
+import { RECYCLE_VALUES, type CardDto } from "@wikideck/shared";
 import { buttonClass, primaryButtonClass } from "@/components/settings/controls";
 import { WikiCard } from "@/components/wiki-card";
 import { AlbumPicker } from "@/components/albums/album-picker";
 import { WishButton } from "@/components/wish-button";
 import { Wikibits } from "@/components/wikibit";
+import { useRarityLabel } from "@/lib/labels";
 import { apiFetch } from "@/lib/tags-api";
-
-const fmt = new Intl.NumberFormat("fr-FR");
 
 export function CardDetail({
   card,
@@ -29,7 +29,9 @@ export function CardDetail({
   apiUrl?: string;
   children?: ReactNode;
 }) {
-  const rarity = RARITIES.find((r) => r.value === card.rarity)!;
+  const t = useTranslations("cards.detail");
+  const tc = useTranslations("common");
+  const rarityLabel = useRarityLabel();
   const [lock, setLock] = useState<string | null>(null);
   const wantsLock = !!apiUrl && (!!onSell || !!onRecycle);
   useEffect(() => {
@@ -54,7 +56,7 @@ export function CardDetail({
     >
       <button
         type="button"
-        aria-label="Fermer"
+        aria-label={tc("close")}
         onClick={(e) => e.currentTarget.closest("dialog")?.close()}
         className="absolute right-4 top-4 opacity-60 hover:opacity-100"
       >
@@ -77,13 +79,12 @@ export function CardDetail({
                 title={lock ?? undefined}
                 className={`${primaryButtonClass} shrink-0`}
               >
-                {lock ? <Lock className="size-4" /> : <Gavel className="size-4" />} Mettre aux
-                enchères
+                {lock ? <Lock className="size-4" /> : <Gavel className="size-4" />} {t("sell")}
               </button>
             )}
           </div>
           <span className="mt-2 inline-block rounded-full border border-line px-3 py-0.5 text-xs font-bold text-pale-mist">
-            {rarity.label}
+            {rarityLabel(card.rarity)}
           </span>
           {card.description && (
             <p className="prose-serif mt-4 text-pale-mist">{card.description}</p>
@@ -91,8 +92,8 @@ export function CardDetail({
           {children && <div className="mt-5">{children}</div>}
 
           <ul className="mt-4 space-y-1 text-sm opacity-60">
-            <li>Exemplaires : {quantity}</li>
-            <li>Vues (30j) : {fmt.format(card.views)}</li>
+            <li>{t("copies", { count: quantity })}</li>
+            <li>{t("views", { count: card.views })}</li>
           </ul>
 
           {onRecycle && quantity > 0 && (
@@ -103,8 +104,7 @@ export function CardDetail({
               title={lock ?? undefined}
               className={`${buttonClass} mt-4`}
             >
-              {lock ? <Lock className="size-4" /> : <Recycle className="size-4" />} Recycler un
-              exemplaire
+              {lock ? <Lock className="size-4" /> : <Recycle className="size-4" />} {t("recycle")}
               <span className="inline-flex items-center gap-1 opacity-80">
                 (+
                 <Wikibits amount={RECYCLE_VALUES[card.rarity]} />)
@@ -114,7 +114,7 @@ export function CardDetail({
 
           {lock && (onSell || onRecycle) && quantity > 0 && (
             <p role="status" className="mt-2 flex items-center gap-1.5 text-xs text-fog">
-              <Lock className="size-3.5" /> {lock} : cette carte ne peut être ni vendue ni recyclée.
+              <Lock className="size-3.5" /> {t("locked", { reason: lock })}
             </p>
           )}
 
@@ -132,16 +132,16 @@ export function CardDetail({
             rel="noreferrer"
             className="mt-4 inline-flex items-center gap-1 font-bold text-pale-mist hover:text-foreground"
           >
-            Voir l&apos;article sur Wikipédia
+            {t("viewOnWikipedia")}
             <ArrowUpRight className="size-4" />
           </a>
           {!card.imageUrl && (
             <p className="mt-3 text-xs text-fog">
-              Wikipédia n&apos;a pas d&apos;image libre de droits pour cet article.
+              {t("noFreeImage")}
             </p>
           )}
           <p className="mt-3 text-xs opacity-50">
-            Texte de l&apos;article : CC BY-SA 4.0 — crédits sur la page Wikipédia.
+            {t("license")}
           </p>
         </div>
       </div>

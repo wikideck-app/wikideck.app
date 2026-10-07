@@ -1,5 +1,35 @@
-function source(home: string, max: number) {
-  return `(function (HOME, MAX) {
+// textes affichés par le favori : traduits par l'application, injectés tels quels dans le script
+export const BOOKMARKLET_KEYS = [
+  "panelTitle",
+  "close",
+  "connecting",
+  "backToWikideck",
+  "popupBlocked",
+  "popupBlockedHint",
+  "stopped",
+  "stoppedHint",
+  "tabClosed",
+  "tabClosedHint",
+  "noAnswer",
+  "noAnswerHint",
+  "opening",
+  "reading",
+  "readingTotal",
+  "readingProgress",
+  "done",
+  "doneHint",
+  "login",
+  "loginHint",
+  "format",
+  "formatHint",
+  "down",
+  "downHint",
+] as const;
+
+export type BookmarkletStrings = Record<(typeof BOOKMARKLET_KEYS)[number], string>;
+
+function source(home: string, max: number, S: BookmarkletStrings, locale: string) {
+  return `(function (HOME, MAX, S, LOCALE) {
 var COLLECTION = "https://www.wiki-masters.com/collection";
 if (!/(^|\\.)wiki-masters\\.com$/.test(location.hostname)) { location.href = COLLECTION; return; }
 var previous = window.__wikideckImport;
@@ -21,13 +51,17 @@ root.innerHTML = "<style>" +
 ".g{display:block;width:100%;margin-top:14px;padding:10px;border:0;border-radius:99px;background:#343755;color:#fff;font:700 12px/1 system-ui,sans-serif;cursor:pointer}" +
 ".e .t{color:#ff6b6b}.e .f{background:#ff6b6b}" +
 "</style>" +
-"<div class='p'><div class='h'><span>Wikideck \\u00b7 Import</span><button class='x' aria-label='Fermer'>\\u00d7</button></div>" +
-"<p class='t'>Connexion \\u00e0 Wikideck\\u2026</p><div class='b'><div class='f'></div></div><div class='n'></div>" +
-"<button class='g'>Revenir sur Wikideck</button></div>";
+"<div class='p'><div class='h'><span></span><button class='x'>\\u00d7</button></div>" +
+"<p class='t'></p><div class='b'><div class='f'></div></div><div class='n'></div>" +
+"<button class='g'></button></div>";
 document.body.appendChild(host);
 
 var panel = root.querySelector(".p");
+root.querySelector(".h span").textContent = S.panelTitle;
+root.querySelector(".x").setAttribute("aria-label", S.close);
+root.querySelector(".g").textContent = S.backToWikideck;
 var text = root.querySelector(".t");
+text.textContent = S.connecting;
 var fill = root.querySelector(".f");
 var note = root.querySelector(".n");
 var go = root.querySelector(".g");
@@ -36,12 +70,13 @@ function say(message, sub, ratio) {
   note.textContent = sub || "";
   if (ratio !== undefined) fill.style.width = Math.round(Math.max(0, Math.min(1, ratio)) * 100) + "%";
 }
-function fmt(n) { return Number(n).toLocaleString("fr-FR"); }
+function fmt(n) { return Number(n).toLocaleString(LOCALE); }
+function fill_(template, values) { return template.replace(/\\{(\\w+)\\}/g, function (m, k) { return values[k] !== undefined ? values[k] : m; }); }
 function wait(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
 
 if (!target) {
   panel.className = "p e";
-  say("Fen\\u00eatre bloqu\\u00e9e", "Autorise les fen\\u00eatres pop-up de wiki-masters.com, puis relance le favori.", 1);
+  say(S.popupBlocked, S.popupBlockedHint, 1);
   go.style.display = "none";
   root.querySelector(".x").onclick = function () { host.remove(); };
   return;
@@ -63,15 +98,15 @@ function stop(message, sub, error) {
 window.addEventListener("message", function (e) {
   if (e.origin !== HOME || !e.data || e.data.app !== "wikideck") return;
   if (e.data.type === "ready") ready = true;
-  if (e.data.type === "stop") stop("Import arr\\u00eat\\u00e9", "L'import a \\u00e9t\\u00e9 arr\\u00eat\\u00e9 depuis Wikideck.");
+  if (e.data.type === "stop") stop(S.stopped, S.stoppedHint);
 });
 
 var hellos = 0;
 var hello = setInterval(function () {
   if (ready || stopped) return clearInterval(hello);
   hellos++;
-  if (target.closed) { clearInterval(hello); return stop("Onglet Wikideck ferm\\u00e9", "Clique \\u00e0 nouveau sur le favori pour recommencer.", true); }
-  if (hellos > 180) { clearInterval(hello); return stop("Wikideck ne r\\u00e9pond pas", "Connecte-toi \\u00e0 Wikideck, puis clique \\u00e0 nouveau sur le favori.", true); }
+  if (target.closed) { clearInterval(hello); return stop(S.tabClosed, S.tabClosedHint, true); }
+  if (hellos > 180) { clearInterval(hello); return stop(S.noAnswer, S.noAnswerHint, true); }
   send({ type: "hello" });
 }, 500);
 send({ type: "hello" });
@@ -118,7 +153,7 @@ async function waitForWikideck() {
   while (!ready && !stopped) await wait(250);
 }
 async function run() {
-  say("Connexion \\u00e0 Wikideck\\u2026", "Ouverture de la page d'import", 0);
+  say(S.connecting, S.opening, 0);
   await waitForWikideck();
   if (stopped) return;
   var stats = await read("/api/my-collection/stats?sort=rarity");
@@ -129,9 +164,9 @@ async function run() {
   var size = 50;
   var pages = Math.ceil(Math.min(total, MAX) / size);
   var readCards = 0, failed = 0, inRow = 0;
-  say("Lecture de ta collection\\u2026", fmt(total) + " cartes sur Wiki-Masters", 0);
+  say(S.reading, fill_(S.readingTotal, { total: fmt(total) }), 0);
   for (var page = 0; page < pages && !stopped; page++) {
-    if (target.closed) return stop("Onglet Wikideck ferm\\u00e9", "Clique \\u00e0 nouveau sur le favori pour recommencer.", true);
+    if (target.closed) return stop(S.tabClosed, S.tabClosedHint, true);
     var data = await read("/api/my-collection?sort=rarity&page=" + page + "&stats=0");
     if (stopped) return;
     if (!data) { failed++; inRow++; if (inRow >= 5) throw new Error("down"); continue; }
@@ -150,26 +185,31 @@ async function run() {
     items = items.slice(0, Math.max(0, MAX - readCards));
     readCards += items.length;
     send({ type: "page", page: page, pages: pages, total: total, items: items });
-    say("Lecture de ta collection\\u2026", fmt(readCards) + " / " + fmt(Math.min(total, MAX)) + " cartes lues", (page + 1) / pages);
+    say(S.reading, fill_(S.readingProgress, { read: fmt(readCards), max: fmt(Math.min(total, MAX)) }), (page + 1) / pages);
     if (readCards >= MAX) break;
     await wait(250);
   }
   if (stopped) return;
   send({ type: "done", read: readCards, failed: failed });
-  stop("Collection lue !", "Valide l'import sur Wikideck.");
+  stop(S.done, S.doneHint);
   fill.style.width = "100%";
 }
 run().catch(function (e) {
   if (stopped) return;
   var reason = e && e.message === "login" ? "login" : e && e.message === "format" ? "format" : "down";
   send({ type: "error", reason: reason });
-  if (reason === "login") stop("Connecte-toi \\u00e0 Wiki-Masters", "Puis clique \\u00e0 nouveau sur le favori.", true);
-  else if (reason === "format") stop("Lecture impossible", "Wiki-Masters a chang\\u00e9 : l'import ne sait plus lire ta collection.", true);
-  else stop("Wiki-Masters ne r\\u00e9pond pas", "R\\u00e9essaie dans un moment : clique \\u00e0 nouveau sur le favori.", true);
+  if (reason === "login") stop(S.login, S.loginHint, true);
+  else if (reason === "format") stop(S.format, S.formatHint, true);
+  else stop(S.down, S.downHint, true);
 });
-})(${JSON.stringify(home)}, ${max});void 0`;
+})(${JSON.stringify(home)}, ${max}, ${JSON.stringify(S)}, ${JSON.stringify(locale)});void 0`;
 }
 
-export function bookmarkletHref(home: string, max = 10_000) {
-  return `javascript:${encodeURIComponent(source(home, max))}`;
+export function bookmarkletHref(
+  home: string,
+  strings: BookmarkletStrings,
+  locale: string,
+  max = 10_000,
+) {
+  return `javascript:${encodeURIComponent(source(home, max, strings, locale))}`;
 }

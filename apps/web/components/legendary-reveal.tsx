@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { CardDto } from "@wikideck/shared";
@@ -38,6 +39,7 @@ export function LegendaryReveal({
   onDone,
   flipped,
 }: Props) {
+  const t = useTranslations("packs.reveal");
   const mythic = card.rarity === "MYTHIC";
   const canvas = useRef<HTMLCanvasElement>(null);
   const root = useRef<HTMLDivElement>(null);
@@ -286,7 +288,7 @@ export function LegendaryReveal({
     <div
       ref={root}
       role="dialog"
-      aria-label={mythic ? "Carte mythique" : "Carte légendaire"}
+      aria-label={mythic ? t("mythicLabel") : t("legendaryLabel")}
       onClick={() => cb.current.onSkip()}
       style={
         {
@@ -300,7 +302,7 @@ export function LegendaryReveal({
 
       <div className="relative z-10 flex flex-col items-center gap-5 text-center">
         <p className="legendary-title" aria-live="polite">
-          {mythic ? "Mythique" : "Légendaire"}
+          {mythic ? t("mythic") : t("legendary")}
         </p>
         <div ref={cardBox} className="will-change-transform">
           <FlipCard
@@ -314,7 +316,7 @@ export function LegendaryReveal({
         <p className="legendary-name">{card.title}</p>
       </div>
 
-      <p className="absolute bottom-6 text-xs text-white/40">Touchez l&apos;écran pour passer</p>
+      <p className="absolute bottom-6 text-xs text-white/40">{t("skip")}</p>
     </div>,
     document.body,
   );

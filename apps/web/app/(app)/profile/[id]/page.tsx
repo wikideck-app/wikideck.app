@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import type { ProfileDto } from "@wikideck/shared";
 import { ProfileView } from "@/components/profile/profile-view";
 import { API_URL, apiGet } from "@/lib/api";
+import { pageMetadata } from "@/i18n/metadata";
 
-export const metadata = { title: "Profil — Wikideck" };
+export const generateMetadata = pageMetadata("profile");
 
 export default async function ProfilePage({ params }: PageProps<"/profile/[id]">) {
   const { id } = await params;

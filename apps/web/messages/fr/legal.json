@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "label": "Informations légales",
+    "legalNotice": "Mentions légales",
+    "privacy": "Confidentialité",
+    "terms": "CGU",
+    "docs": "API"
+  },
+  "layout": {
+    "homeLabel": "Wikideck, accueil",
+    "backToSite": "Retour au site"
+  },
+  "updatedAt": "Dernière mise à jour : {date}",
+  "todo": "À COMPLÉTER"
+}

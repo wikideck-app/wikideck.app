@@ -1,0 +1,21 @@
+{
+  "toasts": {
+    "message": "Nouveau message de {from}",
+    "friendAccepted": "{from} a accepté votre demande d’ami",
+    "friendRequest": "{from} vous a envoyé une demande d’ami",
+    "trade": "Échange mis à jour avec {from}",
+    "outbid": "Vous avez été surenchéri",
+    "auction": "Une de vos enchères a évolué",
+    "wishlist": "{card} (votre liste d’envies) est en vente",
+    "gift": "{from} vous a offert une carte",
+    "achievement": "Nouveau succès débloqué",
+    "staffBug": "Nouveau rapport de bug à traiter",
+    "staffReport": "Nouveau signalement de message à traiter",
+    "staffSuspect": "Un compte vient d’être signalé comme suspect",
+    "dailyBonus": "Bonus du jour : +{amount} wikibits"
+  },
+  "boosterReady": {
+    "title": "Wikideck",
+    "body": "Votre booster est prêt : un nouveau paquet vous attend !"
+  }
+}

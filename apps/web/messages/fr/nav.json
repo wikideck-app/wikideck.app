@@ -1,0 +1,40 @@
+{
+  "groups": {
+    "play": "Jouer",
+    "community": "Communauté",
+    "competition": "Compétition",
+    "account": "Compte"
+  },
+  "items": {
+    "packs": "Paquets",
+    "collection": "Collection",
+    "albums": "Albums",
+    "cards": "Toutes les cartes",
+    "wheel": "Roue",
+    "wishlist": "Envies",
+    "trades": "Échanges",
+    "market": "Marché",
+    "guild": "Guilde",
+    "friends": "Amis",
+    "messages": "Messages",
+    "battle": "Bataille",
+    "achievements": "Succès",
+    "ranking": "Classement",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  },
+  "brand": "Wikideck",
+  "wikibitsBalance": "Solde de wikibits",
+  "mainNavigation": "Navigation principale",
+  "openMenu": "Ouvrir le menu",
+  "closeMenu": "Fermer le menu",
+  "packsAvailable": "Paquets disponibles",
+  "packsShort": "Paquets",
+  "myProfile": "Mon profil",
+  "pending": "{count} en attente",
+  "staff": "Espace staff",
+  "staffAlerts": "Espace staff : {count} à traiter",
+  "settings": "Paramètres",
+  "logout": "Se déconnecter",
+  "comingSoon": "Bientôt disponible."
+}

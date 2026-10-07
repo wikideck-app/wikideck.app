@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Check, Pencil, Plus, Search, Trash2 } from "@/components/icons";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import {
@@ -15,6 +16,7 @@ import { CardDetail } from "@/components/card-detail";
 import { useConfirm } from "@/components/confirm-dialog";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
 import { WikiCard } from "@/components/wiki-card";
+import { useRarityLabel } from "@/lib/labels";
 import { RARITY_COLOR } from "@/lib/rarity-ui";
 import { apiCall } from "@/lib/tags-api";
 
@@ -37,6 +39,10 @@ const STAGE = [
 ];
 
 export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: string }) {
+  const t = useTranslations("albums");
+  const tc = useTranslations("common");
+  const tCards = useTranslations("cards");
+  const rarityLabel = useRarityLabel();
   const router = useRouter();
   const { album } = data;
   const { confirm, dialog: confirmDialog } = useConfirm();
@@ -87,9 +93,9 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
 
   async function remove() {
     const ok = await confirm({
-      title: `Supprimer l'album « ${album.name} » ?`,
-      message: "Les cartes restent dans votre collection, seul le classeur disparaît.",
-      confirmLabel: "Supprimer",
+      title: t("delete.title", { name: album.name }),
+      message: t("delete.message"),
+      confirmLabel: tc("delete"),
       danger: true,
     });
     if (!ok) return;
@@ -101,9 +107,9 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
   async function takeOut() {
     const ids = [...picked];
     const ok = await confirm({
-      title: `Retirer ${ids.length} carte${ids.length > 1 ? "s" : ""} de l'album ?`,
-      message: "Elles restent dans votre collection.",
-      confirmLabel: "Retirer",
+      title: t("takeOutTitle", { count: ids.length }),
+      message: t("takeOutMessage"),
+      confirmLabel: t("takeOutConfirm"),
       danger: true,
     });
     if (!ok) return;
@@ -127,13 +133,13 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
       {confirmDialog}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link href="/albums" className={`${buttonClass} py-1.5!`}>
-          <ChevronLeft className="size-4" /> Albums
+          <ChevronLeft className="size-4" /> {t("back")}
         </Link>
         <div className="flex gap-2">
           <button
             type="button"
-            aria-label="Renommer l'album"
-            title="Renommer"
+            aria-label={t("rename.label")}
+            title={t("rename.button")}
             onClick={() => {
               setName(album.name);
               setError(null);
@@ -145,8 +151,8 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
           </button>
           <button
             type="button"
-            aria-label="Supprimer l'album"
-            title="Supprimer"
+            aria-label={t("delete.label")}
+            title={t("delete.button")}
             onClick={() => void remove()}
             className={`${buttonClass} px-3! text-danger!`}
           >
@@ -157,7 +163,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
 
       <h1 className="mt-6 font-display text-4xl font-medium">{album.name}</h1>
       <p className="text-sm text-fog">
-        Mon album · {data.count} carte{data.count > 1 ? "s" : ""}
+        {t("mine", { count: data.count })}
       </p>
       {error && (
         <p role="alert" className="mt-3 text-sm text-danger">
@@ -166,9 +172,9 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
       )}
 
       {data.highlights.length > 0 && (
-        <section className="mt-8" aria-label="Pièces maîtresses">
+        <section className="mt-8" aria-label={t("highlights")}>
           <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-fog">
-            Pièces maîtresses
+            {t("highlights")}
           </h2>
           <div className="mt-4 flex h-96 items-center justify-center overflow-hidden rounded-xl border border-line bg-surface">
             <div className="relative flex w-40 items-center justify-center sm:w-48">
@@ -176,7 +182,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
                 <button
                   key={card.id}
                   type="button"
-                  aria-label={`Voir ${card.title}`}
+                  aria-label={t("view", { title: card.title })}
                   onClick={() => setSelectedId(card.id)}
                   className={`absolute w-full transition-transform duration-300 hover:-translate-y-2 ${STAGE[i]}`}
                 >
@@ -191,14 +197,14 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
       <section className="mt-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-fog">
-            Album complet
+            {t("full")}
             <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-[11px] tabular-nums">
               {data.count}
             </span>
           </h2>
           <div className="flex gap-2">
             <button type="button" className={primaryButtonClass} onClick={() => setAdding(true)}>
-              <Plus className="size-4" /> Ajouter
+              <Plus className="size-4" /> {tc("add")}
             </button>
             <button
               type="button"
@@ -210,7 +216,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
               }}
               className={`${buttonClass} ${selectMode ? "bg-accent! text-accent-foreground!" : ""}`}
             >
-              {selectMode ? "Terminer" : "Sélectionner"}
+              {selectMode ? t("selectDone") : t("select")}
             </button>
           </div>
         </div>
@@ -221,13 +227,13 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Chercher une carte (nom ou sous-titre)"
-            aria-label="Chercher dans l'album"
+            placeholder={t("searchPlaceholder")}
+            aria-label={t("searchLabel")}
             className="w-full rounded-full border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
           />
         </div>
 
-        <nav aria-label="Filtrer par rareté" className="mt-3 flex flex-wrap items-center gap-1">
+        <nav aria-label={tCards("filterByRarity")} className="mt-3 flex flex-wrap items-center gap-1">
           {data.counts.map(({ rarity, count }) => {
             const info = RARITIES.find((r) => r.value === rarity)!;
             const active = data.rarities.includes(rarity);
@@ -238,7 +244,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
               <Link
                 key={rarity}
                 href={href(album.id, { q: data.query, rarities: next })}
-                title={`${info.label} : ${count}`}
+                title={t("rarityCount", { rarity: rarityLabel(info.value), count })}
                 aria-pressed={active}
                 style={{ color: RARITY_COLOR[rarity] }}
                 className={`flex min-w-11 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold transition hover:bg-foreground/10 aria-pressed:bg-foreground/15 ${
@@ -257,16 +263,14 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
               href={href(album.id, { q: data.query })}
               className="ml-2 text-xs opacity-60 hover:opacity-100"
             >
-              Réinitialiser
+              {tCards("resetFilters")}
             </Link>
           )}
         </nav>
 
         {data.cards.length === 0 ? (
           <p className="mt-10 text-center opacity-60">
-            {data.count === 0
-              ? "Cet album est vide : ajoutez-y des cartes de votre collection."
-              : "Aucune carte ne correspond à ces filtres."}
+            {data.count === 0 ? t("emptyAlbum") : t("noMatch")}
           </p>
         ) : (
           <div
@@ -278,7 +282,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
                 <div key={card.id} className="relative">
                   <button
                     type="button"
-                    aria-label={selectMode ? `Sélectionner ${card.title}` : `Voir ${card.title}`}
+                    aria-label={t(selectMode ? "selectCard" : "view", { title: card.title })}
                     aria-pressed={selectMode ? isPicked : undefined}
                     onClick={() => (selectMode ? toggle(card) : setSelectedId(card.id))}
                     className={`block w-full rounded-[9.6%/6.5%] outline-none transition hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-accent ${
@@ -306,11 +310,11 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
         )}
 
         {data.totalPages > 1 && (
-          <nav aria-label="Pagination" className="mt-8 flex items-center justify-center gap-4">
+          <nav aria-label={tc("pagination.label")} className="mt-8 flex items-center justify-center gap-4">
             {data.page > 1 ? (
               <Link
                 href={href(album.id, { ...base, page: data.page - 1 })}
-                aria-label="Page précédente"
+                aria-label={tc("pagination.previous")}
                 className={`${buttonClass} px-3!`}
               >
                 <ChevronLeft className="size-4" />
@@ -326,7 +330,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
             {data.page < data.totalPages ? (
               <Link
                 href={href(album.id, { ...base, page: data.page + 1 })}
-                aria-label="Page suivante"
+                aria-label={tc("pagination.next")}
                 className={`${buttonClass} px-3!`}
               >
                 <ChevronRight className="size-4" />
@@ -343,11 +347,10 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
       {selectMode && picked.size > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-center gap-3 border-t border-line bg-surface/95 p-3 backdrop-blur">
           <span className="text-sm">
-            {picked.size} carte{picked.size > 1 ? "s" : ""} sélectionnée
-            {picked.size > 1 ? "s" : ""}
+            {t("selected", { count: picked.size })}
           </span>
           <button type="button" className={dangerButtonClass} onClick={() => void takeOut()}>
-            Retirer de l&apos;album
+            {t("takeOut")}
           </button>
         </div>
       )}
@@ -381,7 +384,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
         onClick={(e) => e.target === renameDialog.current && renameDialog.current.close()}
         className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-line bg-surface p-6 text-foreground backdrop:bg-black/70"
       >
-        <h2 className="text-lg font-bold">Renommer l&apos;album</h2>
+        <h2 className="text-lg font-bold">{t("rename.title")}</h2>
         <form
           className="mt-4 flex flex-col gap-3"
           onSubmit={(e) => {
@@ -393,7 +396,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={ALBUM_NAME_MAX}
-            aria-label="Nouveau nom"
+            aria-label={t("rename.newName")}
             className="rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
           />
           {error && (
@@ -407,10 +410,10 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
               className={buttonClass}
               onClick={() => renameDialog.current?.close()}
             >
-              Annuler
+              {tc("cancel")}
             </button>
             <button type="submit" className={primaryButtonClass} disabled={!name.trim() || busy}>
-              Enregistrer
+              {tc("save")}
             </button>
           </div>
         </form>

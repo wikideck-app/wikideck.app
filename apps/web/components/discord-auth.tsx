@@ -2,17 +2,17 @@
 
 import { ArrowRight, Check, Info } from "@/components/icons";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-const ERRORS: Record<string, string> = {
-  denied: "Connexion Discord annulée.",
-  state: "La session de connexion a expiré, réessayez.",
-  token: "Discord a refusé la connexion, réessayez.",
-  profile: "Impossible de récupérer votre profil Discord.",
-  banned: "Ce compte est suspendu. Contactez l'équipe du site pour en savoir plus.",
-};
+const ERROR_KEYS = ["denied", "state", "token", "profile", "banned"] as const;
+const isErrorKey = (value: string): value is (typeof ERROR_KEYS)[number] =>
+  (ERROR_KEYS as readonly string[]).includes(value);
+
+const legalLink = "font-bold text-foreground underline underline-offset-2";
 
 export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string }) {
+  const t = useTranslations("auth");
   const [accepted, setAccepted] = useState(false);
   const [missing, setMissing] = useState(false);
 
@@ -23,15 +23,15 @@ export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string 
 
   return (
     <div className="on-light w-full max-w-sm rounded-xl bg-surface p-8 shadow-(--shadow-float)">
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-fog">Connexion</p>
-      <h2 className="font-display mt-3 text-3xl font-medium">Rejoignez Wikideck</h2>
+      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-fog">{t("eyebrow")}</p>
+      <h2 className="font-display mt-3 text-3xl font-medium">{t("title")}</h2>
       <p className="mt-3 font-serif text-[15px] leading-[1.7] text-pale-mist">
-        Un seul clic : votre compte est créé à la première connexion.
+        {t("intro")}
       </p>
 
       {error && (
         <p role="alert" className="mt-5 rounded-lg bg-danger/10 p-3 text-sm text-danger">
-          {ERRORS[error] ?? "Une erreur est survenue."}
+          {t(`errors.${error !== undefined && isErrorKey(error) ? error : "unknown"}`)}
         </p>
       )}
 
@@ -65,38 +65,31 @@ export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string 
           />
         </span>
         <span className="text-sm leading-snug text-pale-mist">
-          J&apos;ai <strong className="font-bold text-foreground">18 ans ou plus</strong> et
-          j&apos;accepte les{" "}
-          <Link
-            href="/terms"
-            target="_blank"
-            onClick={(e) => e.stopPropagation()}
-            className="font-bold text-foreground underline underline-offset-2"
-          >
-            conditions d&apos;utilisation
-          </Link>{" "}
-          et la{" "}
-          <Link
-            href="/privacy"
-            target="_blank"
-            onClick={(e) => e.stopPropagation()}
-            className="font-bold text-foreground underline underline-offset-2"
-          >
-            politique de confidentialité
-          </Link>
-          .
+          {t.rich("consent", {
+            strong: (chunks) => <strong className="font-bold text-foreground">{chunks}</strong>,
+            terms: (chunks) => (
+              <Link href="/terms" target="_blank" onClick={(e) => e.stopPropagation()} className={legalLink}>
+                {chunks}
+              </Link>
+            ),
+            privacy: (chunks) => (
+              <Link href="/privacy" target="_blank" onClick={(e) => e.stopPropagation()} className={legalLink}>
+                {chunks}
+              </Link>
+            ),
+          })}
         </span>
       </label>
 
       {missing && !accepted && (
         <p role="alert" className="mt-2 text-xs text-danger">
-          Cochez la case pour continuer.
+          {t("consentMissing")}
         </p>
       )}
 
       <p className="mt-3 flex gap-2 text-xs leading-relaxed text-fog">
         <Info className="mt-0.5 size-3.5 shrink-0" />
-        Les cartes proviennent de Wikipédia et peuvent inclure du contenu sensible.
+        {t("sensitive")}
       </p>
 
       <button
@@ -109,7 +102,7 @@ export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string 
             : "border border-line text-fog hover:border-accent"
         }`}
       >
-        Continuer avec Discord
+        {t("continue")}
         <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
       </button>
     </div>

@@ -1,4 +1,5 @@
-import type { DocSection, Endpoint, Field, Method } from "@/lib/api-docs";
+import { getTranslations } from "next-intl/server";
+import type { DocSection, Endpoint, Method } from "@/lib/api-docs";
 
 const METHOD_STYLE: Record<Method, string> = {
   GET: "bg-success/15 text-success",
@@ -8,17 +9,31 @@ const METHOD_STYLE: Record<Method, string> = {
   DELETE: "bg-danger/15 text-danger",
 };
 
-function Fields({ title, fields }: { title: string; fields: Field[] }) {
+type DocsTranslator = Awaited<ReturnType<typeof getTranslations<"docs">>>;
+
+// les noms de champs viennent de la structure (api-docs.ts) : le test i18n vérifie que chacun a un texte
+const fieldText = (t: DocsTranslator, key: Endpoint["key"], group: "query" | "body", name: string) =>
+  t(`endpoints.${key}.${group}.${name}` as never);
+
+function Fields({
+  title,
+  names,
+  describe,
+}: {
+  title: string;
+  names: string[];
+  describe: (name: string) => string;
+}) {
   return (
     <div className="mt-3">
       <p className="text-xs font-bold uppercase tracking-[0.15em] text-fog">{title}</p>
       <dl className="mt-1.5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-        {fields.map(([name, description]) => (
+        {names.map((name) => (
           <div key={name} className="contents">
             <dt>
               <code className="rounded bg-foreground/10 px-1.5 py-0.5 text-xs">{name}</code>
             </dt>
-            <dd className="min-w-0 text-pale-mist">{description}</dd>
+            <dd className="min-w-0 text-pale-mist">{describe(name)}</dd>
           </div>
         ))}
       </dl>
@@ -26,7 +41,7 @@ function Fields({ title, fields }: { title: string; fields: Field[] }) {
   );
 }
 
-function EndpointCard({ endpoint, id }: { endpoint: Endpoint; id: string }) {
+function EndpointCard({ endpoint, id, t }: { endpoint: Endpoint; id: string; t: DocsTranslator }) {
   return (
     <li id={id} className="scroll-mt-20 rounded-xl border border-line bg-surface p-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -37,21 +52,39 @@ function EndpointCard({ endpoint, id }: { endpoint: Endpoint; id: string }) {
         </span>
         <code className="min-w-0 break-all text-sm font-semibold">{endpoint.path}</code>
         {endpoint.limit && (
-          <span className="ml-auto text-xs tabular-nums text-fog">{endpoint.limit}</span>
+          <span className="ml-auto text-xs tabular-nums text-fog">
+            {t("reference.limit", { max: endpoint.limit.max, minutes: endpoint.limit.minutes })}
+          </span>
         )}
       </div>
-      <p className="mt-2 text-sm text-pale-mist">{endpoint.summary}</p>
-      {endpoint.query && <Fields title="Paramètres d'URL" fields={endpoint.query} />}
-      {endpoint.body && <Fields title="Corps JSON" fields={endpoint.body} />}
+      <p className="mt-2 text-sm text-pale-mist">{t(`endpoints.${endpoint.key}.summary`)}</p>
+      {endpoint.query && (
+        <Fields
+          title={t("reference.query")}
+          names={endpoint.query}
+          describe={(name) => fieldText(t, endpoint.key, "query", name)}
+        />
+      )}
+      {endpoint.body && (
+        <Fields
+          title={t("reference.body")}
+          names={endpoint.body}
+          describe={(name) => fieldText(t, endpoint.key, "body", name)}
+        />
+      )}
       {endpoint.returns && (
         <p className="mt-3 text-sm">
-          <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">Réponse </span>
+          <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">
+            {t("reference.response")}{" "}
+          </span>
           <code className="rounded bg-foreground/10 px-1.5 py-0.5 text-xs">{endpoint.returns}</code>
         </p>
       )}
       {endpoint.errors && (
         <p className="mt-3 flex flex-wrap items-center gap-1.5 text-sm">
-          <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">Erreurs</span>
+          <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">
+            {t("reference.errors")}
+          </span>
           {endpoint.errors.map((e) => (
             <code key={e} className="rounded bg-foreground/10 px-1.5 py-0.5 text-xs">
               {e}
@@ -63,29 +96,35 @@ function EndpointCard({ endpoint, id }: { endpoint: Endpoint; id: string }) {
   );
 }
 
-export function ApiReference({ sections }: { sections: DocSection[] }) {
+export async function ApiReference({ sections }: { sections: DocSection[] }) {
+  const t = await getTranslations("docs");
   return (
     <>
-      <nav aria-label="Sections" className="mt-8 flex flex-wrap gap-2">
+      <nav aria-label={t("reference.sections")} className="mt-8 flex flex-wrap gap-2">
         {sections.map((s) => (
           <a
             key={s.id}
             href={`#${s.id}`}
             className="rounded-full border border-line px-3 py-1 text-xs font-semibold text-pale-mist hover:border-accent hover:text-foreground"
           >
-            {s.title}
+            {t(`sections.${s.id}.title`)}
           </a>
         ))}
       </nav>
       {sections.map((section) => (
         <section key={section.id} id={section.id} className="mt-12 scroll-mt-20">
-          <h2 className="font-display text-3xl font-medium">{section.title}</h2>
-          {section.intro && <p className="prose-serif mt-2 text-pale-mist">{section.intro}</p>}
+          <h2 className="font-display text-3xl font-medium">{t(`sections.${section.id}.title`)}</h2>
+          {t.has(`sections.${section.id}.intro` as never) && (
+            <p className="prose-serif mt-2 text-pale-mist">
+              {t(`sections.${section.id}.intro` as never)}
+            </p>
+          )}
           <ul className="mt-5 flex flex-col gap-3">
             {section.endpoints.map((e) => (
               <EndpointCard
-                key={`${e.method}${e.path}`}
+                key={e.key}
                 endpoint={e}
+                t={t}
                 id={`${section.id}-${e.method.toLowerCase()}-${e.path.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}`}
               />
             ))}

@@ -2,6 +2,7 @@
 
 import { ArrowLeftRight, Ban, Check, Hourglass, Plus, X, type IconType } from "@/components/icons";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
@@ -18,34 +19,28 @@ import { useLiveEvents } from "@/lib/push";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 import { ComposeDialog } from "./compose-dialog";
 
-const TABS: { box: TradeBox; label: string }[] = [
-  { box: "incoming", label: "Reçues" },
-  { box: "outgoing", label: "Envoyées" },
-  { box: "history", label: "Historique" },
-];
+const currentTime = () => Date.now();
 
-const STATUS: Record<TradeDto["status"], { label: string; icon: IconType; tone: string }> = {
-  PENDING: { label: "En attente", icon: Hourglass, tone: "border-accent/40 bg-accent/5" },
-  ACCEPTED: {
-    label: "Acceptée",
-    icon: Check,
-    tone: "border-accent bg-accent text-accent-foreground",
-  },
-  DECLINED: { label: "Refusée", icon: X, tone: "border-danger/60 bg-danger/10 text-danger" },
-  CANCELLED: { label: "Annulée", icon: Ban, tone: "border-line text-fog" },
-  EXPIRED: { label: "Expirée", icon: Hourglass, tone: "border-line text-fog" },
+const TABS: TradeBox[] = ["incoming", "outgoing", "history"];
+
+const STATUS: Record<TradeDto["status"], { icon: IconType; tone: string }> = {
+  PENDING: { icon: Hourglass, tone: "border-accent/40 bg-accent/5" },
+  ACCEPTED: { icon: Check, tone: "border-accent bg-accent text-accent-foreground" },
+  DECLINED: { icon: X, tone: "border-danger/60 bg-danger/10 text-danger" },
+  CANCELLED: { icon: Ban, tone: "border-line text-fog" },
+  EXPIRED: { icon: Hourglass, tone: "border-line text-fog" },
 };
 
-function remaining(expiresAt: string) {
-  const ms = new Date(expiresAt).getTime() - Date.now();
-  if (ms <= 0) return "expire bientôt";
-  const hours = Math.floor(ms / 3_600_000);
-  if (hours < 1) return "expire dans moins d'1 h";
-  return hours < 48 ? `expire dans ${hours} h` : `expire dans ${Math.floor(hours / 24)} j`;
-}
-
 function StatusBadge({ trade }: { trade: TradeDto }) {
-  const { label, icon: Icon, tone } = STATUS[trade.status];
+  const t = useTranslations("trades");
+  const format = useFormatter();
+  const { icon: Icon, tone } = STATUS[trade.status];
+  const expires = new Date(trade.expiresAt);
+  const now = currentTime();
+  const remaining =
+    expires.getTime() <= now
+      ? t("expiresSoon")
+      : t("expires", { time: format.relativeTime(expires, now) });
   const pending = trade.status === "PENDING";
   return (
     <span
@@ -59,26 +54,17 @@ function StatusBadge({ trade }: { trade: TradeDto }) {
       ) : (
         <Icon aria-hidden className="size-3.5" strokeWidth={3} />
       )}
-      {label}
+      {t(`status.${trade.status}`)}
       {pending && (
         <span suppressHydrationWarning className="font-medium text-pale-mist">
-          · {remaining(trade.expiresAt)}
+          · {remaining}
         </span>
       )}
     </span>
   );
 }
 
-const ERRORS: Record<string, string> = {
-  not_available: "Une des cartes n'est plus disponible : l'échange n'a pas eu lieu.",
-  already_resolved: "Cette proposition a déjà été traitée.",
-  expired: "Cette proposition a expiré.",
-  busy: "Le serveur est occupé, réessayez.",
-};
-
 const SWAP_MS = 2200;
-
-const dateFmt = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 function CardStrip({
   title,
@@ -89,6 +75,8 @@ function CardStrip({
   cards: TradeCard[];
   side: "left" | "right";
 }) {
+  const t = useTranslations("trades");
+  const count = cards.reduce((n, c) => n + c.quantity, 0);
   const size =
     cards.length > 4 ? "w-28 sm:w-32" : cards.length > 2 ? "w-32 sm:w-36" : "w-36 sm:w-44";
   return (
@@ -98,12 +86,11 @@ function CardStrip({
       <h4 className="flex items-baseline justify-between text-xs font-bold uppercase tracking-[0.15em] text-fog">
         {title}
         <span className="tabular-nums">
-          {cards.reduce((n, c) => n + c.quantity, 0)} carte
-          {cards.reduce((n, c) => n + c.quantity, 0) > 1 ? "s" : ""}
+          {t("cards", { count })}
         </span>
       </h4>
       {cards.length === 0 ? (
-        <p className="py-16 text-center text-sm text-fog">Rien</p>
+        <p className="py-16 text-center text-sm text-fog">{t("nothing")}</p>
       ) : (
         <ul className="mt-4 flex flex-wrap gap-4 pb-2 pt-3">
           {cards.map((c, i) => (
@@ -146,6 +133,8 @@ function TradeRow({
   swapping: boolean;
   onAct: (action: "accept" | "decline" | "cancel") => void;
 }) {
+  const t = useTranslations("trades");
+  const format = useFormatter();
   const p = trade.counterparty;
   const row = useRef<HTMLLIElement>(null);
 
@@ -184,31 +173,23 @@ function TradeRow({
           )}
           <div>
             <p className="text-sm font-bold">
-              {trade.role === "recipient" ? (
-                <>
-                  <Link href={`/profile/${p.id}`} className="hover:underline">
-                    {p.username}
-                  </Link>{" "}
-                  vous propose
-                </>
-              ) : (
-                <>
-                  Vous →{" "}
+              {t.rich(trade.role === "recipient" ? "proposes" : "youTo", {
+                player: () => (
                   <Link href={`/profile/${p.id}`} className="hover:underline">
                     {p.username}
                   </Link>
-                </>
-              )}
+                ),
+              })}
             </p>
-            <p className="text-xs text-fog">{dateFmt.format(new Date(trade.createdAt))}</p>
+            <p className="text-xs text-fog">{format.dateTime(new Date(trade.createdAt), "mediumTime")}</p>
           </div>
         </div>
         <StatusBadge trade={swapping ? { ...trade, status: "ACCEPTED" } : trade} />
       </div>
 
       <div className="relative mt-6 grid gap-4 sm:grid-cols-2 sm:gap-8">
-        <CardStrip title="Vous donnez" cards={trade.give} side="left" />
-        <CardStrip title="Vous recevez" cards={trade.receive} side="right" />
+        <CardStrip title={t("give")} cards={trade.give} side="left" />
+        <CardStrip title={t("receive")} cards={trade.receive} side="right" />
         <Versus burst={swapping} />
       </div>
 
@@ -222,7 +203,7 @@ function TradeRow({
                 className={buttonClass}
                 onClick={() => onAct("decline")}
               >
-                Refuser
+                {t("decline")}
               </button>
               <button
                 type="button"
@@ -230,7 +211,7 @@ function TradeRow({
                 className={primaryButtonClass}
                 onClick={() => onAct("accept")}
               >
-                Accepter
+                {t("accept")}
               </button>
             </>
           ) : (
@@ -240,7 +221,7 @@ function TradeRow({
               className={dangerButtonClass}
               onClick={() => onAct("cancel")}
             >
-              Annuler la proposition
+              {t("cancel")}
             </button>
           )}
         </div>
@@ -258,6 +239,8 @@ export function TradesView({
   initial: TradeDto[] | null;
   initialRecipient?: PlayerSummary;
 }) {
+  const t = useTranslations("trades");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [box, setBox] = useState<TradeBox>("incoming");
   const [trades, setTrades] = useState<TradeDto[] | null>(initial);
@@ -286,7 +269,6 @@ export function TradesView({
       hasInitial.current = false;
       return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTrades(null);
     void load(box);
   }, [box, load]);
@@ -297,7 +279,13 @@ export function TradesView({
     setBusyId(trade.id);
     setError(null);
     const result = await apiCall(apiUrl, `/trades/${trade.id}/${action}`, "POST");
-    if (!result.ok) setError((result.code && ERRORS[result.code]) || result.message);
+    if (!result.ok) {
+      setError(
+        result.code && t.has(`errors.${result.code}` as never)
+          ? t(`errors.${result.code}` as never)
+          : result.message,
+      );
+    }
     if (result.ok && action === "accept") {
       setSwappingId(trade.id);
       sfx.trade();
@@ -313,30 +301,30 @@ export function TradesView({
     <div className="mx-auto max-w-5xl">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-5xl font-medium">Échanges</h1>
+          <h1 className="font-display text-5xl font-medium">{t("title")}</h1>
           <p className="prose-serif mt-2 text-pale-mist">
-            Proposez des cartes à un autre joueur, en échange des siennes.
+            {t("subtitle")}
           </p>
         </div>
         <button type="button" className={primaryButtonClass} onClick={() => setComposing(true)}>
-          <Plus className="size-4" /> Proposer un échange
+          <Plus className="size-4" /> {t("propose")}
         </button>
       </div>
 
       <div role="tablist" className="mt-8 flex gap-2 border-b border-line">
-        {TABS.map((t) => (
+        {TABS.map((tab) => (
           <button
-            key={t.box}
+            key={tab}
             role="tab"
-            aria-selected={box === t.box}
-            onClick={() => setBox(t.box)}
+            aria-selected={box === tab}
+            onClick={() => setBox(tab)}
             className={`-mb-px border-b-2 px-4 py-2 text-sm font-bold transition-colors ${
-              box === t.box
+              box === tab
                 ? "border-accent text-foreground"
                 : "border-transparent text-fog hover:text-foreground"
             }`}
           >
-            {t.label}
+            {t(`tabs.${tab}`)}
           </button>
         ))}
       </div>
@@ -349,25 +337,21 @@ export function TradesView({
 
       <div className="mt-6">
         {trades === null ? (
-          <p className="py-10 text-center text-sm text-fog">Chargement…</p>
+          <p className="py-10 text-center text-sm text-fog">{tc("loading")}</p>
         ) : trades.length === 0 ? (
           <p className="py-10 text-center text-sm text-fog">
-            {box === "incoming"
-              ? "Aucune proposition reçue."
-              : box === "outgoing"
-                ? "Aucune proposition envoyée en attente."
-                : "Aucun échange terminé."}
+            {t(`emptyBox.${box}`)}
           </p>
         ) : (
           <ul key={box} className="flex flex-col gap-5">
-            {trades.map((t, i) => (
+            {trades.map((trade, i) => (
               <TradeRow
-                key={t.id}
-                trade={t}
+                key={trade.id}
+                trade={trade}
                 index={i}
-                busy={busyId === t.id}
-                swapping={swappingId === t.id}
-                onAct={(a) => act(t, a)}
+                busy={busyId === trade.id}
+                swapping={swappingId === trade.id}
+                onAct={(a) => act(trade, a)}
               />
             ))}
           </ul>

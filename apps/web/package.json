@@ -9,17 +9,21 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "icons": "node scripts/build-icons.mjs"
+    "icons": "node scripts/build-icons.mjs",
+    "lint:i18n": "node scripts/lint-i18n.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",
     "@wikideck/shared": "workspace:*",
     "next": "16.3.8",
+    "next-intl": "^4.14.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "three": "^0.186.1"
   },
   "devDependencies": {
+    "@formatjs/icu-messageformat-parser": "^3.5.21",
     "@iconify-json/ph": "^1.2.2",
     "@iconify/utils": "^3.1.7",
     "@tailwindcss/postcss": "^4.3.3",
@@ -30,7 +34,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "tailwindcss": "^4.3.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.3"
   },
   "packageManager": "pnpm@11.22.0"
 }

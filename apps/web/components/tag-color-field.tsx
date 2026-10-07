@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { normalizeTagColor, type TagColor } from "@wikideck/shared";
 import { TAG_COLORS } from "@wikideck/shared";
@@ -26,13 +27,15 @@ export function TagColorField({
   value,
   onChange,
   onCommit,
-  label = "Couleur",
+  label,
 }: {
   value: TagColor;
   onChange?: (color: TagColor) => void;
   onCommit?: (color: TagColor) => void;
   label?: string;
 }) {
+  const t = useTranslations("tags");
+  const name = label ?? t("color");
   const hex = toHex(value);
   const [text, setText] = useState<string | null>(null);
   const shown = text ?? hex;
@@ -52,7 +55,7 @@ export function TagColorField({
         <input
           type="color"
           value={hex}
-          aria-label={`${label} : sélecteur`}
+          aria-label={t("colorPicker", { label: name })}
           onChange={(e) => {
             setText(null);
             onChange?.(e.target.value);
@@ -65,7 +68,7 @@ export function TagColorField({
         value={shown}
         maxLength={7}
         spellCheck={false}
-        aria-label={`${label} : code hexadécimal`}
+        aria-label={t("colorHex", { label: name })}
         aria-invalid={invalid}
         placeholder="#a1b2c3"
         onChange={(e) => {
@@ -84,7 +87,7 @@ export function TagColorField({
       />
       {invalid && (
         <span role="alert" className="text-xs text-danger">
-          Code invalide
+          {t("invalidColor")}
         </span>
       )}
     </div>

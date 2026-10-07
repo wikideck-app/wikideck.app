@@ -1,0 +1,42 @@
+{
+  "cancel": "Annuler",
+  "confirm": "Confirmer",
+  "close": "Fermer",
+  "save": "Enregistrer",
+  "delete": "Supprimer",
+  "next": "Suivant",
+  "previous": "Précédent",
+  "loading": "Chargement…",
+  "send": "Envoyer",
+  "sending": "Envoi…",
+  "loadMore": "Charger plus",
+  "create": "Créer",
+  "add": "Ajouter",
+  "accept": "Accepter",
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Page précédente",
+    "next": "Page suivante",
+    "page": "Page <strong>{page}</strong> / {total}"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue.",
+    "network": "Impossible de joindre le serveur."
+  },
+  "notFound": {
+    "title": "Cette page n’existe pas",
+    "home": "Retour à l’accueil",
+    "browse": "Parcourir les cartes"
+  },
+  "ended": "Terminée",
+  "duration": {
+    "days": "{days} j {hours} h",
+    "hours": "{hours} h {minutes}",
+    "minutes": "{minutes} min {seconds} s",
+    "seconds": "{seconds} s"
+  },
+  "trustNotice": {
+    "title": "Fonctions temporairement indisponibles.",
+    "text": "Les échanges, cadeaux, enchères et gains de la Bataille sont suspendus pour ce compte. Si c’est une erreur, contactez l’équipe du site."
+  }
+}

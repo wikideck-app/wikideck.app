@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { TAG_NAME_MAX, type TagColor, type TagDto } from "@wikideck/shared";
@@ -20,6 +21,8 @@ export function TagEditor({
   allTags: TagDto[];
   onChange?: (cardTags: TagDto[], allTags: TagDto[]) => void;
 }) {
+  const t = useTranslations("tags");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [input, setInput] = useState("");
@@ -28,10 +31,10 @@ export function TagEditor({
   const [error, setError] = useState<string | null>(null);
 
   const name = input.trim();
-  const match = allTags.find((t) => t.name.toLowerCase() === name.toLowerCase());
-  const assigned = new Set(cardTags.map((t) => t.id));
+  const match = allTags.find((x) => x.name.toLowerCase() === name.toLowerCase());
+  const assigned = new Set(cardTags.map((x) => x.id));
   const suggestions = allTags
-    .filter((t) => !assigned.has(t.id) && t.name.toLowerCase().includes(name.toLowerCase()))
+    .filter((x) => !assigned.has(x.id) && x.name.toLowerCase().includes(name.toLowerCase()))
     .slice(0, 6);
 
   async function save(ids: string[], all = allTags) {
@@ -67,15 +70,15 @@ export function TagEditor({
 
   return (
     <div>
-      <h3 className="text-xs font-semibold uppercase tracking-wide opacity-60">Étiquettes</h3>
+      <h3 className="text-xs font-semibold uppercase tracking-wide opacity-60">{t("title")}</h3>
 
       {cardTags.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
-          {cardTags.map((t) => (
+          {cardTags.map((tag) => (
             <TagChip
-              key={t.id}
-              tag={t}
-              onRemove={() => save([...assigned].filter((id) => id !== t.id))}
+              key={tag.id}
+              tag={tag}
+              onRemove={() => save([...assigned].filter((id) => id !== tag.id))}
             />
           ))}
         </div>
@@ -84,7 +87,7 @@ export function TagEditor({
       <input
         value={input}
         maxLength={TAG_NAME_MAX}
-        placeholder="Ajouter une étiquette…"
+        placeholder={t("addPlaceholder")}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -98,13 +101,13 @@ export function TagEditor({
       {name && !match && (
         <div className="mt-2">
           <p className="text-xs opacity-60">
-            Nouvelle étiquette — choisissez sa couleur (sélecteur ou code hexadécimal) :
+            {t("newHint")}
           </p>
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             <TagColorField
               value={color}
               onChange={setColor}
-              label="Couleur de la nouvelle étiquette"
+              label={t("newColor")}
             />
             <button
               type="button"
@@ -112,7 +115,7 @@ export function TagEditor({
               disabled={busy}
               className="ml-auto rounded-lg bg-accent px-[18px] py-1 text-xs font-bold text-accent-foreground disabled:opacity-50"
             >
-              Créer
+              {tc("create")}
             </button>
           </div>
         </div>
@@ -120,14 +123,14 @@ export function TagEditor({
 
       {suggestions.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
-          {suggestions.map((t) => (
+          {suggestions.map((tag) => (
             <button
-              key={t.id}
+              key={tag.id}
               type="button"
-              onClick={() => void add(t)}
+              onClick={() => void add(tag)}
               className="opacity-80 hover:opacity-100"
             >
-              <TagChip tag={t} />
+              <TagChip tag={tag} />
             </button>
           ))}
         </div>

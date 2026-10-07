@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Search, X } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import {
   ALBUM_ADD_BATCH,
@@ -10,6 +11,7 @@ import {
 } from "@wikideck/shared";
 import { buttonClass, primaryButtonClass } from "@/components/settings/controls";
 import { WikiCard } from "@/components/wiki-card";
+import { useRarityLabel } from "@/lib/labels";
 import { RARITY_COLOR } from "@/lib/rarity-ui";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
@@ -24,6 +26,10 @@ export function AlbumAddDialog({
   onClose: () => void;
   onDone: () => void;
 }) {
+  const t = useTranslations("albums.addDialog");
+  const tAlbums = useTranslations("albums");
+  const tc = useTranslations("common");
+  const rarityLabel = useRarityLabel();
   const [search, setSearch] = useState("");
   const [rarities, setRarities] = useState<string[]>([]);
   const [page, setPage] = useState(1);
@@ -97,16 +103,15 @@ export function AlbumAddDialog({
     >
       <button
         type="button"
-        aria-label="Fermer"
+        aria-label={tc("close")}
         onClick={(e) => e.currentTarget.closest("dialog")?.close()}
         className="absolute right-4 top-4 opacity-60 hover:opacity-100"
       >
         <X className="size-5" />
       </button>
-      <h2 className="text-lg font-bold">Ajouter des cartes à l&apos;album</h2>
+      <h2 className="text-lg font-bold">{t("title")}</h2>
       <p className="mt-1 text-sm text-fog">
-        Vos cartes qui n&apos;y sont pas encore. {room} place{room > 1 ? "s" : ""} restante
-        {room > 1 ? "s" : ""}.
+        {t("intro", { count: room })}
       </p>
 
       <div className="relative mt-4 max-w-md">
@@ -118,8 +123,8 @@ export function AlbumAddDialog({
             setSearch(e.target.value);
             setPage(1);
           }}
-          placeholder="Chercher une carte (nom ou sous-titre)"
-          aria-label="Chercher une carte à ajouter"
+          placeholder={tAlbums("searchPlaceholder")}
+          aria-label={t("searchLabel")}
           className="w-full rounded-full border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
         />
       </div>
@@ -130,7 +135,7 @@ export function AlbumAddDialog({
             <button
               key={r.value}
               type="button"
-              title={r.label}
+              title={rarityLabel(r.value)}
               aria-pressed={active}
               onClick={() => {
                 setRarities((prev) =>
@@ -153,18 +158,18 @@ export function AlbumAddDialog({
           disabled={!data?.cards.length}
           onClick={selectPage}
         >
-          Tout sélectionner sur cette page
+          {t("selectPage")}
         </button>
       </div>
 
       <div className="mt-4 min-h-0 flex-1 overflow-y-auto pr-1">
         {!data ? (
-          <p className="py-10 text-center text-sm text-fog">Chargement…</p>
+          <p className="py-10 text-center text-sm text-fog">{tc("loading")}</p>
         ) : data.cards.length === 0 ? (
           <p className="py-10 text-center text-sm text-fog">
             {data.total === 0 && !search && !rarities.length
-              ? "Toutes vos cartes sont déjà dans cet album."
-              : "Aucune carte ne correspond."}
+              ? t("allIn")
+              : t("noMatch")}
           </p>
         ) : (
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
@@ -175,7 +180,7 @@ export function AlbumAddDialog({
                   key={card.id}
                   type="button"
                   aria-pressed={isPicked}
-                  aria-label={`${isPicked ? "Désélectionner" : "Sélectionner"} ${card.title}`}
+                  aria-label={t(isPicked ? "deselect" : "select", { title: card.title })}
                   disabled={!isPicked && full}
                   onClick={() => toggle(card)}
                   className={`relative rounded-[9.6%/6.5%] outline-none transition focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-40 ${
@@ -208,7 +213,7 @@ export function AlbumAddDialog({
             disabled={page <= 1}
             onClick={() => setPage((p) => p - 1)}
           >
-            Précédent
+            {tc("previous")}
           </button>
           <span>
             {data?.page ?? 1} / {data?.totalPages ?? 1}
@@ -219,7 +224,7 @@ export function AlbumAddDialog({
             disabled={!data || page >= data.totalPages}
             onClick={() => setPage((p) => p + 1)}
           >
-            Suivant
+            {tc("next")}
           </button>
         </div>
         <button
@@ -228,7 +233,7 @@ export function AlbumAddDialog({
           disabled={picked.size === 0 || busy}
           onClick={() => void add()}
         >
-          {busy ? "Ajout…" : `Ajouter ${picked.size} carte${picked.size > 1 ? "s" : ""}`}
+          {busy ? t("adding") : t("addCount", { count: picked.size })}
         </button>
       </div>
     </dialog>

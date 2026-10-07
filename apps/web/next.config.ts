@@ -1,5 +1,8 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const LEGACY_ROUTES: Record<string, string> = {
   paquets: "packs",
@@ -31,4 +34,4 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(process.cwd(), "../.."),
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

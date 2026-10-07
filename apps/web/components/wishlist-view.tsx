@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
@@ -8,6 +9,7 @@ import { CardDetail } from "@/components/card-detail";
 import { WikiCard } from "@/components/wiki-card";
 
 export function WishlistView({ data, apiUrl }: { data: WishlistResponse; apiUrl: string }) {
+  const t = useTranslations("wishlist");
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = data.cards.find((c) => c.id === selectedId);
@@ -17,14 +19,14 @@ export function WishlistView({ data, apiUrl }: { data: WishlistResponse; apiUrl:
     <>
       <p className="mt-3 text-center text-sm text-pale-mist">
         {data.cards.length === 0
-          ? "Marquez des cartes avec le cœur pour les retrouver ici."
-          : `${data.cards.length} / ${data.max} cartes · il vous en manque ${missing}.`}
+          ? t("empty")
+          : t("summary", { count: data.cards.length, max: data.max, missing })}
       </p>
 
       {data.cards.length === 0 ? (
         <p className="mt-10 text-center">
           <Link href="/cards" className="underline hover:text-foreground">
-            Parcourir toutes les cartes
+            {t("browse")}
           </Link>
         </p>
       ) : (
@@ -33,7 +35,7 @@ export function WishlistView({ data, apiUrl }: { data: WishlistResponse; apiUrl:
             <button
               key={card.id}
               type="button"
-              aria-label={`Voir ${card.title}`}
+              aria-label={t("view", { title: card.title })}
               onClick={() => setSelectedId(card.id)}
               className="relative rounded-[9.6%/6.5%] text-left outline-none transition hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-accent"
             >
@@ -43,7 +45,7 @@ export function WishlistView({ data, apiUrl }: { data: WishlistResponse; apiUrl:
                   card.quantity > 0 ? "bg-success/90" : "bg-black/75"
                 }`}
               >
-                {card.quantity > 0 ? `Possédée ×${card.quantity}` : "Il me manque"}
+                {card.quantity > 0 ? t("owned", { count: card.quantity }) : t("missing")}
               </span>
             </button>
           ))}

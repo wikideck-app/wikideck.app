@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import {
   IMPORT_BATCH_SIZE,
@@ -8,7 +9,7 @@ import {
   WIKI_MASTERS_ORIGINS,
   type ImportBatchResponse,
 } from "@wikideck/shared";
-import { bookmarkletHref } from "@/lib/bookmarklet";
+import { BOOKMARKLET_KEYS, bookmarkletHref, type BookmarkletStrings } from "@/lib/bookmarklet";
 import { apiCall } from "@/lib/tags-api";
 
 type Phase = "idle" | "reading" | "read" | "importing" | "done" | "error";
@@ -20,20 +21,19 @@ type Totals = {
   otherLanguage: number;
 };
 
-const READ_ERRORS: Record<string, string> = {
-  login: "Vous n'êtes pas connecté à Wiki-Masters. Connectez-vous, puis relancez le favori.",
-  format: "Wiki-Masters a changé : l'import ne sait plus lire votre collection.",
-  down: "Wiki-Masters ne répond pas. Réessayez dans un moment.",
-  cancelled: "Import annulé depuis Wiki-Masters.",
-};
+const READ_ERROR_KEYS = ["login", "format", "down", "cancelled"] as const;
+type ReadError = (typeof READ_ERROR_KEYS)[number];
+const readError = (reason: string): ReadError =>
+  (READ_ERROR_KEYS as readonly string[]).includes(reason) ? (reason as ReadError) : "down";
 
 const QUEUE_RETRY_MS = 4000;
 const QUEUE_MAX_TRIES = 20;
 const RETRYABLE = [429, 500, 502, 503];
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const fmt = new Intl.NumberFormat("fr-FR");
 
 export function ImportWizard({ apiUrl }: { apiUrl: string }) {
+  const t = useTranslations("importer");
+  const locale = useLocale();
   const linkRef = useRef<HTMLAnchorElement>(null);
   const entries = useRef(new Map<string, Entry>());
   const [phase, setPhase] = useState<Phase>("idle");
@@ -48,11 +48,19 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
   });
   const [hint, setHint] = useState(false);
   const [waiting, setWaiting] = useState(false);
+  const [errorKey, setErrorKey] = useState<ReadError | null>(null);
   const [counts, setCounts] = useState({ distinct: 0, french: 0 });
 
   useEffect(() => {
-    linkRef.current?.setAttribute("href", bookmarkletHref(location.origin));
-  }, []);
+    // les textes du favori sont traduits ici : le script les reçoit tout faits
+    const strings = Object.fromEntries(
+      BOOKMARKLET_KEYS.map((key) => [
+        key,
+        t(`bookmarklet.${key}`, { total: "{total}", read: "{read}", max: "{max}" }),
+      ]),
+    ) as BookmarkletStrings;
+    linkRef.current?.setAttribute("href", bookmarkletHref(location.origin, strings, locale));
+  }, [t, locale]);
 
   useEffect(() => {
     function onMessage(e: MessageEvent) {
@@ -79,13 +87,15 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
         }
         setPhase((p) => (p === "idle" || p === "error" ? "reading" : p));
         setError(null);
+        setErrorKey(null);
         const all = [...entries.current.values()];
         setCounts({ distinct: all.length, french: all.filter((e) => e.lang === "fr").length });
         setRead({ cards: all.length, total: Number(d.total) || 0 });
       } else if (d.type === "done") {
         setPhase("read");
       } else if (d.type === "error") {
-        setError(READ_ERRORS[String(d.reason)] ?? READ_ERRORS.down);
+        setErrorKey(readError(String(d.reason)));
+        setError(null);
         setPhase("error");
       }
     }
@@ -135,7 +145,7 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
           stopped = true;
           setError(
             result.code === "import_limit"
-              ? `Limite de ${fmt.format(IMPORT_MAX_CARDS)} cartes importées atteinte.`
+              ? t("limit", { max: IMPORT_MAX_CARDS })
               : result.message,
           );
           setPhase("error");
@@ -164,17 +174,16 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
   return (
     <div className="mx-auto mt-10 grid max-w-3xl gap-4">
       <section className="rounded-xl border border-line bg-surface p-7 ">
-        <h2 className="text-lg font-bold">Comment faire</h2>
+        <h2 className="text-lg font-bold">{t("howTo")}</h2>
         <ol className="mt-5 space-y-5">
           <li className="flex gap-4">
             <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-line text-xs font-bold">
               1
             </span>
             <div>
-              <p className="font-medium">Ajoutez ce favori à votre navigateur</p>
+              <p className="font-medium">{t("step1.title")}</p>
               <p className="mt-1 text-sm text-pale-mist">
-                Glissez le bouton ci-dessous dans votre barre de favoris (ne cliquez pas dessus
-                ici).
+                {t("step1.text")}
               </p>
               <a
                 ref={linkRef}
@@ -186,11 +195,11 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
                 }}
                 className="mt-3 inline-flex cursor-grab rounded-lg bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground"
               >
-                Importer vers Wikideck
+                {t("step1.button")}
               </a>
               {hint && (
                 <p className="mt-2 text-xs text-fog">
-                  Faites-le glisser dans la barre de favoris plutôt que de cliquer.
+                  {t("step1.hint")}
                 </p>
               )}
             </div>
@@ -200,19 +209,20 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
               2
             </span>
             <div>
-              <p className="font-medium">Lancez-le depuis Wiki-Masters</p>
+              <p className="font-medium">{t("step2.title")}</p>
               <p className="mt-1 text-sm text-pale-mist">
-                Ouvrez{" "}
-                <a
-                  href="https://www.wiki-masters.com/collection"
-                  target="_blank"
-                  rel="noopener"
-                  className="underline hover:text-foreground"
-                >
-                  wiki-masters.com
-                </a>
-                , connectez-vous, puis cliquez sur le favori. Autorisez les pop-up si on vous le
-                demande.
+                {t.rich("step2.text", {
+                  link: (chunks) => (
+                    <a
+                      href="https://www.wiki-masters.com/collection"
+                      target="_blank"
+                      rel="noopener"
+                      className="underline hover:text-foreground"
+                    >
+                      {chunks}
+                    </a>
+                  ),
+                })}
               </p>
             </div>
           </li>
@@ -221,9 +231,9 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
               3
             </span>
             <div>
-              <p className="font-medium">Validez ici</p>
+              <p className="font-medium">{t("step3.title")}</p>
               <p className="mt-1 text-sm text-pale-mist">
-                Cette page lit votre collection puis vous laisse confirmer l&apos;import.
+                {t("step3.text")}
               </p>
             </div>
           </li>
@@ -231,30 +241,28 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
       </section>
 
       <section aria-live="polite" className="rounded-xl border border-line bg-surface p-7 ">
-        <h2 className="text-lg font-bold">État</h2>
+        <h2 className="text-lg font-bold">{t("state")}</h2>
 
         {phase === "idle" && (
           <p className="mt-3 text-sm text-pale-mist">
-            En attente de votre collection Wiki-Masters…
+            {t("idle")}
           </p>
         )}
 
         {phase === "reading" && (
           <p className="mt-3 text-sm text-pale-mist">
-            Lecture en cours : {fmt.format(read.cards)} article{read.cards > 1 ? "s" : ""} reçu
-            {read.cards > 1 ? "s" : ""}
-            {read.total ? ` sur ${fmt.format(read.total)} cartes` : ""}…
+            {t("reading", { count: read.cards, total: read.total })}
           </p>
         )}
 
         {phase === "read" && (
           <div className="mt-3">
             <p className="text-sm text-pale-mist">
-              {fmt.format(counts.distinct)} article{counts.distinct > 1 ? "s" : ""} différent
-              {counts.distinct > 1 ? "s" : ""} lu{counts.distinct > 1 ? "s" : ""}, dont{" "}
-              <strong className="text-foreground">{fmt.format(importable)}</strong> en français
-              importable
-              {importable > 1 ? "s" : ""}.
+              {t.rich("read", {
+                distinct: counts.distinct,
+                french: importable,
+                strong: (chunks) => <strong className="text-foreground">{chunks}</strong>,
+              })}
             </p>
             <button
               type="button"
@@ -262,7 +270,7 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
               disabled={importable === 0}
               className="mt-4 rounded-lg bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-40"
             >
-              Importer {fmt.format(importable)} carte{importable > 1 ? "s" : ""}
+              {t("importCount", { count: importable })}
             </button>
           </div>
         )}
@@ -276,20 +284,20 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
               />
             </div>
             <p className="mt-3 text-sm text-pale-mist">
-              {phase === "importing" ? "Import en cours… " : "Import terminé. "}
-              <strong className="text-foreground">{fmt.format(totals.imported)}</strong> carte
-              {totals.imported > 1 ? "s" : ""} ajoutée{totals.imported > 1 ? "s" : ""}
-              {totals.alreadyImported > 0 &&
-                `, ${fmt.format(totals.alreadyImported)} déjà importée${totals.alreadyImported > 1 ? "s" : ""}`}
-              {totals.notFound > 0 &&
-                `, ${fmt.format(totals.notFound)} introuvable${totals.notFound > 1 ? "s" : ""}`}
+              {phase === "importing" ? t("progress.running") : t("progress.finished")}{" "}
+              {t.rich("progress.imported", {
+                count: totals.imported,
+                strong: (chunks) => <strong className="text-foreground">{chunks}</strong>,
+              })}
+              {totals.alreadyImported > 0 && t("progress.already", { count: totals.alreadyImported })}
+              {totals.notFound > 0 && t("progress.notFound", { count: totals.notFound })}
               {totals.otherLanguage > 0 &&
-                `, ${fmt.format(totals.otherLanguage)} ignorée${totals.otherLanguage > 1 ? "s" : ""} (autre langue)`}
+                t("progress.otherLanguage", { count: totals.otherLanguage })}
               .
             </p>
             {waiting && (
               <p role="status" className="mt-2 text-xs text-fog">
-                Wikipédia limite le débit : nouvelle tentative dans quelques secondes…
+                {t("waiting")}
               </p>
             )}
             {phase === "done" && (
@@ -297,7 +305,7 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
                 href="/collection"
                 className="mt-4 inline-flex rounded-lg bg-accent px-4.5 py-2.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70"
               >
-                Voir ma collection
+                {t("viewCollection")}
               </Link>
             )}
           </div>
@@ -305,15 +313,13 @@ export function ImportWizard({ apiUrl }: { apiUrl: string }) {
 
         {phase === "error" && (
           <p role="alert" className="mt-3 text-sm text-danger">
-            {error}
+            {errorKey ? t(`readErrors.${errorKey}`) : error}
           </p>
         )}
       </section>
 
       <p className="text-xs leading-relaxed text-fog">
-        Seuls les articles en français sont importés. La rareté est recalculée avec les vues
-        actuelles de Wikipédia, pas reprise de Wiki-Masters. Un article ne peut être importé
-        qu&apos;une seule fois, dans la limite de {fmt.format(IMPORT_MAX_CARDS)} cartes par compte.
+        {t("footnote", { max: IMPORT_MAX_CARDS })}
       </p>
     </div>
   );

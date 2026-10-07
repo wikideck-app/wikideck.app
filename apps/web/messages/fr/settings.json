@@ -1,0 +1,161 @@
+{
+  "title": "Paramètres",
+  "loadError": "Impossible de charger vos paramètres pour le moment.",
+  "status": {
+    "saving": "Enregistrement…",
+    "saved": "Préférences enregistrées",
+    "error": "Échec de l’enregistrement"
+  },
+  "section": "Section",
+  "sectionsLabel": "Sections des paramètres",
+  "sections": {
+    "profil": "Profil & compte",
+    "apparence": "Apparence",
+    "tirage": "Tirage & animations",
+    "collection": "Collection & accessibilité",
+    "audio": "Audio",
+    "notifications": "Notifications",
+    "confidentialite": "Confidentialité",
+    "donnees": "Données (RGPD)"
+  },
+  "profile": {
+    "title": "Profil du joueur & compte",
+    "description": "Votre identité en jeu, telle que les autres joueurs la voient.",
+    "username": "Pseudonyme",
+    "usernameHelp": "{min} à {max} caractères : lettres, chiffres, espace, point, tiret, tiret bas et apostrophe. Votre avatar vient de Discord.",
+    "lengthError": "Entre {min} et {max} caractères.",
+    "charsError": "Caractères non autorisés.",
+    "updated": "Pseudonyme mis à jour.",
+    "discordName": "Nom d’utilisateur Discord",
+    "discordNameHelp": "Lié à votre compte Discord, non modifiable ici. C’est ce nom que vos amis saisissent pour vous retrouver et vous ajouter ; il est mis à jour à chaque connexion.",
+    "discordUnknown": "Pas encore enregistré : il apparaîtra à votre prochaine connexion.",
+    "showcase": "Carte vitrine",
+    "showcaseHelp": "La carte mise en avant sur votre profil. Choisissez-en une parmi celles que vous possédez.",
+    "noCard": "Aucune carte",
+    "change": "Changer",
+    "choose": "Choisir une carte",
+    "remove": "Retirer",
+    "showcaseUpdated": "Carte vitrine mise à jour.",
+    "showcaseRemoved": "Carte vitrine retirée."
+  },
+  "appearance": {
+    "title": "Apparence",
+    "description": "Le thème de l’interface. Il s’applique tout de suite et vous suit sur vos appareils.",
+    "theme": "Thème",
+    "themeHelp": "« Système » suit le réglage clair ou sombre de votre appareil et en change avec lui.",
+    "system": "Système",
+    "light": "Clair",
+    "dark": "Sombre"
+  },
+  "draw": {
+    "title": "Tirage & animations",
+    "description": "Pour ouvrir vos paquets plus vite, ou ménager votre appareil. Les réglages s’appliquent tout de suite.",
+    "skip": "Passer les animations de tirage",
+    "skipHelp": "Les cartes s’affichent directement face visible, sans secousse du paquet ni retournement.",
+    "speed": "Vitesse des animations",
+    "speedHelp": "Accélère les effets visuels du tirage et du menu. Sans effet si les animations sont passées.",
+    "quality": "Qualité graphique",
+    "qualityHelp": "Bas : peu d’étoiles, ni flou, ni halos, ni reflets. Moyen : sans reflets continus. Élevé : tous les effets.",
+    "low": "Bas",
+    "medium": "Moyen",
+    "high": "Élevé",
+    "fps": "Images par seconde",
+    "fpsHelp": "30 images par seconde chauffent moins et économisent la batterie, sur téléphone notamment.",
+    "fpsOption": "{count} FPS"
+  },
+  "collection": {
+    "title": "Collection & accessibilité",
+    "description": "Comment s’affiche votre collection, et comment rendre le texte plus confortable à lire.",
+    "defaultSort": "Tri par défaut de la collection",
+    "defaultSortHelp": "Appliqué à l’ouverture de la collection. Vous pouvez toujours changer de tri sur la page.",
+    "sorts": {
+      "rarity": "Par rareté",
+      "date": "Par date d’obtention",
+      "alpha": "Par ordre alphabétique"
+    },
+    "readableFont": "Police à haute lisibilité",
+    "readableFontHelp": "Remplace les polices par Atkinson Hyperlegible, aux lettres bien distinctes, avec plus d’espace. Utile pour la dyslexie ou une vue fatiguée.",
+    "highContrast": "Contrastes renforcés",
+    "highContrastHelp": "Textes secondaires plus clairs et filets plus visibles, pour lire les longs textes encyclopédiques."
+  },
+  "audio": {
+    "title": "Audio",
+    "description": "Tous les sons sont synthétisés par votre navigateur : aucun fichier à télécharger.",
+    "master": "Volume général",
+    "masterHelp": "S’applique à la musique et aux effets.",
+    "music": "Musique d’ambiance",
+    "musicHelp": "Une nappe sonore douce en fond. Le navigateur ne la lance qu’après votre premier clic.",
+    "musicVolume": "Volume de la musique",
+    "sfx": "Effets sonores",
+    "sfxHelp": "Bruitage des clics, souffle à l’ouverture d’un paquet et arpège à chaque carte révélée (plus long pour une carte plus rare).",
+    "sfxVolume": "Volume des effets",
+    "test": "Tester un effet"
+  },
+  "notifications": {
+    "title": "Notifications & alertes de jeu",
+    "description": "Soyez prévenu quand un paquet est prêt, même depuis un autre onglet.",
+    "permission": "Autorisation du navigateur",
+    "state": "État : <b>{state}</b>.",
+    "deniedHelp": " Réautorisez-les dans les réglages du site de votre navigateur (cadenas près de l’adresse).",
+    "states": {
+      "default": "Pas encore demandée",
+      "granted": "Autorisées",
+      "denied": "Refusées par le navigateur",
+      "unsupported": "Non prises en charge par ce navigateur"
+    },
+    "allow": "Autoriser les notifications",
+    "test": "Envoyer un test",
+    "testTitle": "Wikideck",
+    "testBody": "Voici à quoi ressemblera une alerte : votre booster est prêt !",
+    "booster": "Recharge de paquet disponible",
+    "boosterHelp": "« Votre booster est prêt ! » : une alerte quand un nouveau paquet arrive. Elle s’affiche tant que Wikideck est ouvert dans un onglet, sans que ce soit celui que vous regardez.",
+    "boosterLabel": "Alerte de recharge de paquet",
+    "events": "Événements thématiques",
+    "eventsHelp": "Début et fin d’un événement spécial sur un thème de Wikipédia (par exemple une semaine d’histoire de France). Aucun événement n’existe encore : votre choix est enregistré pour plus tard.",
+    "eventsLabel": "Alertes d’événements thématiques"
+  },
+  "privacy": {
+    "title": "Confidentialité & données du joueur",
+    "description": "Ce que les autres joueurs peuvent voir, et la transparence sur vos tirages.",
+    "public": "Statistiques publiques",
+    "publicHelp": "Public : votre collection et votre taux de complétion pourront être vus par les autres joueurs. Privé : vous seul les voyez. Les profils publics arrivent bientôt : votre choix est déjà pris en compte.",
+    "visibility": "Visibilité de la collection",
+    "private": "Privé",
+    "publicOption": "Public"
+  },
+  "data": {
+    "title": "Options RGPD : sécurité & données",
+    "description": "Vos données vous appartiennent : récupérez-les ou effacez-les à tout moment.",
+    "download": "Télécharger mes données personnelles",
+    "downloadHelp": "Un fichier JSON avec votre profil, vos préférences, votre collection, vos étiquettes et l’historique de vos tirages.",
+    "downloadButton": "Télécharger (JSON)",
+    "preparing": "Préparation…",
+    "downloadError": "Impossible de télécharger vos données pour le moment. Réessayez dans un instant.",
+    "exportFile": "wikideck-export-{date}.json",
+    "danger": "Zone dangereuse",
+    "dangerText": "La suppression du compte efface définitivement toutes vos données. Elle ne peut pas être annulée."
+  },
+  "deleteAccount": {
+    "button": "Supprimer définitivement mon compte",
+    "title": "Supprimer mon compte",
+    "warning": "Cette action est <strong>définitive et irréversible</strong>. Votre profil, votre collection, vos étiquettes, vos paquets et votre historique de tirages seront effacés. Pensez à télécharger vos données avant.",
+    "confirm": "Pour confirmer, saisissez <b>{word}</b> :",
+    "busy": "Suppression…",
+    "action": "Supprimer pour toujours"
+  },
+  "pullHistory": {
+    "title": "Historique des tirages",
+    "subtitle": "Les {count} dernières cartes obtenues en ouvrant des paquets",
+    "transparency": "Transparence : chaque carte est un article Wikipédia tiré au hasard. Sa rareté dépend uniquement du nombre de vues de l’article sur les 30 derniers jours (C moins de 50, PC dès 50, R dès 250, SR dès 1 000, UR dès 5 000, L dès 20 000). Aucune probabilité n’est truquée ni modifiée.",
+    "empty": "Aucun tirage pour le moment. Ouvrez un paquet !",
+    "total": "{count, plural, one {# carte tirée} other {# cartes tirées}} au total depuis la création du compte."
+  },
+  "showcasePicker": {
+    "title": "Choisir ma carte vitrine",
+    "description": "Elle sera mise en avant sur votre profil. Seules vos cartes sont proposées.",
+    "search": "Rechercher une carte par nom…",
+    "searchLabel": "Rechercher une carte par nom",
+    "none": "Aucune carte trouvée.",
+    "choose": "Choisir {title}"
+  }
+}

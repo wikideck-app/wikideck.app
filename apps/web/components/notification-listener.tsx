@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { LiveEvent, LiveNotify } from "@wikideck/shared";
@@ -20,7 +21,9 @@ const TYPES = [
 
 type Toast = { id: number; text: string; href: string };
 
-function describe(event: LiveEvent): { text: string; href: string } {
+type ToastTranslator = ReturnType<typeof useTranslations<"notifications.toasts">>;
+
+function describe(event: LiveEvent, t: ToastTranslator): { text: string; href: string } {
   const from =
     "from" in event
       ? String(event.from)
@@ -29,42 +32,42 @@ function describe(event: LiveEvent): { text: string; href: string } {
       : "";
   switch (event.type) {
     case "message":
-      return { text: `Nouveau message de ${from}`, href: "/messages" };
+      return { text: t("message", { from }), href: "/messages" };
     case "friend":
       return {
-        text: event.accepted
-          ? `${from} a accepté votre demande d'ami`
-          : `${from} vous a envoyé une demande d'ami`,
+        text: t(event.accepted ? "friendAccepted" : "friendRequest", { from }),
         href: "/friends",
       };
     case "trade":
-      return { text: `Échange mis à jour avec ${from}`, href: "/trades" };
+      return { text: t("trade", { from }), href: "/trades" };
     case "outbid":
       return {
-        text: "Vous avez été surenchéri",
+        text: t("outbid"),
         href: `/market/${encodeURIComponent(event.auction)}`,
       };
     case "auction":
       return {
-        text: "Une de vos enchères a évolué",
+        text: t("auction"),
         href: `/market/${encodeURIComponent(event.auction)}`,
       };
     case "wishlist":
       return {
-        text: `${String(event.card)
-          .replace(/[\u0000-\u001f]/g, "")
-          .slice(0, 80)} (votre liste d'envies) est en vente`,
+        text: t("wishlist", {
+          card: String(event.card)
+            .replace(/[\u0000-\u001f]/g, "")
+            .slice(0, 80),
+        }),
         href: `/market/${encodeURIComponent(event.auction)}`,
       };
     case "gift":
-      return { text: `${from} vous a offert une carte`, href: "/guild" };
+      return { text: t("gift", { from }), href: "/guild" };
     case "achievement":
-      return { text: "Nouveau succès débloqué", href: "/achievements" };
+      return { text: t("achievement"), href: "/achievements" };
     case "staff":
-      if (event.kind === "bug") return { text: "Nouveau rapport de bug à traiter", href: "/staff" };
+      if (event.kind === "bug") return { text: t("staffBug"), href: "/staff" };
       return event.kind === "report"
-        ? { text: "Nouveau signalement de message à traiter", href: "/staff" }
-        : { text: "Un compte vient d'être signalé comme suspect", href: "/staff" };
+        ? { text: t("staffReport"), href: "/staff" }
+        : { text: t("staffSuspect"), href: "/staff" };
   }
 }
 
@@ -75,6 +78,7 @@ export function NotificationListener({
   live: LiveNotify | null;
   dailyBonus?: number;
 }) {
+  const t = useTranslations("notifications.toasts");
   const router = useRouter();
   const pathname = usePathname();
   const path = useRef(pathname);
@@ -89,13 +93,13 @@ export function NotificationListener({
   useEffect(() => {
     if (!dailyBonus) return;
     const id = Date.now() + Math.random();
-    setToasts((t) => [
-      ...t,
-      { id, text: `Bonus du jour : +${dailyBonus} wikibits`, href: path.current },
+    setToasts((prev) => [
+      ...prev,
+      { id, text: t("dailyBonus", { amount: dailyBonus }), href: path.current },
     ]);
-    const timer = setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 7000);
+    const timer = setTimeout(() => setToasts((prev) => prev.filter((x) => x.id !== id)), 7000);
     return () => clearTimeout(timer);
-  }, [dailyBonus]);
+  }, [dailyBonus, t]);
 
   useEffect(() => {
     if (!live || typeof EventSource === "undefined") return;
@@ -116,17 +120,17 @@ export function NotificationListener({
       refreshTimer.current = setTimeout(() => router.refresh(), 400);
 
       if (event.type === "message" && path.current.startsWith("/messages")) return;
-      const { text, href } = describe(event);
+      const { text, href } = describe(event, t);
       const id = Date.now() + Math.random();
-      setToasts((t) => [...t.slice(-2), { id, text, href }]);
-      setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 7000);
+      setToasts((prev) => [...prev.slice(-2), { id, text, href }]);
+      setTimeout(() => setToasts((prev) => prev.filter((x) => x.id !== id)), 7000);
     });
     return () => {
       source.close();
       setPushConnected(false);
       clearTimeout(refreshTimer.current);
     };
-  }, [live, router]);
+  }, [live, router, t]);
 
   if (!toasts.length) return null;
   return (
@@ -134,15 +138,15 @@ export function NotificationListener({
       aria-live="polite"
       className="pointer-events-none fixed bottom-4 right-4 z-70 flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2"
     >
-      {toasts.map((t) => (
+      {toasts.map((toast) => (
         <Link
-          key={t.id}
-          href={t.href}
+          key={toast.id}
+          href={toast.href}
           role="status"
-          onClick={() => setToasts((all) => all.filter((x) => x.id !== t.id))}
+          onClick={() => setToasts((all) => all.filter((x) => x.id !== toast.id))}
           className="toast-in pointer-events-auto rounded-xl border border-accent/40 bg-surface px-4 py-3 text-sm transition-colors hover:border-accent"
         >
-          {t.text}
+          {toast.text}
         </Link>
       ))}
     </div>

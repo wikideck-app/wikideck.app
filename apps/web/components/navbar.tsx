@@ -3,6 +3,7 @@
 import { ChevronDown, LogOut, Menu, Settings, ShieldCheck, X } from "@/components/icons";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { PackStatus, SessionUser } from "@wikideck/shared";
@@ -22,11 +23,12 @@ const iconButton =
   "flex aspect-square size-10 shrink-0 items-center justify-center rounded-full border-2 border-white/40 transition-colors hover:border-white hover:bg-white hover:text-(--deep-concord)";
 
 function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
+  const t = useTranslations("nav");
   const ratio = Math.min(1, packs.packs / packs.max);
   return (
-    <Link href="/packs" className={chip} title="Paquets disponibles">
+    <Link href="/packs" className={chip} title={t("packsAvailable")}>
       <span className="hidden text-[11px] uppercase tracking-[0.12em] text-pale-mist 2xl:inline">
-        Paquets
+        {t("packsShort")}
       </span>
       <span className="tabular-nums">
         {packs.packs}
@@ -45,11 +47,12 @@ function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
 const menuLink =
   "flex items-center gap-3 rounded-[15px] bg-(--theme-pill) px-4 py-3 text-sm font-bold text-(--theme-pill-ink) transition-colors hover:bg-(--theme-pill-hover)";
 
-const MENU_GROUPS = NAV_GROUPS.filter((g) => g !== "Compte");
+const MENU_GROUPS = NAV_GROUPS.filter((g) => g !== "account");
 
 type OpenMenu = NavGroup | "all" | null;
 
 export function Navbar({ user, logoutUrl, packs }: Props) {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState<OpenMenu>(null);
   const bar = useRef<HTMLDivElement>(null);
@@ -77,7 +80,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
     return () => removeEventListener("keydown", onKey);
   }, [open]);
 
-  const link = ({ slug, label, icon: Icon }: NavItem) => {
+  const link = ({ slug, icon: Icon }: NavItem) => {
     const active = current?.slug === slug;
     const count = badges[slug] ?? 0;
     return (
@@ -93,10 +96,10 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           }`}
         >
           <Icon className="size-[18px]" strokeWidth={active ? 2.2 : 1.9} />
-          {label}
+          {t(`items.${slug}`)}
           {count > 0 && (
             <span
-              title={`${count} en attente`}
+              title={t("pending", { count })}
               className="ml-auto min-w-5 rounded-full bg-(--bubblegum) px-1.5 text-center text-[11px] font-bold leading-5 text-white"
             >
               {count}
@@ -128,7 +131,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           }`}
         >
           {expanded ? <X className="size-4" /> : <Menu className="size-4" />}
-          {group}
+          {t(`groups.${group}`)}
           <ChevronDown
             className={`size-3.5 transition-transform ${expanded ? "rotate-180" : ""}`}
           />
@@ -142,7 +145,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
         {expanded && (
           <nav
             id={`menu-${group}`}
-            aria-label={group}
+            aria-label={t(`groups.${group}`)}
             className="on-light toast-in absolute left-0 top-[calc(100%+10px)] z-10 w-64 rounded-xl bg-surface p-4 shadow-(--shadow-float)"
           >
             <ul className="flex flex-col gap-1.5">{items(group).map(link)}</ul>
@@ -158,7 +161,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
     <header ref={bar} className="on-grape grape-field sticky top-0 z-40">
       <div className="mx-auto grid h-16 w-full max-w-[1600px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 sm:px-6">
         <div className="flex items-center gap-3">
-          <Link href="/packs" aria-label="Wikideck" className="group flex items-center gap-3">
+          <Link href="/packs" aria-label={t("brand")} className="group flex items-center gap-3">
             <Image
               src="/logo.webp"
               alt=""
@@ -168,13 +171,13 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
               className="size-10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110"
             />
             <span className="hidden text-xl font-bold tracking-tight min-[420px]:inline">
-              Wikideck
+              {t("brand")}
             </span>
           </Link>
 
           <button
             type="button"
-            aria-label={open === "all" ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-label={open === "all" ? t("closeMenu") : t("openMenu")}
             aria-expanded={open === "all"}
             aria-controls="menu-all"
             onClick={() => setOpen(open === "all" ? null : "all")}
@@ -198,12 +201,12 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
 
         <div className="flex items-center justify-end gap-2 sm:gap-3">
           {packs && <PackChip packs={packs} />}
-          <Link href="/market" className={chip} title="Solde de wikibits">
+          <Link href="/market" className={chip} title={t("wikibitsBalance")}>
             <Wikibits amount={user.wikibits} />
           </Link>
           <Link
             href="/profile"
-            title="Mon profil"
+            title={t("myProfile")}
             className="hidden items-center gap-2.5 rounded-full p-1 transition-colors hover:bg-white/10 md:flex 2xl:pr-3"
           >
             {user.avatarUrl ? (
@@ -226,9 +229,9 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             <Link
               href="/staff"
               aria-label={
-                user.staffAlerts ? `Espace staff : ${user.staffAlerts} à traiter` : "Espace staff"
+                user.staffAlerts ? t("staffAlerts", { count: user.staffAlerts }) : t("staff")
               }
-              title="Espace staff"
+              title={t("staff")}
               className={`${iconButton} relative max-md:hidden`}
             >
               <ShieldCheck className="size-4" />
@@ -241,8 +244,8 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           )}
           <Link
             href="/settings"
-            aria-label="Paramètres"
-            title="Paramètres"
+            aria-label={t("settings")}
+            title={t("settings")}
             className={`${iconButton} max-md:hidden`}
           >
             <Settings className="size-4" />
@@ -250,8 +253,8 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           <form action={logoutUrl} method="post" className="max-md:hidden">
             <button
               type="submit"
-              aria-label="Se déconnecter"
-              title="Se déconnecter"
+              aria-label={t("logout")}
+              title={t("logout")}
               className={iconButton}
             >
               <LogOut className="size-4" />
@@ -264,7 +267,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
         <button
           type="button"
           tabIndex={-1}
-          aria-label="Fermer le menu"
+          aria-label={t("closeMenu")}
           onClick={() => setOpen(null)}
           className="fixed inset-0 top-16 -z-10 cursor-default bg-(--theme-scrim)"
         />
@@ -273,14 +276,14 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
       {open === "all" && (
         <nav
           id="menu-all"
-          aria-label="Navigation principale"
+          aria-label={t("mainNavigation")}
           className="on-light toast-in absolute left-3 right-3 top-[68px] max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-xl bg-surface p-5 shadow-(--shadow-float) xl:hidden"
         >
           <div className="flex flex-col gap-5">
             {MENU_GROUPS.map((group) => (
               <section key={group}>
                 <h2 className="px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-fog">
-                  {group}
+                  {t(`groups.${group}`)}
                 </h2>
                 <ul className="mt-2.5 flex flex-col gap-1.5">{items(group).map(link)}</ul>
               </section>
@@ -288,15 +291,15 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             {/* sous 768 px les boutons du compte quittent la barre : ils sont ici */}
             <section className="md:hidden">
               <h2 className="px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-fog">
-                Compte
+                {t("groups.account")}
               </h2>
               <ul className="mt-2.5 flex flex-col gap-1.5">
-                {items("Compte").map(link)}
+                {items("account").map(link)}
                 {user.staff && (
                   <li>
                     <Link href="/staff" onClick={() => setOpen(null)} className={menuLink}>
                       <ShieldCheck className="size-[18px]" />
-                      Espace staff
+                      {t("staff")}
                       {user.staffAlerts > 0 && (
                         <span className="ml-auto min-w-5 rounded-full bg-(--bubblegum) px-1.5 text-center text-[11px] font-bold leading-5 text-white">
                           {user.staffAlerts}
@@ -309,7 +312,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
                   <form action={logoutUrl} method="post">
                     <button type="submit" className={`${menuLink} w-full`}>
                       <LogOut className="size-[18px]" />
-                      Se déconnecter
+                      {t("logout")}
                     </button>
                   </form>
                 </li>

@@ -1,0 +1,108 @@
+{
+  "title": "Marché",
+  "subtitle": "Vendez et achetez des cartes aux enchères, en wikibits.",
+  "balance": "Votre solde : <amount></amount>",
+  "loadError": "Impossible de charger le marché.",
+  "tabs": {
+    "all": "Enchères en cours",
+    "selling": "Mes ventes",
+    "bidding": "Mes mises"
+  },
+  "empty": {
+    "all": "Aucune enchère en cours pour ces filtres.",
+    "selling": "Vous n’avez rien mis en vente.",
+    "bidding": "Vous n’avez pas encore misé."
+  },
+  "sorts": {
+    "ending": "Se termine bientôt",
+    "new": "Les plus récentes",
+    "price_asc": "Prix croissant",
+    "price_desc": "Prix décroissant"
+  },
+  "marketView": "Vue du marché",
+  "sell": "Mettre en vente",
+  "searchPlaceholder": "Rechercher une carte…",
+  "searchLabel": "Rechercher une carte par nom",
+  "badges": {
+    "won": "Remportée",
+    "sold": "Vendue",
+    "unsold": "Invendue",
+    "cancelled": "Annulée",
+    "yourSale": "Votre vente",
+    "leading": "Vous menez",
+    "outbid": "Surenchéri"
+  },
+  "tile": {
+    "view": "Voir l’enchère : {title}",
+    "bids": "{count, plural, =0 {Aucune mise} one {# mise} other {# mises}}"
+  },
+  "sellDialog": {
+    "pickTitle": "Quelle carte mettre en vente ?",
+    "pickDescription": "Elle quitte votre collection jusqu’à la fin de l’enchère. Si personne ne mise, elle vous revient.",
+    "title": "Mettre en vente",
+    "changeCard": "Changer de carte",
+    "listed": "Mise en vente !",
+    "listedText": "« {title} » est aux enchères. Elle quitte votre collection jusqu’à la fin de la vente ; si personne ne mise, elle vous revient.",
+    "viewAuction": "Voir l’enchère",
+    "continue": "Continuer",
+    "startPrice": "Prix de départ",
+    "duration": "Durée",
+    "hours": "{count} h",
+    "days": "{count} j",
+    "fees": "Frais de vente : {fee} %. Au prix de départ, vous toucheriez <amount></amount>.",
+    "busy": "Mise en vente…"
+  },
+  "auction": {
+    "back": "Retour au marché",
+    "viewArticle": "Voir l’article sur Wikipédia",
+    "soldBy": "Mis en vente par",
+    "won": "Vous avez remporté cette carte !",
+    "soldTo": "Vendue à {name}",
+    "aPlayer": "un joueur",
+    "finalPrice": "Prix final : <amount></amount>",
+    "received": " · vous avez reçu <amount></amount> (frais de {fee} % déduits)",
+    "inCollection": " · la carte est dans votre collection.",
+    "unsold": "Invendue",
+    "unsoldText": "Aucune mise : la carte est revenue chez son vendeur.",
+    "cancelledBySeller": "Vente annulée par le vendeur.",
+    "startBid": "Mise de départ",
+    "currentBid": "Mise actuelle",
+    "finalBid": "Prix final",
+    "leading": "En tête :",
+    "buyer": "Acheteur :",
+    "you": "vous",
+    "timeLeft": "Temps restant",
+    "yourBalance": "Votre solde : <amount></amount>",
+    "minBid": "Mise minimum : <strong>{amount, number}</strong>",
+    "less": "Moins",
+    "more": "Plus",
+    "amountLabel": "Montant de la mise",
+    "raise": "Relancer",
+    "bid": "Miser",
+    "bidRules": "La mise est débitée immédiatement. Si vous êtes surenchéri, elle vous est intégralement remboursée. Une mise dans les {window} dernières secondes prolonge la fin de l’enchère de {extend} secondes.",
+    "yourSale": "C’est votre vente. Une fois terminée, vous recevrez le prix moins {fee} % de frais ; sans mise, la carte vous revient.",
+    "cancel": "Annuler la vente",
+    "history": "Historique des mises ({count})",
+    "noBids": "Aucune mise placée pour l’instant.",
+    "marketViewLabel": "Vue du marché"
+  },
+  "stats": {
+    "title": "Vue du marché",
+    "rarity": "Rareté",
+    "all": "Toutes",
+    "allRarities": "Toutes raretés",
+    "priceTrend": "Évolution des prix · {rarity}",
+    "lastSales": "10 dernières ventes · {rarity}",
+    "sales": "Ventes",
+    "last": "Dernier",
+    "average": "Moyenne",
+    "min": "Min",
+    "max": "Max",
+    "noSales": "Aucune vente pour l’instant."
+  },
+  "chart": {
+    "label": "Évolution des prix de vente",
+    "average": "Moy. {value, number}",
+    "price": "{price, number} wikibits"
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Plus, Recycle, X } from "@/components/icons";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import {
   PROTECTED_WORDS_MAX,
@@ -18,11 +19,11 @@ import {
 } from "@wikideck/shared";
 import { buttonClass, dangerButtonClass } from "@/components/settings/controls";
 import { Wikibits } from "@/components/wikibit";
+import { useRarityLabel } from "@/lib/labels";
 import { RARITY_COLOR } from "@/lib/rarity-ui";
 import { useSettings } from "@/lib/settings-context";
 import { apiFetch, apiCall } from "@/lib/tags-api";
 
-const num = new Intl.NumberFormat("fr-FR");
 const MAX_VIEWS = 100_000;
 
 const toSlider = (views: number) => Math.round((Math.log10(Math.max(1, views)) / 5) * 1000);
@@ -41,6 +42,10 @@ export function CollectionBulkPanel({
   onDuplicates: () => void;
   onDone: (result: RecycleResponse) => void;
 }) {
+  const t = useTranslations("collection.bulk");
+  const tc = useTranslations("common");
+  const { number } = useFormatter();
+  const rarityLabel = useRarityLabel();
   const { settings, update, status } = useSettings();
   const words = settings.collection.protectedWords;
 
@@ -194,19 +199,19 @@ export function CollectionBulkPanel({
 
   return (
     <section
-      aria-label="Recyclage groupé"
+      aria-label={t("title")}
       className="mt-8 rounded-xl border border-line bg-surface p-5 text-left"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold">Recyclage groupé</h2>
+          <h2 className="text-lg font-bold">{t("title")}</h2>
           <p className="mt-0.5 text-sm text-pale-mist">
-            Faites le tri parmi vos cartes peu consultées, sans toucher à celles qui comptent.
+            {t("intro")}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" className={`${buttonClass} py-1.5!`} onClick={onDuplicates}>
-            Doublons{duplicates !== null && ` (${num.format(duplicates)})`}
+            {duplicates !== null ? t("duplicatesCount", { count: duplicates }) : t("duplicates")}
           </button>
           <button
             type="button"
@@ -214,34 +219,30 @@ export function CollectionBulkPanel({
             onClick={() => setHelp((h) => !h)}
             className="text-sm text-pale-mist underline hover:text-foreground"
           >
-            Comment ça marche ?
+            {t("howTo")}
           </button>
         </div>
       </div>
 
       {help && (
         <p className="prose-serif mt-3 rounded-xl border border-line p-3 text-sm text-pale-mist">
-          Chaque carte rapporte des wikibits selon sa rareté (C 1 · PC 2 · R 5 · SR 10 · UR 15 · L
-          20) et tous ses exemplaires partent. Le seuil compte les vues de l&apos;article Wikipédia
-          sur 30 jours : plus il est bas, plus les cartes visées sont discrètes. Les chiffres des
-          raretés comptent les cartes sous le seuil ; cochez celles que vous voulez recycler.
+          {t("help")}
         </p>
       )}
 
-      <h3 className={`${heading} mt-5`}>Cartes peu consultées</h3>
+      <h3 className={`${heading} mt-5`}>{t("lowViews")}</h3>
       <p className="mt-1 text-sm text-pale-mist">
-        Cartes mises en avant sur votre profil, carte vitrine et cartes d&apos;un échange en attente
-        sont toujours conservées.
+        {t("kept")}
       </p>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-3">
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-fog">Cartes de</span>
+          <span className="text-fog">{t("cardsOf")}</span>
           <div className="flex gap-1 rounded-full border border-line p-1" role="group">
             {(
               [
-                ["page", "Cette page"],
-                ["all", "Toute la collection"],
+                ["page", t("scopePage")],
+                ["all", t("scopeAll")],
               ] as const
             ).map(([value, label]) => (
               <button
@@ -263,14 +264,14 @@ export function CollectionBulkPanel({
         </div>
 
         <div className="flex min-w-64 flex-1 items-center gap-3 text-sm">
-          <span className="text-fog">sous</span>
+          <span className="text-fog">{t("under")}</span>
           <input
             type="range"
             min={0}
             max={1000}
             value={toSlider(maxViews)}
             onChange={(e) => setViews(fromSlider(Number(e.target.value)))}
-            aria-label="Seuil de vues"
+            aria-label={t("viewsThreshold")}
             className="min-w-0 flex-1 accent-(--accent)"
           />
           <label className="flex items-center gap-1.5 whitespace-nowrap">
@@ -285,14 +286,14 @@ export function CollectionBulkPanel({
                 if (digits) setMaxViews(Math.min(MAX_VIEWS, Math.max(1, Number(digits))));
               }}
               onBlur={() => setViews(Number(viewsText) || 1)}
-              aria-label="Nombre de vues"
+              aria-label={t("viewsCount")}
               className="w-20 rounded-lg border border-line bg-transparent px-2.5 py-1 text-right text-sm outline-none focus:border-accent"
             />
-            <span className="text-fog">vues sur 30 jours</span>
+            <span className="text-fog">{t("views30")}</span>
           </label>
         </div>
 
-        <div className="flex flex-wrap gap-1" role="group" aria-label="Seuils rapides">
+        <div className="flex flex-wrap gap-1" role="group" aria-label={t("quick")}>
           {[10, 30, 100, 300, 1000].map((v) => (
             <button
               key={v}
@@ -301,17 +302,15 @@ export function CollectionBulkPanel({
               onClick={() => setViews(v)}
               className="rounded-full border border-line px-2.5 py-0.5 text-xs font-semibold tabular-nums hover:bg-foreground/10 aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-foreground"
             >
-              {num.format(v)}
+              {number(v)}
             </button>
           ))}
         </div>
 
         <div className="ml-auto flex flex-wrap items-center gap-3">
           <span className="text-sm font-bold">
-            {preview ? num.format(cards) : "…"}{" "}
-            <span className="font-normal text-fog">
-              carte{cards > 1 ? "s" : ""} concernée{cards > 1 ? "s" : ""}
-            </span>
+            {preview ? number(cards) : "…"}{" "}
+            <span className="font-normal text-fog">{t("concerned", { count: cards })}</span>
           </span>
           <button
             type="button"
@@ -319,8 +318,7 @@ export function CollectionBulkPanel({
             disabled={cards === 0 || !settled || busy}
             onClick={openReview}
           >
-            <Recycle className="size-4" /> Passer en revue {num.format(cards)} carte
-            {cards > 1 ? "s" : ""}
+            <Recycle className="size-4" /> {t("review", { count: cards })}
             {cards > 0 && (
               <span className="inline-flex items-center gap-1 opacity-90">
                 (+
@@ -337,17 +335,15 @@ export function CollectionBulkPanel({
       )}
       {status === "error" && (
         <p role="alert" className="mt-3 text-sm text-danger">
-          Vos mots protégés n&apos;ont pas pu être enregistrés : le recyclage est suspendu.
-          Réessayez en modifiant la liste.
+          {t("settingsError")}
         </p>
       )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <div>
-          <h3 className={heading}>Toujours garder</h3>
+          <h3 className={heading}>{t("alwaysKeep")}</h3>
           <p className="mt-1 text-xs leading-relaxed text-pale-mist">
-            Un mot du titre ou d&apos;une étiquette suffit : « chanteur » protège aussi « chanteurs
-            ».
+            {t("alwaysKeepHint")}
           </p>
           <form
             className="mt-3 flex gap-2"
@@ -370,8 +366,8 @@ export function CollectionBulkPanel({
                   addWords(text);
                 }
               }}
-              placeholder="Un mot, puis Entrée (ou une liste séparée par des virgules)"
-              aria-label="Mot à toujours garder"
+              placeholder={t("wordPlaceholder")}
+              aria-label={t("wordLabel")}
               className="min-w-0 flex-1 rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
             />
             <button
@@ -379,7 +375,7 @@ export function CollectionBulkPanel({
               className={buttonClass}
               disabled={!foldText(draft) || words.length >= PROTECTED_WORDS_MAX}
             >
-              <Plus className="size-4" /> Ajouter
+              <Plus className="size-4" /> {tc("add")}
             </button>
           </form>
           {words.length > 0 && (
@@ -392,7 +388,7 @@ export function CollectionBulkPanel({
                   {w}
                   <button
                     type="button"
-                    aria-label={`Ne plus protéger « ${w} »`}
+                    aria-label={t("unprotect", { word: w })}
                     onClick={() => removeWord(w)}
                     className="flex size-5 items-center justify-center rounded-full opacity-60 hover:bg-foreground/10 hover:opacity-100"
                   >
@@ -404,36 +400,28 @@ export function CollectionBulkPanel({
           )}
           {preview && preview.protectedCards > 0 && (
             <p className="mt-3 text-xs text-fog">
-              {num.format(preview.protectedCards)} carte{preview.protectedCards > 1 ? "s" : ""} sous
-              le seuil {preview.protectedCards > 1 ? "sont épargnées" : "est épargnée"} :{" "}
-              {(
-                [
-                  ["favorite", "favorites"],
-                  ["featured", "mises en avant"],
-                  ["showcase", "en vitrine"],
-                  ["trade", "dans un échange"],
-                  ["word", "mot protégé"],
-                ] as const
-              )
-                .filter(([k]) => preview.protectedReasons[k] > 0)
-                .map(([k, label]) => `${num.format(preview.protectedReasons[k])} ${label}`)
-                .join(", ")}
-              .
+              {t("spared", {
+                count: preview.protectedCards,
+                reasons: (["favorite", "featured", "showcase", "trade", "word"] as const)
+                  .filter((k) => preview.protectedReasons[k] > 0)
+                  .map((k) => t(`reasons.${k}`, { count: preview.protectedReasons[k] }))
+                  .join(", "),
+              })}
             </p>
           )}
         </div>
 
         <div>
-          <h3 className={heading}>Raretés à recycler</h3>
+          <h3 className={heading}>{t("rarities")}</h3>
           <p className="mt-1 text-xs leading-relaxed text-pale-mist">
-            Cochez les raretés concernées. Le chiffre compte les cartes sous le seuil.
+            {t("raritiesHint")}
           </p>
           <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
             {DROP_RARITIES.map((r) => (
               <button
                 key={r.value}
                 type="button"
-                title={r.label}
+                title={rarityLabel(r.value)}
                 aria-pressed={picked.has(r.value)}
                 onClick={() => {
                   resetReview();
@@ -449,7 +437,7 @@ export function CollectionBulkPanel({
               >
                 <strong className="text-base">{r.code}</strong>
                 <span className="text-xs tabular-nums text-foreground opacity-80">
-                  {num.format(countOf(r.value))}
+                  {number(countOf(r.value))}
                 </span>
               </button>
             ))}
@@ -467,12 +455,11 @@ export function CollectionBulkPanel({
             <strong className="inline-flex items-center gap-1 text-base">
               +<Wikibits amount={result.gained} />
             </strong>{" "}
-            · {num.format(result.copies)} exemplaire{result.copies > 1 ? "s" : ""} recyclé
-            {result.copies > 1 ? "s" : ""}. Nouveau solde : {num.format(result.wikibits)} wikibits.
+            · {t("result", { copies: result.copies, balance: result.wikibits })}
           </p>
           <button
             type="button"
-            aria-label="Fermer"
+            aria-label={tc("close")}
             onClick={() => setResult(null)}
             className="ml-auto flex size-7 items-center justify-center rounded-full hover:bg-foreground/10"
           >
@@ -482,14 +469,14 @@ export function CollectionBulkPanel({
       )}
 
       {review && (
-        <div className="mt-6 rounded-xl border border-line p-4" aria-label="Revue des cartes">
+        <div className="mt-6 rounded-xl border border-line p-4" aria-label={t("reviewLabel")}>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="font-bold">
-                {num.format(kept.length)} carte{kept.length > 1 ? "s" : ""} à recycler
+                {t("toRecycle", { count: kept.length })}
               </h3>
               <p className="text-xs text-fog">
-                Retirez celles que vous voulez garder, rien n&apos;est supprimé avant confirmation.
+                {t("reviewHint")}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -499,11 +486,11 @@ export function CollectionBulkPanel({
                   className={`${buttonClass} py-1.5!`}
                   onClick={() => setExcluded(new Set())}
                 >
-                  Tout remettre
+                  {t("restoreAll")}
                 </button>
               )}
               <button type="button" className={`${buttonClass} py-1.5!`} onClick={resetReview}>
-                Annuler
+                {tc("cancel")}
               </button>
             </div>
           </div>
@@ -511,14 +498,13 @@ export function CollectionBulkPanel({
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Chercher dans la liste"
-            aria-label="Chercher dans la liste"
+            placeholder={t("searchList")}
+            aria-label={t("searchList")}
             className="mt-3 w-full max-w-sm rounded-lg border border-line bg-transparent px-3 py-1.5 text-sm outline-none focus:border-accent"
           />
           {review.truncated && (
             <p className="mt-2 text-xs text-fog">
-              Seules les {num.format(review.items.length)} premières cartes sont listées ; toutes
-              celles qui correspondent seront recyclées, sauf celles que vous retirez.
+              {t("truncated", { count: review.items.length })}
             </p>
           )}
           <ul className="mt-3 max-h-80 divide-y divide-line overflow-y-auto rounded-xl border border-line">
@@ -538,32 +524,31 @@ export function CollectionBulkPanel({
                     {i.quantity > 1 && <span className="text-fog"> ×{i.quantity}</span>}
                   </span>
                   <span className="hidden text-xs tabular-nums text-fog sm:inline">
-                    {num.format(i.views)} vues
+                    {t("viewsShort", { count: i.views })}
                   </span>
                   <Wikibits amount={i.wikibits} className="w-16 justify-end text-xs" />
                   <button
                     type="button"
-                    aria-label={off ? `Remettre ${i.title}` : `Garder ${i.title}`}
+                    aria-label={t(off ? "restore" : "keep", { title: i.title })}
                     onClick={() => toggleExcluded(i.id)}
                     className="rounded-full border border-line px-2 py-0.5 text-xs hover:bg-foreground/10"
                   >
-                    {off ? "Remettre" : "Garder"}
+                    {off ? t("restoreShort") : t("keepShort")}
                   </button>
                 </li>
               );
             })}
             {shown.length === 0 && (
-              <li className="px-3 py-4 text-center text-sm text-fog">Aucune carte.</li>
+              <li className="px-3 py-4 text-center text-sm text-fog">{t("noCard")}</li>
             )}
           </ul>
           {kept.some((i) => ["SUPER_RARE", "ULTRA_RARE", "LEGENDARY"].includes(i.rarity)) && (
             <p className="mt-3 text-xs text-pale-mist">
-              La sélection contient des cartes Super rares ou mieux : elles valent souvent bien plus
-              aux enchères.
+              {t("preciousSelection")}
             </p>
           )}
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm font-semibold text-danger">Cette action est irréversible.</p>
+            <p className="text-sm font-semibold text-danger">{t("irreversible")}</p>
             <button
               type="button"
               className={dangerButtonClass}
@@ -572,24 +557,26 @@ export function CollectionBulkPanel({
             >
               <Recycle className="size-4" />{" "}
               {busy
-                ? "Recyclage…"
-                : `Recycler ${num.format(kept.length)} carte${kept.length > 1 ? "s" : ""} (${num.format(keptCopies)} ex.) contre ${num.format(keptTotal)} wikibits`}
+                ? t("busy")
+                : t("confirm", { cards: kept.length, copies: keptCopies, amount: keptTotal })}
             </button>
           </div>
         </div>
       )}
 
       <p className="mt-6 text-xs text-fog">
-        Idée inspirée de{" "}
-        <a
-          href="https://github.com/Lypningeuh/WikiRemastered"
-          target="_blank"
-          rel="noreferrer"
-          className="underline hover:text-foreground"
-        >
-          WikiRemastered
-        </a>{" "}
-        (MIT).
+        {t.rich("inspiredBy", {
+          link: (chunks) => (
+            <a
+              href="https://github.com/Lypningeuh/WikiRemastered"
+              target="_blank"
+              rel="noreferrer"
+              className="underline hover:text-foreground"
+            >
+              {chunks}
+            </a>
+          ),
+        })}
       </p>
     </section>
   );

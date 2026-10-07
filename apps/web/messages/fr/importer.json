@@ -1,0 +1,68 @@
+{
+  "title": "Importer ma collection",
+  "subtitle": "Retrouvez vos cartes de Wiki-Masters dans Wikideck.",
+  "howTo": "Comment faire",
+  "step1": {
+    "title": "Ajoutez ce favori à votre navigateur",
+    "text": "Glissez le bouton ci-dessous dans votre barre de favoris (ne cliquez pas dessus ici).",
+    "button": "Importer vers Wikideck",
+    "hint": "Faites-le glisser dans la barre de favoris plutôt que de cliquer."
+  },
+  "step2": {
+    "title": "Lancez-le depuis Wiki-Masters",
+    "text": "Ouvrez <link>wiki-masters.com</link>, connectez-vous, puis cliquez sur le favori. Autorisez les pop-up si on vous le demande."
+  },
+  "step3": {
+    "title": "Validez ici",
+    "text": "Cette page lit votre collection puis vous laisse confirmer l’import."
+  },
+  "state": "État",
+  "idle": "En attente de votre collection Wiki-Masters…",
+  "reading": "Lecture en cours : {count, plural, one {# article reçu} other {# articles reçus}}{total, plural, =0 {} other { sur # cartes}}…",
+  "read": "{distinct, plural, one {# article différent lu} other {# articles différents lus}}, dont <strong>{french, number}</strong> {french, plural, one {en français importable} other {en français importables}}.",
+  "importCount": "{count, plural, one {Importer # carte} other {Importer # cartes}}",
+  "progress": {
+    "running": "Import en cours…",
+    "finished": "Import terminé.",
+    "imported": "<strong>{count, number}</strong> {count, plural, one {carte ajoutée} other {cartes ajoutées}}",
+    "already": ", {count, plural, one {# déjà importée} other {# déjà importées}}",
+    "notFound": ", {count, plural, one {# introuvable} other {# introuvables}}",
+    "otherLanguage": ", {count, plural, one {# ignorée} other {# ignorées}} (autre langue)"
+  },
+  "waiting": "Wikipédia limite le débit : nouvelle tentative dans quelques secondes…",
+  "viewCollection": "Voir ma collection",
+  "footnote": "Seuls les articles en français sont importés. La rareté est recalculée avec les vues actuelles de Wikipédia, pas reprise de Wiki-Masters. Un article ne peut être importé qu’une seule fois, dans la limite de {max, number} cartes par compte.",
+  "limit": "Limite de {max, number} cartes importées atteinte.",
+  "readErrors": {
+    "login": "Vous n’êtes pas connecté à Wiki-Masters. Connectez-vous, puis relancez le favori.",
+    "format": "Wiki-Masters a changé : l’import ne sait plus lire votre collection.",
+    "down": "Wiki-Masters ne répond pas. Réessayez dans un moment.",
+    "cancelled": "Import annulé depuis Wiki-Masters."
+  },
+  "bookmarklet": {
+    "panelTitle": "Wikideck · Import",
+    "close": "Fermer",
+    "connecting": "Connexion à Wikideck…",
+    "backToWikideck": "Revenir sur Wikideck",
+    "popupBlocked": "Fenêtre bloquée",
+    "popupBlockedHint": "Autorise les fenêtres pop-up de wiki-masters.com, puis relance le favori.",
+    "stopped": "Import arrêté",
+    "stoppedHint": "L’import a été arrêté depuis Wikideck.",
+    "tabClosed": "Onglet Wikideck fermé",
+    "tabClosedHint": "Clique à nouveau sur le favori pour recommencer.",
+    "noAnswer": "Wikideck ne répond pas",
+    "noAnswerHint": "Connecte-toi à Wikideck, puis clique à nouveau sur le favori.",
+    "opening": "Ouverture de la page d’import",
+    "reading": "Lecture de ta collection…",
+    "readingTotal": "{total} cartes sur Wiki-Masters",
+    "readingProgress": "{read} / {max} cartes lues",
+    "done": "Collection lue !",
+    "doneHint": "Valide l’import sur Wikideck.",
+    "login": "Connecte-toi à Wiki-Masters",
+    "loginHint": "Puis clique à nouveau sur le favori.",
+    "format": "Lecture impossible",
+    "formatHint": "Wiki-Masters a changé : l’import ne sait plus lire ta collection.",
+    "down": "Wiki-Masters ne répond pas",
+    "downHint": "Réessaie dans un moment : clique à nouveau sur le favori."
+  }
+}

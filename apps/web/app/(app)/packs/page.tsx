@@ -1,12 +1,15 @@
-import type { DropRatesResponse, PackStatus, TagDto } from "@wikideck/shared";
+import { getTranslations } from "next-intl/server";
+import { PACK_SIZE, type DropRatesResponse, PackStatus, TagDto } from "@wikideck/shared";
 import { HowItWorks } from "@/components/how-it-works";
 import { PackOpener } from "@/components/pack-opener";
 import { API_URL, apiGet } from "@/lib/api";
+import { pageMetadata } from "@/i18n/metadata";
 
-export const metadata = { title: "Ouvrir un paquet — Wikideck" };
+export const generateMetadata = pageMetadata("packs");
 
 export default async function PacksPage() {
-  const [status, tags, drops] = await Promise.all([
+  const [t, status, tags, drops] = await Promise.all([
+    getTranslations("packs"),
     apiGet<PackStatus>("/packs"),
     apiGet<{ tags: TagDto[] }>("/tags"),
     apiGet<DropRatesResponse>("/cards/rates"),
@@ -14,14 +17,14 @@ export default async function PacksPage() {
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-      <h1 className="font-display text-5xl font-medium">Ouvrir un paquet</h1>
-      <p className="mt-2 opacity-60">Découvrez 5 nouvelles cartes Wikipédia</p>
+      <h1 className="font-display text-5xl font-medium">{t("title")}</h1>
+      <p className="mt-2 opacity-60">{t("subtitle", { count: PACK_SIZE })}</p>
       <HowItWorks drops={drops} />
 
       {status ? (
         <PackOpener initial={status} apiUrl={API_URL} tags={tags?.tags} />
       ) : (
-        <p className="mt-10 text-sm text-danger">Impossible de charger vos paquets.</p>
+        <p className="mt-10 text-sm text-danger">{t("loadError")}</p>
       )}
     </div>
   );

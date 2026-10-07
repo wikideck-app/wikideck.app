@@ -1,0 +1,23 @@
+{
+  "title": "Étiquettes",
+  "manage": "Gérer les étiquettes",
+  "manageIntro": "Créez-en ici ou depuis la fiche d’une carte, puis renommez-les, changez leur couleur ou supprimez-les. {count} / {max}",
+  "newName": "Nom de la nouvelle étiquette",
+  "newColor": "Couleur de la nouvelle étiquette",
+  "limitReached": "Limite de {max} étiquettes atteinte : supprimez-en une pour en créer.",
+  "none": "Aucune étiquette pour le moment.",
+  "nameOf": "Nom de l’étiquette {name}",
+  "colorOf": "Couleur de {name}",
+  "cardCount": "{count, plural, =0 {0 carte} one {# carte} other {# cartes}}",
+  "delete": "Supprimer {name}",
+  "confirmDelete": "Supprimer l’étiquette « {name} » ?",
+  "deleteUsed": "{count, plural, one {Elle sera retirée de # carte. Les cartes ne sont pas supprimées.} other {Elle sera retirée de # cartes. Les cartes ne sont pas supprimées.}}",
+  "deleteUnused": "Aucune carte ne l’utilise.",
+  "remove": "Retirer l’étiquette {name}",
+  "addPlaceholder": "Ajouter une étiquette…",
+  "newHint": "Nouvelle étiquette — choisissez sa couleur (sélecteur ou code hexadécimal) :",
+  "color": "Couleur",
+  "colorPicker": "{label} : sélecteur",
+  "colorHex": "{label} : code hexadécimal",
+  "invalidColor": "Code invalide"
+}

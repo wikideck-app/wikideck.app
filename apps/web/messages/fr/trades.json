@@ -1,0 +1,71 @@
+{
+  "title": "Échanges",
+  "subtitle": "Proposez des cartes à un autre joueur, en échange des siennes.",
+  "propose": "Proposer un échange",
+  "tabs": {
+    "incoming": "Reçues",
+    "outgoing": "Envoyées",
+    "history": "Historique"
+  },
+  "status": {
+    "PENDING": "En attente",
+    "ACCEPTED": "Acceptée",
+    "DECLINED": "Refusée",
+    "CANCELLED": "Annulée",
+    "EXPIRED": "Expirée"
+  },
+  "expiresSoon": "expire bientôt",
+  "expires": "expire {time}",
+  "errors": {
+    "not_available": "Une des cartes n’est plus disponible : l’échange n’a pas eu lieu.",
+    "already_resolved": "Cette proposition a déjà été traitée.",
+    "expired": "Cette proposition a expiré.",
+    "busy": "Le serveur est occupé, réessayez.",
+    "self_trade": "Vous ne pouvez pas échanger avec vous-même.",
+    "player_not_found": "Ce joueur n’existe pas.",
+    "recipient_private": "Ce joueur a un profil privé : vous ne pouvez pas lui demander de cartes.",
+    "not_available_mine": "Vous ne possédez plus ces cartes en quantité suffisante.",
+    "not_available_theirs": "Ce joueur ne possède plus ces cartes en quantité suffisante.",
+    "too_many_pending": "Trop de propositions en attente : attendez une réponse ou annulez-en.",
+    "too_many_pending_player": "Vous avez déjà plusieurs propositions en attente avec ce joueur.",
+    "invalid": "Proposition invalide."
+  },
+  "proposes": "<player></player> vous propose",
+  "youTo": "Vous → <player></player>",
+  "give": "Vous donnez",
+  "receive": "Vous recevez",
+  "cards": "{count, plural, =0 {0 carte} one {# carte} other {# cartes}}",
+  "nothing": "Rien",
+  "decline": "Refuser",
+  "accept": "Accepter",
+  "cancel": "Annuler la proposition",
+  "emptyBox": {
+    "incoming": "Aucune proposition reçue.",
+    "outgoing": "Aucune proposition envoyée en attente.",
+    "history": "Aucun échange terminé."
+  },
+  "compose": {
+    "title": "Proposer un échange",
+    "intro": "Les cartes ne bougent que si l’autre joueur accepte. Sans réponse, la proposition expire au bout de {days} jours.",
+    "player": "Joueur",
+    "private": "profil privé",
+    "change": "Changer",
+    "searchPlaceholder": "Pseudonyme du joueur…",
+    "searchLabel": "Pseudonyme du joueur",
+    "noPlayer": "Aucun joueur.",
+    "give": "Je donne",
+    "request": "Je demande",
+    "selected": "({count, plural, one {# sélectionnée} other {# sélectionnées}})",
+    "privateNotice": "{name} a un profil privé : vous ne pouvez que lui offrir des cartes.",
+    "send": "Envoyer la proposition"
+  },
+  "selector": {
+    "searchPlaceholder": "Rechercher une carte…",
+    "searchLabel": "Rechercher une carte",
+    "empty": "Aucune carte.",
+    "remove": "Retirer {title}",
+    "choose": "Choisir {title}",
+    "less": "Moins",
+    "more": "Plus"
+  }
+}

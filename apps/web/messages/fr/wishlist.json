@@ -1,0 +1,12 @@
+{
+  "title": "Mes envies",
+  "loadError": "Impossible de charger vos envies.",
+  "empty": "Marquez des cartes avec le cœur pour les retrouver ici.",
+  "summary": "{count} / {max} cartes · il vous en manque {missing}.",
+  "browse": "Parcourir toutes les cartes",
+  "view": "Voir {title}",
+  "owned": "Possédée ×{count}",
+  "missing": "Il me manque",
+  "inWishlist": "Dans mes envies",
+  "add": "Ajouter à mes envies"
+}

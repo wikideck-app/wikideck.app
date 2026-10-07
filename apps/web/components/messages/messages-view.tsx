@@ -2,6 +2,7 @@
 
 import { ArrowLeft, MessageCirclePlus, Send, X } from "@/components/icons";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
@@ -16,9 +17,6 @@ import {
 import { pollDelay, useLiveEvents, usePushConnected } from "@/lib/push";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
-const timeFmt = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" });
-const dayFmt = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-const shortFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
 const THREAD_POLL_MS = 4000;
 const LIST_POLL_MS = 10000;
 
@@ -35,11 +33,6 @@ function Avatar({ player, size = "size-10" }: { player: PlayerSummary; size?: st
   );
 }
 
-function when(iso: string) {
-  const d = new Date(iso);
-  return d.toDateString() === new Date().toDateString() ? timeFmt.format(d) : shortFmt.format(d);
-}
-
 function NewConversation({
   apiUrl,
   onPick,
@@ -49,6 +42,8 @@ function NewConversation({
   onPick: (player: PlayerSummary) => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("messages");
+  const tc = useTranslations("common");
   const [friends, setFriends] = useState<PlayerSummary[] | null>(null);
   useEffect(() => {
     void apiFetch<FriendsResponse>(apiUrl, "/friends").then((r) =>
@@ -66,22 +61,22 @@ function NewConversation({
       className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-xl border border-line bg-surface p-6 text-foreground backdrop:bg-black/70"
     >
       <div className="flex items-start justify-between gap-4">
-        <h2 className="text-lg font-bold">Nouvelle conversation</h2>
+        <h2 className="text-lg font-bold">{t("new")}</h2>
         <button
           type="button"
-          aria-label="Fermer"
+          aria-label={tc("close")}
           onClick={(e) => e.currentTarget.closest("dialog")?.close()}
           className="opacity-60 hover:opacity-100"
         >
           <X className="size-5" />
         </button>
       </div>
-      <p className="mt-1 text-sm text-pale-mist">On ne peut écrire qu&apos;à ses amis.</p>
+      <p className="mt-1 text-sm text-pale-mist">{t("friendsOnly")}</p>
       {friends === null ? (
-        <p className="py-8 text-center text-sm text-fog">Chargement…</p>
+        <p className="py-8 text-center text-sm text-fog">{tc("loading")}</p>
       ) : friends.length === 0 ? (
         <p className="py-8 text-center text-sm text-fog">
-          Vous n&apos;avez pas encore d&apos;ami. Ajoutez-en depuis la page Amis.
+          {t("noFriends")}
         </p>
       ) : (
         <ul className="mt-4 max-h-80 divide-y divide-line overflow-y-auto rounded-xl border border-line bg-surface">
@@ -117,6 +112,9 @@ function Thread({
   onBack: () => void;
   onActivity: () => void;
 }) {
+  const t = useTranslations("messages");
+  const tc = useTranslations("common");
+  const format = useFormatter();
   const [messages, setMessages] = useState<MessageDto[] | null>(null);
   const [canSend, setCanSend] = useState(true);
   const [draft, setDraft] = useState("");
@@ -190,7 +188,7 @@ function Thread({
       <header className="flex items-center gap-3 border-b border-line px-4 py-3">
         <button
           type="button"
-          aria-label="Retour aux conversations"
+          aria-label={t("back")}
           onClick={onBack}
           className="text-pale-mist hover:text-foreground md:hidden"
         >
@@ -211,14 +209,14 @@ function Thread({
         className="min-h-0 flex-1 space-y-1 overflow-y-auto px-4 py-4"
       >
         {messages === null ? (
-          <p className="py-10 text-center text-sm text-fog">Chargement…</p>
+          <p className="py-10 text-center text-sm text-fog">{tc("loading")}</p>
         ) : messages.length === 0 ? (
           <p className="py-10 text-center text-sm text-fog">
-            Aucun message. Dites bonjour à {player.username} !
+            {t("empty", { name: player.username })}
           </p>
         ) : (
           messages.map((m, i) => {
-            const d = dayFmt.format(new Date(m.createdAt));
+            const d = format.dateTime(new Date(m.createdAt), "weekday");
             const header = d !== day ? d : null;
             day = d;
             const next = messages[i + 1];
@@ -235,7 +233,7 @@ function Thread({
                     className={`max-w-[80%] whitespace-pre-wrap wrap-break-word rounded-2xl px-3.5 py-2 text-sm ${
                       m.mine ? "rounded-br-md bg-accent/12" : "rounded-bl-md border border-line"
                     }`}
-                    title={timeFmt.format(new Date(m.createdAt))}
+                    title={format.dateTime(new Date(m.createdAt), "time")}
                   >
                     {m.body}
                   </div>
@@ -243,11 +241,11 @@ function Thread({
                 <p
                   className={`mt-0.5 px-1 text-[10px] text-fog ${m.mine ? "text-right" : "text-left"}`}
                 >
-                  {timeFmt.format(new Date(m.createdAt))}
-                  {lastOfMine && m.read && " · Lu"}
+                  {format.dateTime(new Date(m.createdAt), "time")}
+                  {lastOfMine && m.read && t("read")}
                   {!m.mine &&
                     (reported.has(m.id) ? (
-                      " · Signalé à l'équipe"
+                      t("reported")
                     ) : reporting === m.id ? (
                       <>
                         {" · "}
@@ -264,14 +262,14 @@ function Thread({
                             else setError(r.message);
                           }}
                         >
-                          Envoyer le signalement à l&apos;équipe ?
+                          {t("confirmReport")}
                         </button>{" "}
                         <button
                           type="button"
                           className="hover:underline"
                           onClick={() => setReporting(null)}
                         >
-                          Annuler
+                          {tc("cancel")}
                         </button>
                       </>
                     ) : (
@@ -282,7 +280,7 @@ function Thread({
                           className="hover:text-danger hover:underline"
                           onClick={() => setReporting(m.id)}
                         >
-                          Signaler
+                          {t("report")}
                         </button>
                       </>
                     ))}
@@ -313,13 +311,13 @@ function Thread({
                   void send();
                 }
               }}
-              placeholder="Écrire un message…"
-              aria-label="Message"
+              placeholder={t("placeholder")}
+              aria-label={t("label")}
               className="max-h-32 min-h-10 flex-1 resize-none rounded-xl border border-line bg-transparent px-3 py-2 text-sm outline-none field-sizing-content focus:border-accent"
             />
             <button
               type="submit"
-              aria-label="Envoyer"
+              aria-label={t("send")}
               disabled={!draft.trim() || sending}
               className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground transition-colors hover:bg-accent/70 disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -328,7 +326,7 @@ function Thread({
           </form>
         ) : (
           <p className="text-center text-xs text-fog">
-            Vous n&apos;êtes plus amis : vous ne pouvez plus écrire à {player.username}.
+            {t("notFriends", { name: player.username })}
           </p>
         )}
         {error && (
@@ -350,6 +348,8 @@ export function MessagesView({
   initialWith: string | null;
   apiUrl: string;
 }) {
+  const t = useTranslations("messages");
+  const format = useFormatter();
   const router = useRouter();
   const [conversations, setConversations] = useState(initial);
   const [active, setActive] = useState<PlayerSummary | null>(
@@ -387,6 +387,13 @@ export function MessagesView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const when = (iso: string) => {
+    const d = new Date(iso);
+    return d.toDateString() === new Date().toDateString()
+      ? format.dateTime(d, "time")
+      : format.dateTime(d, "short");
+  };
+
   function open(player: PlayerSummary | null) {
     setActive(player);
     window.history.replaceState(null, "", player ? `/messages?with=${player.id}` : "/messages");
@@ -398,11 +405,11 @@ export function MessagesView({
         className={`${active ? "hidden md:flex" : "flex"} w-full shrink-0 flex-col border-line md:w-80 md:border-r`}
       >
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-fog">Conversations</h2>
+          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-fog">{t("conversations")}</h2>
           <button
             type="button"
-            aria-label="Nouvelle conversation"
-            title="Nouvelle conversation"
+            aria-label={t("new")}
+            title={t("new")}
             onClick={() => setPicking(true)}
             className="text-pale-mist hover:text-foreground"
           >
@@ -412,7 +419,7 @@ export function MessagesView({
         <ul className="min-h-0 flex-1 overflow-y-auto">
           {conversations.length === 0 && (
             <li className="p-6 text-center text-sm text-fog">
-              Aucune conversation. Écrivez à un ami avec le bouton ci-dessus.
+              {t("emptyList")}
             </li>
           )}
           {conversations.map((c) => (
@@ -433,8 +440,7 @@ export function MessagesView({
                     <p
                       className={`truncate text-xs ${c.unread ? "font-bold text-foreground" : "text-fog"}`}
                     >
-                      {c.last.mine && "Vous : "}
-                      {c.last.body}
+                      {c.last.mine ? t("you", { body: c.last.body }) : c.last.body}
                     </p>
                     {c.unread > 0 && (
                       <span className="min-w-5 shrink-0 rounded-lg bg-accent px-1.5 text-center text-[10px] font-bold leading-5 text-accent-foreground">
@@ -460,7 +466,7 @@ export function MessagesView({
           />
         ) : (
           <div className="flex flex-1 items-center justify-center p-8 text-center text-sm text-fog">
-            Choisissez une conversation, ou démarrez-en une avec un ami.
+            {t("pick")}
           </div>
         )}
       </section>

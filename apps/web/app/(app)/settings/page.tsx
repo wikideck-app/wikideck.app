@@ -1,16 +1,18 @@
+import { getTranslations } from "next-intl/server";
 import type { MeProfile } from "@wikideck/shared";
 import { SettingsView } from "@/components/settings-view";
 import { API_URL, apiGet } from "@/lib/api";
+import { pageMetadata } from "@/i18n/metadata";
 
-export const metadata = { title: "Paramètres — Wikideck" };
+export const generateMetadata = pageMetadata("settings");
 
 export default async function SettingsPage() {
-  const profile = await apiGet<MeProfile>("/me");
+  const [t, profile] = await Promise.all([getTranslations("settings"), apiGet<MeProfile>("/me")]);
 
   if (!profile) {
     return (
       <p className="mt-10 text-center text-sm text-danger">
-        Impossible de charger vos paramètres pour le moment.
+        {t("loadError")}
       </p>
     );
   }

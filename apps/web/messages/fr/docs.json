@@ -1,0 +1,574 @@
+{
+  "api": {
+    "title": "API Wikideck",
+    "intro": "Les routes utilisées par le site, décrites pour que tu saches ce qu’elles font et ce qu’elles renvoient.",
+    "noBotTitle": "Pas encore d’accès pour les bots",
+    "noBotText": "Toutes les routes de données demandent une session ouverte via Discord dans un navigateur. Il n’existe pas encore de clé d’API : un bot Discord ne peut donc pas s’en servir pour l’instant. Seules <code>/health</code> et la racine de l’API sont ouvertes sans connexion.",
+    "principles": "Principes",
+    "baseUrl": "Adresse de base",
+    "baseUrlText": "<code>{url}</code>. Le préfixe <code>/v1</code> est la version ; la réponse indique <code>X-Api-Version</code>.",
+    "auth": "Authentification",
+    "authText": "Cookie <code>wikideck_session</code>, posé après la connexion Discord. Il est <code>HttpOnly</code> et valable 30 jours. Les requêtes depuis un navigateur doivent envoyer les cookies (<code>credentials: \"include\"</code>) et ne sont acceptées que depuis le site officiel. Ne partage jamais ce cookie : il donne accès à ton compte.",
+    "format": "Format",
+    "formatText": "JSON en entrée et en sortie. Les identifiants sont des UUID, les dates sont au format ISO 8601. Les listes sont paginées avec <code>page</code>.",
+    "errors": "Erreurs",
+    "errorsText": "Un code HTTP et un corps <code>'{' \"error\": \"code\" '}'</code>. <code>401</code> : non connecté ; <code>400</code> : requête invalide ; <code>404</code> : introuvable ; <code>409</code> : conflit d’état ; <code>429</code> : trop de requêtes.",
+    "rateLimits": "Limites de débit",
+    "rateLimitsText": "Chaque route a une limite par minute (indiquée à droite de chaque route). Les en-têtes <code>RateLimit-Limit</code>, <code>RateLimit-Remaining</code> et <code>RateLimit-Reset</code> disent où tu en es. Au-delà, la réponse est <code>429 rate_limited</code> avec <code>retryAfter</code> en secondes.",
+    "rarities": "Raretés",
+    "raritiesText": "C commune, PC peu commune, R rare, SR super rare, UR ultra rare, L légendaire, M mythique.",
+    "health": "Santé du service",
+    "healthText": "État du service, version de l’API et charge. Avec la racine de l’API, c’est la seule route publique.",
+    "noLogin": "sans connexion"
+  },
+  "staff": {
+    "title": "API staff",
+    "intro": "Routes de l’espace staff, sous <code>/staff</code>. Même session et mêmes conventions que l’API des joueurs.",
+    "access": "<strong>Accès</strong> : compte staff, rôle modérateur ou administrateur. Un compte sans rôle reçoit <code>404</code>.",
+    "journal": "<strong>Journal</strong> : chaque action qui modifie quelque chose est enregistrée avec son auteur, sa cible et son motif, et visible dans <code>/staff/audit</code>.",
+    "roles": "<strong>Rôles</strong> : le modérateur peut bannir, renommer et ajuster la confiance d’un membre de rang inférieur. Donner des wikibits ou des paquets, changer un rôle et supprimer un compte demandent le rôle administrateur. Tu ne peux jamais agir sur toi-même ni sur un administrateur défini par la configuration du serveur."
+  },
+  "reference": {
+    "sections": "Sections",
+    "query": "Paramètres d’URL",
+    "body": "Corps JSON",
+    "response": "Réponse",
+    "errors": "Erreurs",
+    "limit": "{max} / {minutes, plural, =1 {min} other {# min}}"
+  },
+  "sections": {
+    "compte": {
+      "title": "Compte et session",
+      "intro": "La connexion se fait par Discord, dans un navigateur. Le serveur pose alors le cookie de session."
+    },
+    "paquets": {
+      "title": "Paquets et roue"
+    },
+    "collection": {
+      "title": "Collection"
+    },
+    "catalogue": {
+      "title": "Catalogue et classement"
+    },
+    "marche": {
+      "title": "Marché et guildes"
+    },
+    "echanges": {
+      "title": "Échanges, amis et messages"
+    },
+    "joueurs": {
+      "title": "Joueurs et profils"
+    },
+    "organisation": {
+      "title": "Étiquettes, albums et envies"
+    },
+    "guildes": {
+      "title": "Guildes"
+    },
+    "bataille": {
+      "title": "Bataille"
+    },
+    "tableau": {
+      "title": "Tableau de bord"
+    },
+    "membres": {
+      "title": "Membres"
+    },
+    "moderation": {
+      "title": "Modération"
+    }
+  },
+  "endpoints": {
+    "get-auth-discord": {
+      "summary": "Redirige vers Discord pour se connecter."
+    },
+    "post-auth-logout": {
+      "summary": "Ferme la session en cours."
+    },
+    "get-auth-me": {
+      "summary": "Utilisateur connecté (null sinon) : pseudo, avatar, solde de wikibits, compteurs de notifications, réglages, rôle staff. Verse aussi le bonus quotidien de 10 wikibits à la première requête de la journée."
+    },
+    "get-me": {
+      "summary": "Profil du compte : pseudo, nom Discord, visibilité, carte en vitrine, cartes en vedette."
+    },
+    "patch-me": {
+      "summary": "Modifie le profil. Tous les champs sont facultatifs.",
+      "body": {
+        "username": "nouveau pseudo",
+        "isPublic": "profil public ou privé",
+        "showcaseCardId": "carte en vitrine (une carte possédée), ou null",
+        "featuredCardIds": "cartes en vedette (identifiants de cartes possédées)"
+      }
+    },
+    "delete-me": {
+      "summary": "Supprime définitivement le compte et ses données. Impossible tant que des enchères sont actives.",
+      "body": {
+        "confirm": "ton pseudo, pour confirmer"
+      }
+    },
+    "put-me-settings": {
+      "summary": "Enregistre les réglages (thème, audio, animations, tri par défaut, notifications).",
+      "body": {
+        "settings": "objet de réglages complet"
+      }
+    },
+    "get-me-export": {
+      "summary": "Export de toutes les données du compte (droit d’accès RGPD)."
+    },
+    "get-me-pulls": {
+      "summary": "Historique des ouvertures de paquets, regroupées par ouverture."
+    },
+    "post-bug-reports": {
+      "summary": "Envoie un rapport de bug à l’équipe.",
+      "body": {
+        "message": "description, de 10 à 2 000 caractères",
+        "page": "chemin de la page concernée (facultatif)"
+      }
+    },
+    "get-packs": {
+      "summary": "Nombre de paquets disponibles, maximum, délai avant le prochain et stock de boosters de chance."
+    },
+    "post-packs-open": {
+      "summary": "Ouvre un paquet de 5 cartes. Les cartes sont ajoutées à la collection et renvoyées avec leur nouveauté et leur quantité.",
+      "body": {
+        "boost": "true pour utiliser un booster de chance (facultatif)"
+      }
+    },
+    "get-wheel": {
+      "summary": "Dit si la roue de la fortune peut être tournée aujourd’hui."
+    },
+    "get-wheel-history": {
+      "summary": "Tes 30 derniers tours et les 20 derniers de la communauté. Un joueur au profil privé apparaît sans pseudo."
+    },
+    "post-wheel-spin": {
+      "summary": "Tourne la roue (un tour par jour, heure de Paris) et verse le gain."
+    },
+    "get-collection": {
+      "summary": "Cartes possédées, paginées (56 par page).",
+      "query": {
+        "page": "numéro de page",
+        "q": "recherche : chaque mot doit apparaître dans le titre ou le sous-titre",
+        "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
+        "sort": "recent, oldest, rarity_desc, rarity_asc, alpha",
+        "tag": "identifiant d’étiquette",
+        "fav": "1 pour les favorites seulement"
+      }
+    },
+    "get-collection-locks": {
+      "summary": "Cartes protégées (favorites, en vitrine, en vente, dans un échange) avec la raison."
+    },
+    "get-collection-duplicates": {
+      "summary": "Doublons recyclables, par rareté, avec les wikibits obtenus."
+    },
+    "put-collection-cardid-favorite": {
+      "summary": "Ajoute ou retire une carte des favorites.",
+      "body": {
+        "favorite": "true ou false"
+      }
+    },
+    "put-collection-cardid-tags": {
+      "summary": "Remplace les étiquettes d’une carte.",
+      "body": {
+        "tagIds": "identifiants d’étiquettes"
+      }
+    },
+    "post-collection-bulk-preview": {
+      "summary": "Aperçu d’un recyclage en masse : nombre de cartes, gain, raisons de protection.",
+      "body": {
+        "maxViews": "vues mensuelles maximum",
+        "rarities": "raretés visées (facultatif)",
+        "cardIds": "limiter à ces cartes (facultatif)",
+        "list": "true pour renvoyer aussi la liste (facultatif)"
+      }
+    },
+    "post-collection-recycle": {
+      "summary": "Recycle des cartes contre des wikibits. Un seul mode par requête.",
+      "body": {
+        "cards": "['{' cardId, quantity '}'] : cartes précises",
+        "duplicates": "raretés dont on recycle les doublons",
+        "bulk": "'{' maxViews, rarities, cardIds?, excludeIds? '}' : recyclage en masse"
+      }
+    },
+    "post-import-batch": {
+      "summary": "Importe un lot (20 maximum) de cartes depuis une autre collection. Plafond : 50 000 cartes différentes par compte.",
+      "body": {
+        "items": "['{' title, lang, quantity '}']"
+      }
+    },
+    "get-cards": {
+      "summary": "Toutes les cartes du catalogue, avec ce que tu possèdes.",
+      "query": {
+        "page": "numéro de page",
+        "q": "recherche (mots de 3 lettres minimum)",
+        "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
+        "show": "all, mine (possédées), missing (manquantes), drawn (déjà tirées)",
+        "sort": "rarity_desc, rarity_asc, alpha"
+      }
+    },
+    "get-cards-rates": {
+      "summary": "Taux de tirage de chaque rareté, par carte et par paquet."
+    },
+    "get-ranking": {
+      "summary": "Classement des joueurs (50 premiers).",
+      "query": {
+        "board": "collection, points ou battle"
+      }
+    },
+    "get-achievements": {
+      "summary": "Succès, progression et récompenses à récupérer."
+    },
+    "post-achievements-claim": {
+      "summary": "Récupère les récompenses des succès terminés."
+    },
+    "post-achievements-seen": {
+      "summary": "Marque les nouveaux succès comme vus."
+    },
+    "get-market": {
+      "summary": "Enchères du marché, 24 par page.",
+      "query": {
+        "view": "all, selling (mes ventes), bidding (mes enchères)",
+        "q": "recherche sur le titre",
+        "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
+        "sort": "ending, new, price_asc, price_desc",
+        "page": "numéro de page"
+      }
+    },
+    "post-market": {
+      "summary": "Met une carte en vente (10 ventes actives au maximum).",
+      "body": {
+        "cardId": "carte à vendre",
+        "startPrice": "prix de départ, de 1 à 1 000 000",
+        "hours": "durée : 1, 6, 12, 24 ou 48"
+      }
+    },
+    "get-market-id": {
+      "summary": "Détail d’une enchère et historique des offres."
+    },
+    "post-market-id-bid": {
+      "summary": "Place une offre.",
+      "body": {
+        "amount": "montant en wikibits"
+      }
+    },
+    "post-market-id-cancel": {
+      "summary": "Annule une de tes enchères (sans offre)."
+    },
+    "get-market-id-stats": {
+      "summary": "Prix des ventes passées de la même carte."
+    },
+    "get-market-stats": {
+      "summary": "Prix des ventes récentes, éventuellement pour une rareté.",
+      "query": {
+        "rarity": "code de rareté"
+      }
+    },
+    "get-trades": {
+      "summary": "Tes échanges, reçus ou envoyés.",
+      "query": {
+        "box": "incoming (reçus), outgoing (envoyés) ou history (historique)"
+      }
+    },
+    "post-trades": {
+      "summary": "Propose un échange (10 cartes par côté, 10 propositions en attente).",
+      "body": {
+        "recipientId": "joueur destinataire",
+        "offer": "['{' cardId, quantity '}'] : ce que tu donnes",
+        "request": "['{' cardId, quantity '}'] : ce que tu demandes"
+      }
+    },
+    "post-trades-id-accept": {
+      "summary": "Accepte un échange reçu."
+    },
+    "post-trades-id-decline": {
+      "summary": "Refuse un échange reçu."
+    },
+    "post-trades-id-cancel": {
+      "summary": "Annule un échange que tu as proposé."
+    },
+    "get-friends": {
+      "summary": "Amis, demandes reçues et envoyées."
+    },
+    "post-friends": {
+      "summary": "Envoie une demande d’ami.",
+      "body": {
+        "userId": "joueur visé (récupéré via /players)"
+      }
+    },
+    "post-friends-id-accept": {
+      "summary": "Accepte une demande d’ami."
+    },
+    "delete-friends-id": {
+      "summary": "Retire un ami ou annule une demande."
+    },
+    "get-messages": {
+      "summary": "Liste des conversations."
+    },
+    "get-messages-userid": {
+      "summary": "Fil de discussion avec un ami (le marque comme lu)."
+    },
+    "post-messages-userid": {
+      "summary": "Envoie un message à un ami (1 000 caractères au maximum).",
+      "body": {
+        "body": "texte du message"
+      }
+    },
+    "post-messages-report": {
+      "summary": "Signale un message reçu au staff, avec les cinq messages précédents comme contexte.",
+      "body": {
+        "messageId": "message signalé"
+      }
+    },
+    "get-players": {
+      "summary": "Recherche de joueurs (8 résultats, 2 caractères minimum).",
+      "query": {
+        "q": "pseudo, ou nom Discord exact avec by=discord",
+        "by": "discord pour chercher par nom d’utilisateur Discord"
+      }
+    },
+    "get-players-id": {
+      "summary": "Résumé d’un joueur et votre relation."
+    },
+    "get-players-id-profile": {
+      "summary": "Profil public : statistiques, vitrine, cartes en vedette, envies."
+    },
+    "get-players-id-cards": {
+      "summary": "Collection d’un joueur dont le profil est public.",
+      "query": {
+        "page": "numéro de page",
+        "q": "recherche"
+      }
+    },
+    "get-tags": {
+      "summary": "Tes étiquettes."
+    },
+    "post-tags": {
+      "summary": "Crée une étiquette (30 au maximum).",
+      "body": {
+        "name": "nom, 24 caractères au maximum",
+        "color": "couleur #rrggbb"
+      }
+    },
+    "patch-tags-id": {
+      "summary": "Renomme ou recolore une étiquette.",
+      "body": {
+        "name": "nouveau nom (facultatif)",
+        "color": "nouvelle couleur (facultatif)"
+      }
+    },
+    "delete-tags-id": {
+      "summary": "Supprime une étiquette."
+    },
+    "get-albums": {
+      "summary": "Tes albums (20 au maximum), avec des cartes mises en avant.",
+      "query": {
+        "card": "identifiant de carte, pour savoir dans quels albums elle est (facultatif)"
+      }
+    },
+    "post-albums": {
+      "summary": "Crée un album.",
+      "body": {
+        "name": "nom, 40 caractères au maximum"
+      }
+    },
+    "get-albums-id": {
+      "summary": "Détail d’un album."
+    },
+    "patch-albums-id": {
+      "summary": "Renomme un album.",
+      "body": {
+        "name": "nouveau nom"
+      }
+    },
+    "delete-albums-id": {
+      "summary": "Supprime un album (les cartes restent dans la collection)."
+    },
+    "put-albums-id-cards": {
+      "summary": "Ajoute ou retire des cartes (500 par album, 100 ajouts par requête).",
+      "body": {
+        "add": "identifiants de cartes à ajouter",
+        "remove": "identifiants de cartes à retirer"
+      }
+    },
+    "get-albums-id-candidates": {
+      "summary": "Cartes de ta collection qui ne sont pas encore dans l’album."
+    },
+    "get-wishlist": {
+      "summary": "Ta liste d’envies (3 cartes au maximum)."
+    },
+    "get-wishlist-ids": {
+      "summary": "Identifiants des cartes en envie, pour afficher les cœurs."
+    },
+    "post-wishlist": {
+      "summary": "Ajoute une carte aux envies. Tu es notifié quand elle est mise en vente.",
+      "body": {
+        "cardId": "carte souhaitée"
+      }
+    },
+    "delete-wishlist-cardid": {
+      "summary": "Retire une carte des envies."
+    },
+    "get-guild": {
+      "summary": "Ta guilde : membres, points de la semaine, récompenses."
+    },
+    "get-guild-ranking": {
+      "summary": "Classement des guildes (50 premières)."
+    },
+    "get-guilds": {
+      "summary": "Recherche de guildes.",
+      "query": {
+        "q": "nom de guilde"
+      }
+    },
+    "post-guilds": {
+      "summary": "Crée une guilde (30 membres au maximum).",
+      "body": {
+        "name": "3 à 24 caractères",
+        "description": "140 caractères au maximum (facultatif)"
+      }
+    },
+    "post-guilds-id-join": {
+      "summary": "Rejoint une guilde."
+    },
+    "post-guild-leave": {
+      "summary": "Quitte ta guilde."
+    },
+    "delete-guild-members-userid": {
+      "summary": "Exclut un membre (propriétaire de la guilde)."
+    },
+    "get-guild-wishes": {
+      "summary": "Souhaits de cartes des membres de la guilde."
+    },
+    "post-guild-wishes": {
+      "summary": "Publie un souhait de carte (un seul souhait ouvert à la fois).",
+      "body": {
+        "cardId": "carte souhaitée"
+      }
+    },
+    "delete-guild-wishes-id": {
+      "summary": "Retire ton souhait."
+    },
+    "post-guild-wishes-id-gift": {
+      "summary": "Offre à un membre la carte qu’il souhaite."
+    },
+    "get-battle-puzzle": {
+      "summary": "Tire un défi (article de départ et article cible)."
+    },
+    "post-battle-games": {
+      "summary": "Enregistre une partie solo terminée.",
+      "body": {
+        "start": "article de départ",
+        "target": "article cible",
+        "path": "articles parcourus",
+        "clicks": "nombre de clics",
+        "timeSeconds": "durée",
+        "won": "partie gagnée ou non"
+      }
+    },
+    "get-battle-games": {
+      "summary": "Historique et statistiques de tes parties."
+    },
+    "post-battle-rooms": {
+      "summary": "Crée un salon multijoueur."
+    },
+    "get-battle-rooms-mine": {
+      "summary": "Salon dans lequel tu es, le cas échéant."
+    },
+    "get-battle-rooms-code": {
+      "summary": "État d’un salon."
+    },
+    "post-battle-rooms-code": {
+      "summary": "Agit dans un salon.",
+      "body": {
+        "action": "join, leave, heartbeat, start, play, navigate, surrender, timeUp, nextRound, reset, settings"
+      }
+    },
+    "get-battle-rooms-code-stream": {
+      "summary": "Flux d’événements en direct (SSE) d’un salon. 3 flux simultanés au maximum par joueur."
+    },
+    "get-staff-overview": {
+      "summary": "Chiffres du site : membres, cartes, enchères, wikibits, activité."
+    },
+    "get-staff-alerts": {
+      "summary": "Comptes suspects selon les indices d’abus des 30 derniers jours."
+    },
+    "get-staff-audit": {
+      "summary": "Journal des actions du staff (qui, quoi, sur qui)."
+    },
+    "get-staff-users": {
+      "summary": "Recherche de membres.",
+      "query": {
+        "q": "pseudo",
+        "filter": "banned (bannis) ou staff (équipe) ; vide pour tous",
+        "page": "numéro de page"
+      }
+    },
+    "get-staff-users-id": {
+      "summary": "Fiche complète d’un membre : stats, niveau de confiance, indices d’abus."
+    },
+    "post-staff-users-id": {
+      "summary": "Agit sur un membre. Chaque action est consignée dans le journal.",
+      "body": {
+        "action": "ban '{' reason '}', unban, rename '{' username '}', setTrust '{' override '}', clearSignals (modérateur sur un rang inférieur) ; wikibits '{' amount, reason '}', packs '{' count '}', setRole '{' role '}', delete '{' confirm, reason '}' (administrateur)"
+      }
+    },
+    "get-staff-deleted": {
+      "summary": "Historique des comptes supprimés (par le staff ou par eux-mêmes)."
+    },
+    "get-staff-reports": {
+      "summary": "Messages signalés, avec le message et les cinq précédents.",
+      "query": {
+        "status": "all pour inclure les signalements traités",
+        "page": "numéro de page"
+      }
+    },
+    "post-staff-reports-id": {
+      "summary": "Traite un signalement.",
+      "body": {
+        "action": "dismiss (classer sans suite) ou deleteMessage"
+      }
+    },
+    "get-staff-bug-reports": {
+      "summary": "Rapports de bug envoyés par les joueurs.",
+      "query": {
+        "status": "all pour inclure les rapports traités",
+        "page": "numéro de page"
+      }
+    },
+    "post-staff-bug-reports-id": {
+      "summary": "Traite un rapport de bug.",
+      "body": {
+        "action": "resolve ou dismiss"
+      }
+    },
+    "get-staff-auctions": {
+      "summary": "Toutes les enchères.",
+      "query": {
+        "q": "titre de carte ou pseudo",
+        "status": "all pour inclure les enchères terminées",
+        "page": "numéro de page"
+      }
+    },
+    "post-staff-auctions-id": {
+      "summary": "Annule une enchère : la carte revient au vendeur et l’offre au meilleur enchérisseur.",
+      "body": {
+        "reason": "motif obligatoire"
+      }
+    },
+    "get-staff-guilds": {
+      "summary": "Guildes.",
+      "query": {
+        "q": "nom de guilde",
+        "page": "numéro de page"
+      }
+    },
+    "get-staff-guilds-id": {
+      "summary": "Détail d’une guilde : membres et souhaits ouverts."
+    },
+    "post-staff-guilds-id": {
+      "summary": "Agit sur une guilde.",
+      "body": {
+        "action": "edit '{' name?, description? '}', kick '{' userId '}', dissolve '{' confirmName '}'"
+      }
+    }
+  }
+}

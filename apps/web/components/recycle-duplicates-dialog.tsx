@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Recycle } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import {
   RARITIES,
@@ -23,6 +24,9 @@ export function RecycleDuplicatesDialog({
   onClose: () => void;
   onDone: (result: RecycleResponse) => void;
 }) {
+  const t = useTranslations("collection.duplicates");
+  const tr = useTranslations("collection.recycle");
+  const tc = useTranslations("common");
   const [data, setData] = useState<DuplicatesResponse | null>(null);
   const [checked, setChecked] = useState<Set<Rarity>>(new Set(DEFAULT_CHECKED));
   const [busy, setBusy] = useState(false);
@@ -80,21 +84,19 @@ export function RecycleDuplicatesDialog({
           <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-success/15 text-success">
             <Check className="size-6" />
           </span>
-          <h2 className="mt-3 text-xl font-bold">Doublons recyclés</h2>
+          <h2 className="mt-3 text-xl font-bold">{t("done")}</h2>
           <p className="mt-2 flex items-center justify-center gap-2 text-2xl font-bold">
             +<Wikibits amount={result.gained} />
           </p>
           <p className="mt-1 text-sm text-pale-mist">
-            {result.copies} exemplaire{result.copies > 1 ? "s" : ""} recyclé
-            {result.copies > 1 ? "s" : ""}, un exemplaire de chaque carte conservé. Nouveau solde :{" "}
-            {result.wikibits} wikibits.
+            {t("doneText", { count: result.copies, balance: result.wikibits })}
           </p>
           <button
             type="button"
             className={`${buttonClass} mt-5`}
             onClick={(e) => e.currentTarget.closest("dialog")?.close()}
           >
-            Fermer
+            {tc("close")}
           </button>
         </div>
       ) : (
@@ -102,18 +104,17 @@ export function RecycleDuplicatesDialog({
           <div className="flex items-start gap-3">
             <Recycle className="mt-1 size-6 shrink-0 text-accent" />
             <div>
-              <h2 className="text-xl font-bold">Recycler les doublons</h2>
+              <h2 className="text-xl font-bold">{t("title")}</h2>
               <p className="mt-1 text-sm text-pale-mist">
-                Pour chaque carte en plusieurs exemplaires, vous gardez toujours un exemplaire :
-                seuls les exemplaires en trop sont recyclés.
+                {t("intro")}
               </p>
             </div>
           </div>
 
-          {!data && !error && <p className="mt-5 text-sm text-fog">Chargement…</p>}
+          {!data && !error && <p className="mt-5 text-sm text-fog">{tc("loading")}</p>}
           {data && rows.length === 0 && (
             <p className="mt-5 text-sm text-pale-mist">
-              Vous n&apos;avez aucun doublon : toutes vos cartes sont en un seul exemplaire.
+              {t("none")}
             </p>
           )}
           {rows.length > 0 && (
@@ -132,7 +133,7 @@ export function RecycleDuplicatesDialog({
                       <span className="min-w-0 flex-1">
                         <strong className="inline-block w-8">{info.code}</strong>
                         <span className="opacity-60">
-                          {r.cards} carte{r.cards > 1 ? "s" : ""} · {r.copies} en trop
+                          {t("row", { cards: r.cards, copies: r.copies })}
                         </span>
                       </span>
                       <Wikibits amount={r.wikibits} className="font-semibold" />
@@ -144,8 +145,7 @@ export function RecycleDuplicatesDialog({
           )}
           {rows.some((r) => ["ULTRA_RARE", "LEGENDARY"].includes(r.rarity)) && (
             <p className="mt-3 text-xs leading-relaxed text-pale-mist">
-              Les Ultra rares et Légendaires valent souvent bien plus aux enchères : elles ne sont
-              pas cochées d&apos;office.
+              {t("warn")}
             </p>
           )}
           {error && (
@@ -154,7 +154,7 @@ export function RecycleDuplicatesDialog({
             </p>
           )}
 
-          <p className="mt-4 text-sm font-semibold text-danger">Cette action est irréversible.</p>
+          <p className="mt-4 text-sm font-semibold text-danger">{tr("irreversible")}</p>
           <div className="mt-4 flex justify-end gap-3">
             <button
               type="button"
@@ -162,7 +162,7 @@ export function RecycleDuplicatesDialog({
               disabled={busy}
               onClick={(e) => e.currentTarget.closest("dialog")?.close()}
             >
-              Annuler
+              {tc("cancel")}
             </button>
             <button
               type="button"
@@ -171,7 +171,7 @@ export function RecycleDuplicatesDialog({
               onClick={confirm}
             >
               <Recycle className="size-4" />
-              {busy ? "Recyclage…" : copies === 0 ? "Recycler" : `Recycler ${copies}`}
+              {busy ? tr("busy") : copies === 0 ? tr("action") : t("recycleCount", { count: copies })}
               {copies > 0 && !busy && (
                 <span className="inline-flex items-center gap-1 opacity-90">
                   (+

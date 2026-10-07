@@ -1,22 +1,12 @@
 "use client";
 
 import { Lock, Search, X } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import type { CreateTradeBody, PlayerSummary } from "@wikideck/shared";
+import { TRADE_EXPIRY_DAYS, type CreateTradeBody, type PlayerSummary } from "@wikideck/shared";
 import { buttonClass, primaryButtonClass } from "@/components/settings/controls";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 import { CardSelector, type Selection } from "./card-selector";
-
-const ERRORS: Record<string, string> = {
-  self_trade: "Vous ne pouvez pas échanger avec vous-même.",
-  player_not_found: "Ce joueur n'existe pas.",
-  recipient_private: "Ce joueur a un profil privé : vous ne pouvez pas lui demander de cartes.",
-  not_available_mine: "Vous ne possédez plus ces cartes en quantité suffisante.",
-  not_available_theirs: "Ce joueur ne possède plus ces cartes en quantité suffisante.",
-  too_many_pending: "Trop de propositions en attente : attendez une réponse ou annulez-en.",
-  too_many_pending_player: "Vous avez déjà plusieurs propositions en attente avec ce joueur.",
-  invalid: "Proposition invalide.",
-};
 
 function Avatar({ player }: { player: PlayerSummary }) {
   return player.avatarUrl ? (
@@ -40,6 +30,8 @@ export function ComposeDialog({
   onCreated: () => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("trades");
+  const tc = useTranslations("common");
   const [recipient, setRecipient] = useState<PlayerSummary | null>(initialRecipient ?? null);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<PlayerSummary[]>([]);
@@ -78,7 +70,11 @@ export function ComposeDialog({
     const result = await apiCall(apiUrl, "/trades", "POST", body);
     setSending(false);
     if (!result.ok) {
-      setError((result.code && ERRORS[result.code]) || result.message);
+      setError(
+        result.code && t.has(`errors.${result.code}` as never)
+          ? t(`errors.${result.code}` as never)
+          : result.message,
+      );
       return;
     }
     onCreated();
@@ -96,15 +92,14 @@ export function ComposeDialog({
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold">Proposer un échange</h2>
+          <h2 className="text-xl font-bold">{t("compose.title")}</h2>
           <p className="mt-1 text-sm text-pale-mist">
-            Les cartes ne bougent que si l&apos;autre joueur accepte. Sans réponse, la proposition
-            expire au bout de 7 jours.
+            {t("compose.intro", { days: TRADE_EXPIRY_DAYS })}
           </p>
         </div>
         <button
           type="button"
-          aria-label="Fermer"
+          aria-label={tc("close")}
           onClick={(e) => e.currentTarget.closest("dialog")?.close()}
           className="opacity-60 hover:opacity-100"
         >
@@ -113,14 +108,14 @@ export function ComposeDialog({
       </div>
 
       <section className="mt-5">
-        <h3 className="text-sm font-bold">Joueur</h3>
+        <h3 className="text-sm font-bold">{t("compose.player")}</h3>
         {recipient ? (
           <div className="mt-2 flex items-center gap-3">
             <Avatar player={recipient} />
             <span className="font-bold">{recipient.username}</span>
             {!recipient.isPublic && (
               <span className="inline-flex items-center gap-1 text-xs text-fog">
-                <Lock className="size-3" /> profil privé
+                <Lock className="size-3" /> {t("compose.private")}
               </span>
             )}
             {!initialRecipient && (
@@ -132,7 +127,7 @@ export function ComposeDialog({
                   setRequest(new Map());
                 }}
               >
-                Changer
+                {t("compose.change")}
               </button>
             )}
           </div>
@@ -145,14 +140,14 @@ export function ComposeDialog({
                 autoFocus
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Pseudonyme du joueur…"
-                aria-label="Pseudonyme du joueur"
+                placeholder={t("compose.searchPlaceholder")}
+                aria-label={t("compose.searchLabel")}
                 className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
               />
             </div>
             {[...search.trim()].length >= 2 && (
               <ul className="mt-2 divide-y divide-line rounded-lg border border-line">
-                {results.length === 0 && <li className="p-3 text-sm text-fog">Aucun joueur.</li>}
+                {results.length === 0 && <li className="p-3 text-sm text-fog">{t("compose.noPlayer")}</li>}
                 {results.map((p) => (
                   <li key={p.id}>
                     <button
@@ -176,7 +171,8 @@ export function ComposeDialog({
         <>
           <section className="mt-6">
             <h3 className="text-sm font-bold">
-              Je donne <span className="font-normal text-fog">({offer.size} sélectionnée(s))</span>
+              {t("compose.give")}{" "}
+              <span className="font-normal text-fog">{t("compose.selected", { count: offer.size })}</span>
             </h3>
             <div className="mt-3">
               <CardSelector
@@ -190,8 +186,8 @@ export function ComposeDialog({
 
           <section className="mt-6">
             <h3 className="text-sm font-bold">
-              Je demande{" "}
-              <span className="font-normal text-fog">({request.size} sélectionnée(s))</span>
+              {t("compose.request")}{" "}
+              <span className="font-normal text-fog">{t("compose.selected", { count: request.size })}</span>
             </h3>
             {recipient.isPublic ? (
               <div className="mt-3">
@@ -206,7 +202,7 @@ export function ComposeDialog({
             ) : (
               <p className="mt-2 flex items-center gap-2 text-sm text-pale-mist">
                 <Lock className="size-4 shrink-0" />
-                {recipient.username} a un profil privé : vous ne pouvez que lui offrir des cartes.
+                {t("compose.privateNotice", { name: recipient.username })}
               </p>
             )}
           </section>
@@ -224,7 +220,7 @@ export function ComposeDialog({
           className={buttonClass}
           onClick={(e) => e.currentTarget.closest("dialog")?.close()}
         >
-          Annuler
+          {tc("cancel")}
         </button>
         <button
           type="button"
@@ -232,7 +228,7 @@ export function ComposeDialog({
           disabled={!recipient || empty || sending}
           onClick={send}
         >
-          {sending ? "Envoi…" : "Envoyer la proposition"}
+          {sending ? tc("sending") : t("compose.send")}
         </button>
       </div>
     </dialog>

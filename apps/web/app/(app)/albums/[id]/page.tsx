@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { RARITIES, type AlbumResponse } from "@wikideck/shared";
 import { AlbumView } from "@/components/albums/album-view";
 import { API_URL, apiGet } from "@/lib/api";
+import { pageMetadata } from "@/i18n/metadata";
 
-export const metadata = { title: "Album — Wikideck" };
+export const generateMetadata = pageMetadata("album");
 
 export default async function AlbumPage({ params, searchParams }: PageProps<"/albums/[id]">) {
   const { id } = await params;

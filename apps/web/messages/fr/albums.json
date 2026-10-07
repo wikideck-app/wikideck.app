@@ -1,0 +1,56 @@
+{
+  "title": "Albums",
+  "back": "Albums",
+  "loadError": "Impossible de charger vos albums.",
+  "intro": "Rangez vos cartes dans des classeurs : une carte peut figurer dans plusieurs albums. {count} / {max}",
+  "new": "Nouvel album",
+  "empty": "Aucun album pour l’instant. Créez-en un, puis ajoutez-y des cartes depuis sa page ou depuis la fiche d’une carte.",
+  "open": "Ouvrir l’album {name}",
+  "cards": "{count, plural, =0 {0 carte} one {# carte} other {# cartes}}",
+  "nameLabel": "Nom de l’album",
+  "rename": {
+    "title": "Renommer l’album",
+    "button": "Renommer",
+    "label": "Renommer l’album",
+    "newName": "Nouveau nom"
+  },
+  "delete": {
+    "label": "Supprimer l’album",
+    "button": "Supprimer",
+    "title": "Supprimer l’album « {name} » ?",
+    "message": "Les cartes restent dans votre collection, seul le classeur disparaît."
+  },
+  "mine": "Mon album · {count, plural, =0 {0 carte} one {# carte} other {# cartes}}",
+  "highlights": "Pièces maîtresses",
+  "full": "Album complet",
+  "select": "Sélectionner",
+  "selectDone": "Terminer",
+  "searchPlaceholder": "Chercher une carte (nom ou sous-titre)",
+  "searchLabel": "Chercher dans l’album",
+  "rarityCount": "{rarity} : {count}",
+  "emptyAlbum": "Cet album est vide : ajoutez-y des cartes de votre collection.",
+  "noMatch": "Aucune carte ne correspond à ces filtres.",
+  "selectCard": "Sélectionner {title}",
+  "view": "Voir {title}",
+  "selected": "{count, plural, one {# carte sélectionnée} other {# cartes sélectionnées}}",
+  "takeOut": "Retirer de l’album",
+  "takeOutTitle": "{count, plural, one {Retirer # carte de l’album ?} other {Retirer # cartes de l’album ?}}",
+  "takeOutMessage": "Elles restent dans votre collection.",
+  "takeOutConfirm": "Retirer",
+  "addDialog": {
+    "title": "Ajouter des cartes à l’album",
+    "intro": "Vos cartes qui n’y sont pas encore. {count, plural, =0 {Aucune place restante} one {# place restante} other {# places restantes}}.",
+    "searchLabel": "Chercher une carte à ajouter",
+    "selectPage": "Tout sélectionner sur cette page",
+    "allIn": "Toutes vos cartes sont déjà dans cet album.",
+    "noMatch": "Aucune carte ne correspond.",
+    "deselect": "Désélectionner {title}",
+    "select": "Sélectionner {title}",
+    "adding": "Ajout…",
+    "addCount": "{count, plural, =0 {Ajouter 0 carte} one {Ajouter # carte} other {Ajouter # cartes}}"
+  },
+  "picker": {
+    "none": "Aucun album.",
+    "create": "En créer un"
+  }
+}

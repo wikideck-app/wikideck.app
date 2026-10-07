@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, Trash2, X } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import { TAG_MAX_PER_USER, TAG_NAME_MAX, type TagColor, type TagDto } from "@wikideck/shared";
@@ -24,6 +25,8 @@ const randomColor = () => {
 };
 
 export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] }) {
+  const t = useTranslations("tags");
+  const tc = useTranslations("common");
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
   const [, startTransition] = useTransition();
@@ -59,12 +62,9 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
 
   async function remove(tag: TagRow) {
     const ok = await confirm({
-      title: `Supprimer l'étiquette « ${tag.name} » ?`,
-      message:
-        tag.count > 0
-          ? `Elle sera retirée de ${tag.count} carte${tag.count > 1 ? "s" : ""}. Les cartes ne sont pas supprimées.`
-          : "Aucune carte ne l'utilise.",
-      confirmLabel: "Supprimer",
+      title: t("confirmDelete", { name: tag.name }),
+      message: tag.count > 0 ? t("deleteUsed", { count: tag.count }) : t("deleteUnused"),
+      confirmLabel: tc("delete"),
       danger: true,
     });
     if (!ok) return;
@@ -80,7 +80,7 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
         onClick={() => dialog.current?.showModal()}
         className="rounded-lg border border-accent/60 px-3 py-1.5 text-[11px] uppercase tracking-wide hover:bg-accent/10"
       >
-        Gérer les étiquettes
+        {t("manage")}
       </button>
 
       {confirmDialog}
@@ -91,16 +91,15 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
       >
         <button
           type="button"
-          aria-label="Fermer"
+          aria-label={tc("close")}
           onClick={() => dialog.current?.close()}
           className="absolute right-4 top-4 opacity-60 hover:opacity-100"
         >
           <X className="size-5" />
         </button>
-        <h2 className="text-xl font-bold">Gérer les étiquettes</h2>
+        <h2 className="text-xl font-bold">{t("manage")}</h2>
         <p className="mt-1 text-sm opacity-60">
-          Créez-en ici ou depuis la fiche d&apos;une carte, puis renommez-les, changez leur couleur
-          ou supprimez-les. {tags.length} / {TAG_MAX_PER_USER}
+          {t("manageIntro", { count: tags.length, max: TAG_MAX_PER_USER })}
         </p>
 
         <form
@@ -115,8 +114,8 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={TAG_NAME_MAX}
-              placeholder="Nom de la nouvelle étiquette"
-              aria-label="Nom de la nouvelle étiquette"
+              placeholder={t("newName")}
+              aria-label={t("newName")}
               disabled={full}
               className="min-w-0 flex-1 rounded-lg border border-line bg-transparent px-3 py-1.5 text-sm outline-none focus:border-accent disabled:opacity-50"
             />
@@ -125,19 +124,19 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
               disabled={!cleanName || creating || full}
               className="flex items-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-sm font-semibold text-accent-foreground disabled:opacity-50"
             >
-              <Plus className="size-4" /> Créer
+              <Plus className="size-4" /> {tc("create")}
             </button>
           </div>
           <div className="mt-2">
             <TagColorField
               value={color}
               onChange={setColor}
-              label="Couleur de la nouvelle étiquette"
+              label={t("newColor")}
             />
           </div>
           {full && (
             <p className="mt-2 text-xs text-fog">
-              Limite de {TAG_MAX_PER_USER} étiquettes atteinte : supprimez-en une pour en créer.
+              {t("limitReached", { max: TAG_MAX_PER_USER })}
             </p>
           )}
         </form>
@@ -149,7 +148,7 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
         )}
 
         {tags.length === 0 ? (
-          <p className="mt-6 text-sm opacity-60">Aucune étiquette pour le moment.</p>
+          <p className="mt-6 text-sm opacity-60">{t("none")}</p>
         ) : (
           <ul className="mt-4 max-h-[60vh] space-y-3 overflow-y-auto pr-1">
             {tags.map((tag) => (
@@ -161,7 +160,7 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
                   <input
                     defaultValue={tag.name}
                     maxLength={TAG_NAME_MAX}
-                    aria-label={`Nom de l'étiquette ${tag.name}`}
+                    aria-label={t("nameOf", { name: tag.name })}
                     // on enregistre en quittant le champ
                     onBlur={(e) => {
                       const next = e.target.value.trim();
@@ -171,10 +170,10 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
                     onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
                     className="min-w-0 flex-1 rounded-lg border border-line bg-transparent px-2 py-1 text-sm outline-none focus:border-accent"
                   />
-                  <span className="text-xs opacity-50">{tag.count} carte(s)</span>
+                  <span className="text-xs opacity-50">{t("cardCount", { count: tag.count })}</span>
                   <button
                     type="button"
-                    aria-label={`Supprimer ${tag.name}`}
+                    aria-label={t("delete", { name: tag.name })}
                     onClick={() => void remove(tag)}
                     className="text-danger opacity-70 hover:opacity-100"
                   >
@@ -185,7 +184,7 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
                   <TagColorField
                     key={`${tag.id}-${tag.color}`}
                     value={tag.color}
-                    label={`Couleur de ${tag.name}`}
+                    label={t("colorOf", { name: tag.name })}
                     onCommit={(c) => void update(tag, { color: c })}
                   />
                 </div>

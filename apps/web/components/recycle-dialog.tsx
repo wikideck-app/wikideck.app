@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Recycle } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   RARITIES,
@@ -10,6 +11,7 @@ import {
 } from "@wikideck/shared";
 import { buttonClass, dangerButtonClass } from "@/components/settings/controls";
 import { Wikibits } from "@/components/wikibit";
+import { useRarityLabel } from "@/lib/labels";
 import { apiCall } from "@/lib/tags-api";
 
 export type RecycleLine = { card: CollectionCard; quantity: number };
@@ -28,6 +30,9 @@ export function RecycleDialog({
   onClose: () => void;
   onDone: (result: RecycleResponse, lines: RecycleLine[]) => void;
 }) {
+  const t = useTranslations("collection.recycle");
+  const tc = useTranslations("common");
+  const rarityLabel = useRarityLabel();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RecycleResponse | null>(null);
@@ -70,20 +75,19 @@ export function RecycleDialog({
           <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-success/15 text-success">
             <Check className="size-6" />
           </span>
-          <h2 className="mt-3 text-xl font-bold">Recyclage effectué</h2>
+          <h2 className="mt-3 text-xl font-bold">{t("done")}</h2>
           <p className="mt-2 flex items-center justify-center gap-2 text-2xl font-bold">
             +<Wikibits amount={result.gained} />
           </p>
           <p className="mt-1 text-sm text-pale-mist">
-            {result.copies} exemplaire{result.copies > 1 ? "s" : ""} recyclé
-            {result.copies > 1 ? "s" : ""}. Nouveau solde : {result.wikibits} wikibits.
+            {t("copies", { count: result.copies, balance: result.wikibits })}
           </p>
           <button
             type="button"
             className={`${buttonClass} mt-5`}
             onClick={(e) => e.currentTarget.closest("dialog")?.close()}
           >
-            Fermer
+            {tc("close")}
           </button>
         </div>
       ) : (
@@ -92,29 +96,20 @@ export function RecycleDialog({
             <Recycle className="mt-1 size-6 shrink-0 text-accent" />
             <div>
               <h2 className="text-xl font-bold">
-                {single ? (
-                  <>
-                    Recycler cette carte contre <Wikibits amount={total} className="align-middle" />{" "}
-                    ?
-                  </>
-                ) : (
-                  <>
-                    Recycler {copies} cartes contre{" "}
-                    <Wikibits amount={total} className="align-middle" /> ?
-                  </>
-                )}
+                {single
+                  ? t.rich("titleOne", { amount: () => <Wikibits amount={total} className="align-middle" /> })
+                  : t.rich("titleMany", {
+                      count: copies,
+                      amount: () => <Wikibits amount={total} className="align-middle" />,
+                    })}
               </h2>
-              <p className="mt-1 text-sm font-semibold text-danger">
-                Cette action est irréversible.
-              </p>
+              <p className="mt-1 text-sm font-semibold text-danger">{t("irreversible")}</p>
             </div>
           </div>
 
           {single ? (
             <p className="mt-4 text-sm text-pale-mist">
-              « {lines[0].card.title} » (
-              {RARITIES.find((r) => r.value === lines[0].card.rarity)!.label}
-              ).
+              {t("single", { title: lines[0].card.title, rarity: rarityLabel(lines[0].card.rarity) })}
             </p>
           ) : (
             <ul className="mt-4 space-y-1 rounded-xl border border-line p-3 text-sm">
@@ -136,17 +131,16 @@ export function RecycleDialog({
             <p className="mt-3 text-xs leading-relaxed text-pale-mist">
               {lines.length === 1
                 ? lines[0].quantity === 1
-                  ? "C'est votre dernier exemplaire de cette carte : elle quittera votre collection."
-                  : "Tous les exemplaires de cette carte sont recyclés : elle quittera votre collection."
+                  ? t("lastCopy")
+                  : t("allCopies")
                 : lastCopies.length === lines.length
-                  ? "Tous les exemplaires de ces cartes sont recyclés : elles quitteront votre collection."
-                  : `${lastCopies.length} de ces cartes quitteront votre collection (leurs derniers exemplaires).`}
+                  ? t("allCopiesMany")
+                  : t("someLeave", { count: lastCopies.length })}
             </p>
           )}
           {precious && (
             <p className="mt-2 text-xs leading-relaxed text-pale-mist">
-              Cette sélection contient des cartes Ultra rares ou Légendaires : elles valent souvent
-              bien plus aux enchères.
+              {t("precious")}
             </p>
           )}
           {error && (
@@ -162,10 +156,10 @@ export function RecycleDialog({
               disabled={busy}
               onClick={(e) => e.currentTarget.closest("dialog")?.close()}
             >
-              Annuler
+              {tc("cancel")}
             </button>
             <button type="button" className={dangerButtonClass} disabled={busy} onClick={confirm}>
-              <Recycle className="size-4" /> {busy ? "Recyclage…" : "Recycler"}
+              <Recycle className="size-4" /> {busy ? t("busy") : t("action")}
             </button>
           </div>
         </>

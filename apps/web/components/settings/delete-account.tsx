@@ -1,12 +1,15 @@
 "use client";
 
 import { AlertTriangle, X } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { DELETE_CONFIRMATION } from "@wikideck/shared";
 import { apiCall } from "@/lib/tags-api";
 import { buttonClass, dangerButtonClass } from "./controls";
 
 export function DeleteAccount({ apiUrl }: { apiUrl: string }) {
+  const t = useTranslations("settings.deleteAccount");
+  const tc = useTranslations("common");
   const dialog = useRef<HTMLDialogElement>(null);
   const [typed, setTyped] = useState("");
   const [busy, setBusy] = useState(false);
@@ -33,7 +36,7 @@ export function DeleteAccount({ apiUrl }: { apiUrl: string }) {
         className={dangerButtonClass}
       >
         <AlertTriangle className="size-4" />
-        Supprimer définitivement mon compte
+        {t("button")}
       </button>
 
       <dialog
@@ -47,7 +50,7 @@ export function DeleteAccount({ apiUrl }: { apiUrl: string }) {
       >
         <button
           type="button"
-          aria-label="Fermer"
+          aria-label={tc("close")}
           onClick={() => dialog.current?.close()}
           className="absolute right-4 top-4 opacity-60 hover:opacity-100"
         >
@@ -55,15 +58,18 @@ export function DeleteAccount({ apiUrl }: { apiUrl: string }) {
         </button>
         <h2 className="flex items-center gap-2 text-lg font-bold text-danger">
           <AlertTriangle className="size-5" />
-          Supprimer mon compte
+          {t("title")}
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-pale-mist">
-          Cette action est <strong className="text-foreground">définitive et irréversible</strong>.
-          Votre profil, votre collection, vos étiquettes, vos paquets et votre historique de tirages
-          seront effacés. Pensez à télécharger vos données avant.
+          {t.rich("warning", {
+            strong: (chunks) => <strong className="text-foreground">{chunks}</strong>,
+          })}
         </p>
         <label className="mt-5 block text-xs text-fog" htmlFor="delete-confirm">
-          Pour confirmer, saisissez <b className="text-foreground">{DELETE_CONFIRMATION}</b> :
+          {t.rich("confirm", {
+            word: DELETE_CONFIRMATION,
+            b: (chunks) => <b className="text-foreground">{chunks}</b>,
+          })}
         </label>
         <input
           id="delete-confirm"
@@ -80,7 +86,7 @@ export function DeleteAccount({ apiUrl }: { apiUrl: string }) {
         )}
         <div className="mt-6 flex justify-end gap-3">
           <button type="button" className={buttonClass} onClick={() => dialog.current?.close()}>
-            Annuler
+            {tc("cancel")}
           </button>
           <button
             type="button"
@@ -88,7 +94,7 @@ export function DeleteAccount({ apiUrl }: { apiUrl: string }) {
             disabled={!confirmed || busy}
             onClick={remove}
           >
-            {busy ? "Suppression…" : "Supprimer pour toujours"}
+            {busy ? t("busy") : t("action")}
           </button>
         </div>
       </dialog>

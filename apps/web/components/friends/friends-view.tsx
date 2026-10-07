@@ -11,6 +11,7 @@ import {
   X,
 } from "@/components/icons";
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -26,7 +27,6 @@ import { useLiveEvents } from "@/lib/push";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
 type Tab = "friends" | "requests";
-const dateFmt = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 const panel = "rounded-xl border border-line p-5 bg-surface";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
 
@@ -44,16 +44,20 @@ function Avatar({ player, size = "size-10" }: { player: PlayerSummary; size?: st
 }
 
 function Visibility({ player }: { player: PlayerSummary }) {
+  const t = useTranslations("friends");
   return player.isPublic ? (
-    <span className="text-[11px] text-fog">Profil public</span>
+    <span className="text-[11px] text-fog">{t("public")}</span>
   ) : (
     <span className="inline-flex items-center gap-1 text-[11px] text-fog">
-      <Lock className="size-3" /> Profil privé
+      <Lock className="size-3" /> {t("private")}
     </span>
   );
 }
 
 export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; apiUrl: string }) {
+  const t = useTranslations("friends");
+  const tc = useTranslations("common");
+  const format = useFormatter();
   const router = useRouter();
   const { confirm, dialog: confirmDialog } = useConfirm();
   const [data, setData] = useState(initial);
@@ -89,7 +93,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
     setBusy(key);
     setError(null);
     const r = await call();
-    if (!r.ok) setError(r.message ?? "Une erreur est survenue.");
+    if (!r.ok) setError(r.message ?? tc("errors.generic"));
     await reload();
     if ([...search.trim()].length >= 2) {
       const s = await apiFetch<{ players: PlayerSearchResult[] }>(
@@ -113,15 +117,15 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
     <div>
       {confirmDialog}
       <section className={`${panel} mt-8`}>
-        <h2 className={heading}>Ajouter un ami</h2>
+        <h2 className={heading}>{t("add")}</h2>
         <div className="relative mt-4 max-w-md">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Nom d'utilisateur Discord (@nom)…"
-            aria-label="Rechercher un joueur par nom d'utilisateur Discord"
+            placeholder={t("searchPlaceholder")}
+            aria-label={t("searchLabel")}
             className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
           />
         </div>
@@ -129,8 +133,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
           <ul className="mt-3 max-w-md divide-y divide-line rounded-xl border border-line bg-surface">
             {results.length === 0 && (
               <li className="p-3 text-sm text-fog">
-                Aucun joueur trouvé : saisissez le nom d&apos;utilisateur Discord exact (pas le
-                pseudonyme affiché).
+                {t("noResult")}
               </li>
             )}
             {results.map((p) => {
@@ -142,9 +145,9 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                     <strong>{p.username}</strong>
                     {p.discordName && <span className="ml-2 text-fog">@{p.discordName}</span>}
                   </span>
-                  {p.relation === "friend" && <span className="text-xs text-fog">Déjà ami</span>}
+                  {p.relation === "friend" && <span className="text-xs text-fog">{t("already")}</span>}
                   {p.relation === "outgoing" && (
-                    <span className="text-xs text-fog">Demande envoyée</span>
+                    <span className="text-xs text-fog">{t("sent")}</span>
                   )}
                   {p.relation === "incoming" && incoming && (
                     <button
@@ -153,7 +156,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                       onClick={() => accept(incoming.id)}
                       className={primaryButtonClass}
                     >
-                      Accepter
+                      {tc("accept")}
                     </button>
                   )}
                   {p.relation === "none" && (
@@ -163,7 +166,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                       onClick={() => add(p)}
                       className={buttonClass}
                     >
-                      <UserPlus className="size-4" /> Ajouter
+                      <UserPlus className="size-4" /> {tc("add")}
                     </button>
                   )}
                 </li>
@@ -181,8 +184,8 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
       <div role="tablist" className="mt-8 flex gap-2 border-b border-line">
         {(
           [
-            ["friends", `Amis (${data.friends.length})`],
-            ["requests", "Demandes"],
+            ["friends", t("tabs.friends", { count: data.friends.length })],
+            ["requests", t("tabs.requests")],
           ] as const
         ).map(([key, label]) => (
           <button
@@ -210,12 +213,12 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
         <div className="mt-6">
           {data.friends.length === 0 ? (
             <p className="py-12 text-center text-sm text-fog">
-              Vous n&apos;avez pas encore d&apos;ami. Cherchez un joueur par pseudonyme ci-dessus.
+              {t("none")}
             </p>
           ) : (
             <>
               <p className="mb-4 text-xs text-fog">
-                {data.friends.length} / {FRIENDS_MAX} amis
+                {t("count", { count: data.friends.length, max: FRIENDS_MAX })}
               </p>
               <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {data.friends.map((f) => (
@@ -234,24 +237,24 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                         </div>
                       </div>
                       <p className="mt-3 text-xs text-fog">
-                        Amis depuis le {dateFmt.format(new Date(f.since))}
-                        {f.cards !== null && ` · ${f.cards} carte${f.cards > 1 ? "s" : ""}`}
+                        {t("since", { date: format.dateTime(new Date(f.since), "medium") })}
+                        {f.cards !== null && ` · ${t("cards", { count: f.cards })}`}
                       </p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         <Link href={`/trades?to=${f.player.id}`} className={buttonClass}>
-                          <ArrowLeftRight className="size-4" /> Échanger
+                          <ArrowLeftRight className="size-4" /> {t("trade")}
                         </Link>
                         <Link href={`/messages?with=${f.player.id}`} className={buttonClass}>
-                          <MessageCircle className="size-4" /> Message
+                          <MessageCircle className="size-4" /> {t("message")}
                         </Link>
                         <button
                           type="button"
                           disabled={busy === f.id}
-                          aria-label={`Retirer ${f.player.username} de mes amis`}
+                          aria-label={t("removeLabel", { name: f.player.username })}
                           onClick={async () => {
                             const ok = await confirm({
-                              title: `Retirer ${f.player.username} de vos amis ?`,
-                              confirmLabel: "Retirer",
+                              title: t("removeTitle", { name: f.player.username }),
+                              confirmLabel: t("remove"),
                               danger: true,
                             });
                             if (ok) void remove(f.id);
@@ -263,7 +266,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                       </div>
                     </div>
                     {f.showcase && (
-                      <div className="w-20 shrink-0 self-start" title="Carte vitrine">
+                      <div className="w-20 shrink-0 self-start" title={t("showcase")}>
                         <WikiCard card={f.showcase} compact />
                       </div>
                     )}
@@ -278,9 +281,9 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
       {tab === "requests" && (
         <div className="mt-6 grid gap-8 lg:grid-cols-2">
           <section>
-            <h2 className={heading}>Reçues ({data.incoming.length})</h2>
+            <h2 className={heading}>{t("received", { count: data.incoming.length })}</h2>
             {data.incoming.length === 0 ? (
-              <p className="mt-4 text-sm text-fog">Aucune demande reçue.</p>
+              <p className="mt-4 text-sm text-fog">{t("noReceived")}</p>
             ) : (
               <ul className="mt-4 divide-y divide-line rounded-xl border border-line bg-surface">
                 {data.incoming.map((r) => (
@@ -288,11 +291,11 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                     <Avatar player={r.player} size="size-9" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold">{r.player.username}</p>
-                      <p className="text-xs text-fog">{dateFmt.format(new Date(r.createdAt))}</p>
+                      <p className="text-xs text-fog">{format.dateTime(new Date(r.createdAt), "medium")}</p>
                     </div>
                     <button
                       type="button"
-                      aria-label={`Refuser ${r.player.username}`}
+                      aria-label={t("refuse", { name: r.player.username })}
                       disabled={busy === r.id}
                       onClick={() => remove(r.id)}
                       className={buttonClass}
@@ -305,7 +308,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                       onClick={() => accept(r.id)}
                       className={primaryButtonClass}
                     >
-                      <Check className="size-4" /> Accepter
+                      <Check className="size-4" /> {tc("accept")}
                     </button>
                   </li>
                 ))}
@@ -313,9 +316,9 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
             )}
           </section>
           <section>
-            <h2 className={heading}>Envoyées ({data.outgoing.length})</h2>
+            <h2 className={heading}>{t("sentTitle", { count: data.outgoing.length })}</h2>
             {data.outgoing.length === 0 ? (
-              <p className="mt-4 text-sm text-fog">Aucune demande en attente.</p>
+              <p className="mt-4 text-sm text-fog">{t("noSent")}</p>
             ) : (
               <ul className="mt-4 divide-y divide-line rounded-xl border border-line bg-surface">
                 {data.outgoing.map((r) => (
@@ -323,7 +326,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                     <Avatar player={r.player} size="size-9" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold">{r.player.username}</p>
-                      <p className="text-xs text-fog">En attente de réponse</p>
+                      <p className="text-xs text-fog">{t("waiting")}</p>
                     </div>
                     <button
                       type="button"
@@ -331,7 +334,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
                       onClick={() => remove(r.id)}
                       className={buttonClass}
                     >
-                      Annuler
+                      {tc("cancel")}
                     </button>
                   </li>
                 ))}

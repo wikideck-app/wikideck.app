@@ -1,11 +1,13 @@
 "use client";
 
 import { Heart, HeartFill } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { buttonClass } from "@/components/settings/controls";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
 export function WishButton({ apiUrl, cardId }: { apiUrl: string; cardId: string }) {
+  const t = useTranslations("wishlist");
   const [wished, setWished] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +44,7 @@ export function WishButton({ apiUrl, cardId }: { apiUrl: string; cardId: string 
         className={`${buttonClass} ${wished ? "border-danger! text-danger!" : ""}`}
       >
         {wished ? <HeartFill className="size-4" /> : <Heart className="size-4" />}
-        {wished ? "Dans mes envies" : "Ajouter à mes envies"}
+        {wished ? t("inWishlist") : t("add")}
       </button>
       {error && (
         <span role="alert" className="mt-1 text-xs text-danger">

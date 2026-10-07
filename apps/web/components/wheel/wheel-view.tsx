@@ -1,12 +1,12 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BOOST_MYTHIC_RATE,
   MYTHIC_RATE,
   WHEEL_PRIZES,
-  wheelPrizeLabel,
   type WheelHistoryEntry,
   type WheelHistoryResponse,
   type WheelPrize,
@@ -36,25 +36,40 @@ function sector(i: number) {
 }
 
 const TOTAL_WEIGHT = WHEEL_PRIZES.reduce((sum, p) => sum + p.weight, 0);
-const percentFmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
+type PrizeLike = Pick<WheelPrize, "kind" | "amount">;
 
-const prizeLabel = (p: WheelPrize) =>
-  p.kind === "wikibits"
-    ? `${p.amount} wikibits`
-    : p.kind === "boost"
-      ? "Booster de chance"
-      : `${p.amount} paquet${p.amount > 1 ? "s" : ""}`;
-
-const prizeText = (p: WheelPrize) =>
-  p.kind === "wikibits"
-    ? { big: String(p.amount), small: "wikibits" }
-    : p.kind === "boost"
-      ? { big: "✦", small: "booster" }
-      : { big: `+${p.amount}`, small: p.amount > 1 ? "paquets" : "paquet" };
-
-const dateFmt = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" });
+// libellés traduits d'un lot (le jeu les expose en français côté API, ici ils suivent la locale)
+function usePrizeText() {
+  const t = useTranslations("wheel");
+  return {
+    label: (p: PrizeLike) =>
+      p.kind === "wikibits"
+        ? t("prize.wikibits", { amount: p.amount })
+        : p.kind === "boost"
+          ? t("prize.boost")
+          : t("prize.packs", { amount: p.amount }),
+    title: (p: PrizeLike) =>
+      p.kind === "wikibits"
+        ? t("prize.wikibits", { amount: p.amount })
+        : p.kind === "boost"
+          ? t("prize.boostTitle")
+          : t("prize.packs", { amount: p.amount }),
+    sector: (p: PrizeLike) =>
+      p.kind === "wikibits"
+        ? { big: String(p.amount), small: t("sector.wikibitsSmall") }
+        : p.kind === "boost"
+          ? { big: t("sector.boostBig"), small: t("sector.boostSmall") }
+          : {
+              big: t("sector.packsBig", { amount: p.amount }),
+              small: t("sector.packsSmall", { amount: p.amount }),
+            },
+  };
+}
 
 function HistoryList({ title, entries }: { title: string; entries: WheelHistoryEntry[] }) {
+  const t = useTranslations("wheel.history");
+  const format = useFormatter();
+  const prize = usePrizeText();
   return (
     <section className="min-w-0">
       <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-fog">{title}</h2>
@@ -63,17 +78,17 @@ function HistoryList({ title, entries }: { title: string; entries: WheelHistoryE
           {entries.map((e, i) => (
             <li key={`${e.at}-${i}`} className="flex flex-wrap items-baseline gap-x-2">
               {e.player !== undefined && (
-                <span className="font-semibold">{e.player ?? "Un joueur"}</span>
+                <span className="font-semibold">{e.player ?? t("anonymous")}</span>
               )}
-              <span className="text-pale-mist">{wheelPrizeLabel(e.prize)}</span>
+              <span className="text-pale-mist">{prize.label(e.prize)}</span>
               <span className="ml-auto text-xs tabular-nums text-fog">
-                {dateFmt.format(new Date(e.at))}
+                {format.dateTime(new Date(e.at), "shortTime")}
               </span>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="mt-2 text-sm text-fog">Aucun tour pour le moment.</p>
+        <p className="mt-2 text-sm text-fog">{t("empty")}</p>
       )}
     </section>
   );
@@ -88,6 +103,9 @@ export function WheelView({
   canSpin: boolean;
   history: WheelHistoryResponse | null;
 }) {
+  const t = useTranslations("wheel");
+  const format = useFormatter();
+  const prize = usePrizeText();
   const router = useRouter();
   const [canSpin, setCanSpin] = useState(initialCanSpin);
   const [spinning, setSpinning] = useState(false);
@@ -134,7 +152,7 @@ export function WheelView({
       <svg
         viewBox="20 40 760 810"
         role="img"
-        aria-label="Roue de la fortune"
+        aria-label={t("wheelLabel")}
         className="h-auto w-full max-w-[min(28rem,max(16rem,calc(100dvh-14rem)))] overflow-visible"
       >
         <defs>
@@ -214,7 +232,7 @@ export function WheelView({
             );
           })}
           {WHEEL_PRIZES.map((p, i) => {
-            const t = prizeText(p);
+            const text = prize.sector(p);
             return (
               <g
                 key={i}
@@ -232,7 +250,7 @@ export function WheelView({
                   strokeOpacity="0.55"
                   paintOrder="stroke"
                 >
-                  {t.big}
+                  {text.big}
                 </text>
                 <text
                   x={CX}
@@ -244,7 +262,7 @@ export function WheelView({
                   strokeOpacity="0.55"
                   paintOrder="stroke"
                 >
-                  {t.small}
+                  {text.small}
                 </text>
               </g>
             );
@@ -272,24 +290,23 @@ export function WheelView({
       >
         {result ? (
           <p className="font-display text-2xl">
-            Gagné :{" "}
-            {result.prize.kind === "wikibits" ? (
-              <Wikibits amount={result.prize.amount} className="text-accent" />
-            ) : result.prize.kind === "boost" ? (
-              <span className="text-accent">un booster de chance</span>
-            ) : (
-              <span className="text-accent">
-                {result.prize.amount} paquet{result.prize.amount > 1 ? "s" : ""}
-              </span>
-            )}
+            {t.rich("won", {
+              prize: () =>
+                result.prize.kind === "wikibits" ? (
+                  <Wikibits amount={result.prize.amount} className="text-accent" />
+                ) : result.prize.kind === "boost" ? (
+                  <span className="text-accent">{t("wonBoost")}</span>
+                ) : (
+                  <span className="text-accent">{t("wonPacks", { amount: result.prize.amount })}</span>
+                ),
+            })}
           </p>
         ) : spinning ? (
-          <p className="text-pale-mist">La roue tourne…</p>
+          <p className="text-pale-mist">{t("spinning")}</p>
         ) : null}
         {result?.prize.kind === "boost" && (
           <p className="max-w-sm text-sm text-pale-mist">
-            Le booster est dans votre stock ({result.dropBoosts}). Activez-le sur la page Paquets
-            quand vous voulez : il se cumule et ne s&apos;utilise qu&apos;à votre demande.
+            {t("boostStock", { count: result.dropBoosts })}
           </p>
         )}
         {error && <p className="text-sm text-danger">{error}</p>}
@@ -299,41 +316,38 @@ export function WheelView({
           disabled={!canSpin || spinning}
           onClick={() => void spin()}
         >
-          {canSpin ? "Tourner la roue" : "Revenez demain"}
+          {canSpin ? t("spin") : t("comeBack")}
         </button>
         {!canSpin && !spinning && !result && (
-          <p className="text-sm text-fog">Vous avez déjà tourné la roue aujourd&apos;hui.</p>
+          <p className="text-sm text-fog">{t("alreadySpun")}</p>
         )}
       </div>
 
       <details className="w-full max-w-md rounded-xl border border-line bg-surface px-5 py-3">
-        <summary className="cursor-pointer text-sm font-semibold">Taux de gain de la roue</summary>
+        <summary className="cursor-pointer text-sm font-semibold">{t("ratesTitle")}</summary>
         <table className="mt-3 w-full text-sm">
           <tbody>
             {[...WHEEL_PRIZES]
               .sort((a, b) => b.weight - a.weight)
               .map((p) => (
                 <tr key={`${p.kind}-${p.amount}`} className="border-t border-line">
-                  <td className="py-1.5">{prizeLabel(p)}</td>
+                  <td className="py-1.5">{prize.title(p)}</td>
                   <td className="py-1.5 text-right tabular-nums text-fog">
-                    {percentFmt.format((p.weight / TOTAL_WEIGHT) * 100)} %
+                    {format.number(p.weight / TOTAL_WEIGHT, "percent")}
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
         <p className="mt-3 text-xs leading-relaxed text-fog">
-          Un tour gratuit par jour (minuit, heure de Paris). Le booster de chance se garde en stock
-          et s&apos;active quand vous ouvrez un paquet : une carte légendaire est alors garantie, et
-          elle sort en version mythique {percentFmt.format(BOOST_MYTHIC_RATE * 100)} % du temps au
-          lieu de {percentFmt.format(MYTHIC_RATE * 100)} %.
+          {t("ratesNote", { boostRate: BOOST_MYTHIC_RATE, rate: MYTHIC_RATE })}
         </p>
       </details>
 
       {history && (
         <div className="grid w-full gap-6 rounded-xl border border-line bg-surface p-5 sm:grid-cols-2">
-          <HistoryList title="Mes derniers tours" entries={history.mine} />
-          <HistoryList title="Derniers gains de la communauté" entries={history.recent} />
+          <HistoryList title={t("history.mine")} entries={history.mine} />
+          <HistoryList title={t("history.community")} entries={history.recent} />
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   RANKING_BOARDS,
   type PlayerRankEntry,
@@ -6,10 +7,11 @@ import {
   type RankingBoard,
 } from "@wikideck/shared";
 
-const num = new Intl.NumberFormat("fr-FR");
 const MEDAL = ["🥇", "🥈", "🥉"];
 
 function Row({ entry, unit }: { entry: PlayerRankEntry; unit: string }) {
+  const t = useTranslations("ranking");
+  const format = useFormatter();
   return (
     <li>
       <Link
@@ -29,10 +31,10 @@ function Row({ entry, unit }: { entry: PlayerRankEntry; unit: string }) {
         )}
         <span className="min-w-0 flex-1 truncate font-semibold">
           {entry.username}
-          {entry.isMe && <span className="ml-2 text-xs font-normal text-fog">vous</span>}
+          {entry.isMe && <span className="ml-2 text-xs font-normal text-fog">{t("you")}</span>}
         </span>
         <span className="tabular-nums">
-          <strong>{num.format(entry.score)}</strong>{" "}
+          <strong>{format.number(entry.score)}</strong>{" "}
           <span className="text-sm text-fog">{unit}</span>
         </span>
       </Link>
@@ -47,10 +49,11 @@ export function RankingView({
   board: RankingBoard;
   data: PlayerRankingResponse | null;
 }) {
-  const info = RANKING_BOARDS.find((b) => b.value === board)!;
+  const t = useTranslations("ranking");
+  const unit = t(`boards.${board}.unit`);
   return (
     <>
-      <nav aria-label="Classements" className="mt-6 flex flex-wrap justify-center gap-2">
+      <nav aria-label={t("navLabel")} className="mt-6 flex flex-wrap justify-center gap-2">
         {RANKING_BOARDS.map((b) => (
           <Link
             key={b.value}
@@ -58,40 +61,39 @@ export function RankingView({
             aria-current={b.value === board ? "page" : undefined}
             className="rounded-full border border-line px-4 py-1.5 text-sm font-semibold hover:bg-foreground/10 aria-[current=page]:border-accent aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground"
           >
-            {b.label}
+            {t(`boards.${b.value}.label`)}
           </Link>
         ))}
         <Link
           href="/guild"
           className="rounded-full border border-line px-4 py-1.5 text-sm font-semibold hover:bg-foreground/10"
         >
-          Guildes
+          {t("guilds")}
         </Link>
       </nav>
-      <p className="mt-3 text-center text-sm text-pale-mist">{info.hint}.</p>
+      <p className="mt-3 text-center text-sm text-pale-mist">{t(`boards.${board}.hint`)}.</p>
 
       {!data ? (
         <p className="mt-10 text-center text-sm text-danger">
-          Impossible de charger le classement.
+          {t("loadError")}
         </p>
       ) : data.entries.length === 0 && !data.mine ? (
-        <p className="mt-10 text-center opacity-60">Personne dans ce classement pour le moment.</p>
+        <p className="mt-10 text-center opacity-60">{t("empty")}</p>
       ) : (
         <>
           <ol className="mt-6 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
             {data.entries.map((e) => (
-              <Row key={e.id} entry={e} unit={info.unit} />
+              <Row key={e.id} entry={e} unit={unit} />
             ))}
           </ol>
           {data.mine && (
             <div className="mt-3 overflow-hidden rounded-xl border border-accent/50 bg-surface">
-              <Row entry={data.mine} unit={info.unit} />
+              <Row entry={data.mine} unit={unit} />
             </div>
           )}
           {data.publicOnly && (
             <p className="mt-4 text-center text-xs text-fog">
-              Seuls les joueurs dont la collection est publique apparaissent ici (réglable dans les
-              paramètres).
+              {t("publicOnly")}
             </p>
           )}
         </>

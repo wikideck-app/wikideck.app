@@ -1,0 +1,33 @@
+{
+  "siteName": "Wikideck",
+  "titleTemplate": "%s — Wikideck",
+  "description": "Cartes Wikipédia, paquets à ouvrir et courses Wikipédia entre amis.",
+  "pages": {
+    "notFound": "Page introuvable",
+    "collection": "Collection",
+    "cards": "Toutes les cartes",
+    "packs": "Ouvrir un paquet",
+    "albums": "Albums",
+    "album": "Album",
+    "wishlist": "Envies",
+    "wheel": "Roue de la fortune",
+    "trades": "Échanges",
+    "market": "Marché",
+    "auction": "Enchère",
+    "guild": "Guilde",
+    "friends": "Amis",
+    "messages": "Messages",
+    "battle": "Bataille",
+    "achievements": "Succès",
+    "ranking": "Classement",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "staff": "Staff",
+    "import": "Importer ma collection",
+    "legalNotice": "Mentions légales",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions générales d’utilisation",
+    "docs": "API",
+    "docsStaff": "API staff"
+  }
+}

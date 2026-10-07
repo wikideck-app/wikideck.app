@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, Users } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -14,6 +15,8 @@ import { buttonClass, primaryButtonClass } from "@/components/settings/controls"
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
 export function NoGuild({ apiUrl }: { apiUrl: string }) {
+  const t = useTranslations("guild.noGuild");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -57,9 +60,9 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
   return (
     <div className="mt-10 grid gap-8 lg:grid-cols-2">
       <section className="rounded-xl border border-line p-6 bg-surface">
-        <h2 className="text-lg font-bold">Fonder une guilde</h2>
+        <h2 className="text-lg font-bold">{t("found")}</h2>
         <p className="mt-1 text-sm text-pale-mist">
-          Jusqu&apos;à {GUILD_MAX_MEMBERS} camarades. Vous en serez le chef.
+          {t("foundText", { max: GUILD_MAX_MEMBERS })}
         </p>
         <form
           className="mt-5 space-y-4"
@@ -69,7 +72,7 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
           }}
         >
           <label className="block">
-            <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">Nom</span>
+            <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">{t("name")}</span>
             <input
               value={name}
               maxLength={GUILD_NAME_MAX}
@@ -79,7 +82,7 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
           </label>
           <label className="block">
             <span className="text-xs font-bold uppercase tracking-[0.15em] text-fog">
-              Description (facultative)
+              {t("description")}
             </span>
             <textarea
               value={description}
@@ -94,28 +97,28 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
             disabled={busy || name.trim().length < 3}
             className={primaryButtonClass}
           >
-            {busy ? "Création…" : "Fonder la guilde"}
+            {busy ? t("creating") : t("create")}
           </button>
         </form>
       </section>
 
       <section className="rounded-xl border border-line p-6 bg-surface">
-        <h2 className="text-lg font-bold">Rejoindre une guilde</h2>
+        <h2 className="text-lg font-bold">{t("join")}</h2>
         <div className="relative mt-4">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Rechercher par nom…"
-            aria-label="Rechercher une guilde"
+            placeholder={t("search")}
+            aria-label={t("searchLabel")}
             className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
           />
         </div>
         {guilds === null ? (
-          <p className="py-8 text-center text-sm text-fog">Chargement…</p>
+          <p className="py-8 text-center text-sm text-fog">{tc("loading")}</p>
         ) : guilds.length === 0 ? (
-          <p className="py-8 text-center text-sm text-fog">Aucune guilde trouvée.</p>
+          <p className="py-8 text-center text-sm text-fog">{t("empty")}</p>
         ) : (
           <ul className="mt-4 divide-y divide-line rounded-xl border border-line bg-surface">
             {guilds.map((g) => (
@@ -124,7 +127,7 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
                   <p className="truncate font-bold">{g.name}</p>
                   <p className="mt-0.5 flex items-center gap-1.5 text-xs text-fog">
                     <Users className="size-3.5" />
-                    {g.members} / {GUILD_MAX_MEMBERS} · chef : {g.owner}
+                    {t("membersOf", { members: g.members, max: GUILD_MAX_MEMBERS, owner: g.owner })}
                   </p>
                   {g.description && (
                     <p className="mt-1 truncate text-xs text-pale-mist">{g.description}</p>
@@ -136,7 +139,7 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
                   onClick={() => join(g.id)}
                   className={buttonClass}
                 >
-                  {g.members >= GUILD_MAX_MEMBERS ? "Complète" : "Rejoindre"}
+                  {g.members >= GUILD_MAX_MEMBERS ? t("full") : t("joinButton")}
                 </button>
               </li>
             ))}

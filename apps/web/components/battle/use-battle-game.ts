@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { BattleGameInput, BattlePuzzle } from "@wikideck/shared";
 import { apiCall } from "@/lib/tags-api";
@@ -33,6 +34,7 @@ const write = (saved: Saved | null) => {
 };
 
 export function useBattleGame({ apiUrl, onFinished }: { apiUrl: string; onFinished: () => void }) {
+  const t = useTranslations("battle");
   const [phase, setPhase] = useState<BattlePhase>("setup");
   const [puzzle, setPuzzle] = useState<BattlePuzzle | null>(null);
   const [html, setHtml] = useState("");
@@ -84,13 +86,13 @@ export function useBattleGame({ apiUrl, onFinished }: { apiUrl: string; onFinish
     loadingRef.current = false;
     setLoading(false);
     if (!article) {
-      setLoadError(`Impossible de charger « ${target} ».`);
+      setLoadError(t("loadArticle", { title: target }));
       return null;
     }
     setHtml(article.html);
     setTitle(article.title);
     return article.title;
-  }, []);
+  }, [t]);
 
   const save = useCallback(
     async (won: boolean, seconds: number) => {

@@ -12,6 +12,7 @@ import {
   X,
 } from "@/components/icons";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import {
@@ -35,6 +36,7 @@ import { ManageTags } from "@/components/manage-tags";
 import { TagChip } from "@/components/tag-chip";
 import { TagEditor } from "@/components/tag-editor";
 import { WikiCard } from "@/components/wiki-card";
+import { useRarityLabel } from "@/lib/labels";
 import { RARITY_COLOR } from "@/lib/rarity-ui";
 import { apiCall } from "@/lib/tags-api";
 
@@ -70,6 +72,11 @@ const circle =
   "flex size-11 items-center justify-center rounded-full bg-foreground/10 hover:bg-foreground/15";
 
 export function CollectionView({ data, apiUrl }: { data: CollectionResponse; apiUrl: string }) {
+  const t = useTranslations("collection");
+  const tc = useTranslations("common");
+  const ts = useTranslations("cards.sorts");
+  const tCards = useTranslations("cards");
+  const rarityLabel = useRarityLabel();
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selling, setSelling] = useState(false);
@@ -170,14 +177,14 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
           value={search}
           maxLength={COLLECTION_SEARCH_MAX}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher par nom ou sous-titre (ex. chanteur français)…"
-          aria-label="Rechercher une carte par nom"
+          placeholder={t("searchPlaceholder")}
+          aria-label={t("searchLabel")}
           className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-9 text-sm outline-none focus:border-accent [&::-webkit-search-cancel-button]:hidden"
         />
         {search && (
           <button
             type="button"
-            aria-label="Effacer la recherche"
+            aria-label={t("clearSearch")}
             onClick={() => setSearch("")}
             className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100"
           >
@@ -186,7 +193,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
         )}
       </div>
 
-      <nav aria-label="Filtrer par rareté" className="mt-4 flex flex-wrap items-center gap-1">
+      <nav aria-label={tCards("filterByRarity")} className="mt-4 flex flex-wrap items-center gap-1">
         <Link
           href={href({
             sort: data.sort,
@@ -199,7 +206,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
           className="mr-2 flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-sm font-bold transition hover:bg-foreground/10 aria-pressed:border-amber-300 aria-pressed:bg-amber-300/15 aria-pressed:text-amber-300"
         >
           {data.favoritesOnly ? <StarFill className="size-4" /> : <Star className="size-4" />}
-          Favoris
+          {t("favorites")}
         </Link>
         {[...RARITIES].reverse().map((r) => {
           const active = data.rarities.includes(r.value);
@@ -216,7 +223,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                 q: data.query,
                 fav: data.favoritesOnly,
               })}
-              title={r.label}
+              title={rarityLabel(r.value)}
               aria-pressed={active}
               style={{ color: RARITY_COLOR[r.value] }}
               className={`min-w-11 rounded-full px-3 py-1.5 text-center text-sm font-bold transition hover:bg-foreground/10 aria-pressed:bg-foreground/15 ${
@@ -232,7 +239,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             href={href({ sort: data.sort, tag: data.tag, q: data.query, fav: data.favoritesOnly })}
             className="ml-2 text-xs opacity-60 hover:opacity-100"
           >
-            Réinitialiser
+            {tCards("resetFilters")}
           </Link>
         )}
       </nav>
@@ -249,24 +256,24 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             aria-current={!data.tag}
             className="rounded-full px-3 py-1 text-xs font-semibold aria-current:bg-foreground aria-current:text-background bg-foreground/10"
           >
-            Toutes
+            {t("allTags")}
           </Link>
-          {data.tags.map((t) => (
+          {data.tags.map((tag) => (
             <Link
-              key={t.id}
+              key={tag.id}
               href={href({
                 sort: data.sort,
-                tag: t.id,
+                tag: tag.id,
                 rarities: data.rarities,
                 q: data.query,
                 fav: data.favoritesOnly,
               })}
-              aria-current={data.tag === t.id}
+              aria-current={data.tag === tag.id}
               className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <TagChip
-                tag={{ name: `${t.name} · ${t.count}`, color: t.color }}
-                active={data.tag === t.id}
+                tag={{ name: `${tag.name} · ${tag.count}`, color: tag.color }}
+                active={data.tag === tag.id}
               />
             </Link>
           ))}
@@ -274,11 +281,11 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
 
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-2 text-sm">
-            <span className="opacity-60">Trier</span>
+            <span className="opacity-60">{tCards("sort")}</span>
             <SelectMenu
-              label="Trier les cartes"
+              label={t("sortLabel")}
               value={data.sort}
-              options={COLLECTION_SORTS}
+              options={COLLECTION_SORTS.map((s) => ({ value: s.value, label: ts(s.value) }))}
               onChange={(sort) =>
                 router.push(
                   href({
@@ -298,7 +305,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             onClick={() => (selectMode ? exitSelect() : setSelectMode(true))}
             className={`${buttonClass} py-1.5! ${selectMode ? "bg-accent! text-accent-foreground!" : ""}`}
           >
-            <Recycle className="size-4" /> {selectMode ? "Terminer" : "Recycler des cartes"}
+            <Recycle className="size-4" /> {selectMode ? t("recycleModeDone") : t("recycleMode")}
           </button>
           <button
             type="button"
@@ -306,7 +313,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             onClick={() => setBulkOpen((o) => !o)}
             className={`${buttonClass} py-1.5! ${bulkOpen ? "bg-accent! text-accent-foreground!" : ""}`}
           >
-            <Recycle className="size-4" /> Recyclage groupé
+            <Recycle className="size-4" /> {t("bulkRecycle")}
           </button>
           <ManageTags apiUrl={apiUrl} tags={data.tags} />
         </div>
@@ -319,7 +326,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
       )}
 
       {data.cards.length === 0 ? (
-        <p className="mt-10 text-center opacity-60">Aucune carte ne correspond à ces filtres.</p>
+        <p className="mt-10 text-center opacity-60">{t("empty")}</p>
       ) : (
         <div
           className={`mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 ${isPending ? "opacity-60" : ""}`}
@@ -332,7 +339,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                 key={card.id}
                 role="button"
                 tabIndex={0}
-                aria-label={selectMode ? `Sélectionner ${card.title}` : `Voir ${card.title}`}
+                aria-label={t(selectMode ? "select" : "view", { title: card.title })}
                 aria-pressed={selectMode ? isPicked : undefined}
                 onClick={(e) => !(e.target as HTMLElement).closest("a, [data-star]") && open()}
                 onKeyDown={(e) => (e.key === "Enter" || (selectMode && e.key === " ")) && open()}
@@ -345,19 +352,19 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                   <span className="pointer-events-none absolute inset-x-1.5 bottom-1.5 flex flex-col items-start gap-1 text-[11px] font-semibold">
                     {card.protectedReason && (
                       <span className="max-w-full truncate rounded-full bg-black/75 px-2 py-0.5 text-white">
-                        🛡️ {card.protectedReason}
+                        {t("protectedBadge", { reason: card.protectedReason })}
                       </span>
                     )}
                     {card.estimate ? (
                       <span className="rounded-full bg-black/75 px-2 py-0.5 text-white">
-                        ≈ {card.estimate} wikibits aux enchères
+                        {t("estimate", { amount: card.estimate })}
                       </span>
                     ) : null}
                   </span>
                 )}
                 {card.inAlbum && !selectMode && (
                   <span
-                    title="Rangée dans un album"
+                    title={t("inAlbum")}
                     className="pointer-events-none absolute left-1.5 top-1.5 z-10 flex size-7 items-center justify-center rounded-full bg-black/55 text-white/90 shadow"
                   >
                     <BookBookmark className="size-4" />
@@ -369,12 +376,8 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                     data-star
                     disabled={starBusy}
                     aria-pressed={isFavorite(card)}
-                    aria-label={
-                      isFavorite(card)
-                        ? `Retirer ${card.title} des favoris`
-                        : `Ajouter ${card.title} aux favoris`
-                    }
-                    title={isFavorite(card) ? "Retirer des favoris" : "Mettre en favori"}
+                    aria-label={t(isFavorite(card) ? "unfavorite" : "favorite", { title: card.title })}
+                    title={t(isFavorite(card) ? "unfavoriteShort" : "favoriteShort")}
                     onClick={(e) => {
                       e.stopPropagation();
                       void toggleStar(card);
@@ -410,11 +413,11 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
       )}
 
       {data.totalPages > 1 && (
-        <nav aria-label="Pagination" className="mt-10 flex items-center justify-center gap-4">
+        <nav aria-label={tc("pagination.label")} className="mt-10 flex items-center justify-center gap-4">
           {data.page > 1 ? (
             <Link
               href={href({ ...base, page: data.page - 1 })}
-              aria-label="Page précédente"
+              aria-label={tc("pagination.previous")}
               className={circle}
             >
               <ChevronLeft />
@@ -425,12 +428,16 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             </span>
           )}
           <span className="text-sm opacity-70">
-            Page <strong className="text-foreground">{data.page}</strong> / {data.totalPages}
+            {tc.rich("pagination.page", {
+              page: data.page,
+              total: data.totalPages,
+              strong: (chunks) => <strong className="text-foreground">{chunks}</strong>,
+            })}
           </span>
           {data.page < data.totalPages ? (
             <Link
               href={href({ ...base, page: data.page + 1 })}
-              aria-label="Page suivante"
+              aria-label={tc("pagination.next")}
               className={circle}
             >
               <ChevronRight />
@@ -467,13 +474,13 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
       {selectMode && (
         <div
           role="region"
-          aria-label="Recyclage de cartes"
+          aria-label={t("selection.label")}
           className="fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-2xl border border-line bg-surface px-5 py-3 shadow-2xl"
         >
           <span className="text-sm font-semibold">
             {picked.size === 0
-              ? "Cochez des cartes à recycler"
-              : `${picked.size} carte${picked.size > 1 ? "s" : ""} cochée${picked.size > 1 ? "s" : ""}`}
+              ? t("selection.none")
+              : t("selection.count", { count: picked.size })}
           </span>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
             <button
@@ -481,7 +488,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
               className="underline hover:text-accent"
               onClick={() => setPicked(new Map(data.cards.map((c) => [c.id, c])))}
             >
-              Toute la page
+              {t("selection.page")}
             </button>
             {picked.size > 0 && (
               <button
@@ -489,7 +496,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                 className="underline hover:text-accent"
                 onClick={() => setPicked(new Map())}
               >
-                Aucune
+                {t("selection.clear")}
               </button>
             )}
           </div>
@@ -500,7 +507,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             onClick={() => setRecycleLines(pickedLines)}
           >
             <Recycle className="size-4" />
-            {pickedCopies === 0 ? "Recycler" : `Recycler ${pickedCopies}`}
+            {pickedCopies === 0 ? t("selection.recycle") : t("selection.recycleCount", { count: pickedCopies })}
             {pickedCopies > 0 && (
               <span className="inline-flex items-center gap-1 opacity-90">
                 (+

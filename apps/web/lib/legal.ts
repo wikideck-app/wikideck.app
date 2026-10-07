@@ -1,13 +1,14 @@
-export const TODO = "À COMPLÉTER";
+// valeur sentinelle : tant qu'elle reste, la page affiche un repère « à compléter »
+export const TODO = "__TODO__";
 
 export const LEGAL = {
   siteName: "Wikideck",
   siteUrl: "https://wikideck.fr",
-  updatedAt: "4 octobre 2026",
+  updatedAt: "2026-10-04",
 
   publisher: {
     name: "Jessy DAVID",
-    status: "Personne physique (éditeur non professionnel)",
+    status: "individual",
     address: TODO,
     email: TODO,
     director: "Jessy DAVID",
@@ -22,8 +23,8 @@ export const LEGAL = {
 } as const;
 
 export const LEGAL_LINKS = [
-  { href: "/legal-notice", label: "Mentions légales" },
-  { href: "/privacy", label: "Confidentialité" },
-  { href: "/terms", label: "CGU" },
-  { href: "/docs", label: "API" },
+  { href: "/legal-notice", key: "legalNotice" },
+  { href: "/privacy", key: "privacy" },
+  { href: "/terms", key: "terms" },
+  { href: "/docs", key: "docs" },
 ] as const;

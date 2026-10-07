@@ -2,6 +2,7 @@
 
 import { BookBookmark, Plus, X } from "@/components/icons";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { ALBUM_NAME_MAX, type AlbumsResponse } from "@wikideck/shared";
@@ -13,6 +14,8 @@ import { apiCall } from "@/lib/tags-api";
 const FAN = ["z-20 scale-110", "z-10 -translate-x-14 -rotate-6", "z-10 translate-x-14 rotate-6"];
 
 export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: string }) {
+  const t = useTranslations("albums");
+  const tc = useTranslations("common");
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
   const [name, setName] = useState("");
@@ -35,8 +38,7 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
   return (
     <>
       <p className="mt-3 text-center text-sm text-pale-mist">
-        Rangez vos cartes dans des classeurs : une carte peut figurer dans plusieurs albums.{" "}
-        {data.albums.length} / {data.max}
+        {t("intro", { count: data.albums.length, max: data.max })}
       </p>
       <div className="mt-6 flex justify-center">
         <button
@@ -49,14 +51,13 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
           }}
           className={primaryButtonClass}
         >
-          <Plus className="size-4" /> Nouvel album
+          <Plus className="size-4" /> {t("new")}
         </button>
       </div>
 
       {data.albums.length === 0 ? (
         <p className="mt-10 text-center opacity-60">
-          Aucun album pour l&apos;instant. Créez-en un, puis ajoutez-y des cartes depuis sa page ou
-          depuis la fiche d&apos;une carte.
+          {t("empty")}
         </p>
       ) : (
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -66,7 +67,7 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
                 {/* lien étiré par-dessus : les cartes contiennent déjà un lien, pas de lien dans un lien */}
                 <Link
                   href={`/albums/${a.id}`}
-                  aria-label={`Ouvrir l'album ${a.name}`}
+                  aria-label={t("open", { name: a.name })}
                   className="absolute inset-0 z-30 rounded-xl"
                 />
                 <div className="relative flex h-40 items-center justify-center">
@@ -85,7 +86,7 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
                 </div>
                 <h2 className="mt-4 truncate text-lg font-bold">{a.name}</h2>
                 <p className="text-sm text-fog">
-                  {a.cards} carte{a.cards > 1 ? "s" : ""}
+                  {t("cards", { count: a.cards })}
                 </p>
               </div>
             </li>
@@ -100,13 +101,13 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
       >
         <button
           type="button"
-          aria-label="Fermer"
+          aria-label={tc("close")}
           onClick={() => dialog.current?.close()}
           className="absolute right-4 top-4 opacity-60 hover:opacity-100"
         >
           <X className="size-5" />
         </button>
-        <h2 className="text-lg font-bold">Nouvel album</h2>
+        <h2 className="text-lg font-bold">{t("new")}</h2>
         <form
           className="mt-4 flex flex-col gap-3"
           onSubmit={(e) => {
@@ -118,8 +119,8 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={ALBUM_NAME_MAX}
-            placeholder="Nom de l'album"
-            aria-label="Nom de l'album"
+            placeholder={t("nameLabel")}
+            aria-label={t("nameLabel")}
             className="rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
           />
           {error && (
@@ -129,10 +130,10 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
           )}
           <div className="flex justify-end gap-3">
             <button type="button" className={buttonClass} onClick={() => dialog.current?.close()}>
-              Annuler
+              {tc("cancel")}
             </button>
             <button type="submit" className={primaryButtonClass} disabled={!name.trim() || busy}>
-              Créer
+              {tc("create")}
             </button>
           </div>
         </form>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
@@ -406,6 +407,7 @@ function createParticles(scene: THREE.Scene, glowTexture: THREE.Texture) {
 }
 
 export function PackStage3D(props: PackStageProps) {
+  const t = useTranslations("packs");
   const host = useRef<HTMLDivElement>(null);
 
   const latest = useRef(props);
@@ -1273,7 +1275,7 @@ export function PackStage3D(props: PackStageProps) {
     <div
       ref={host}
       role="img"
-      aria-label="Paquet Wikideck"
+      aria-label={t("packAlt")}
       className={`
         relative
         h-104

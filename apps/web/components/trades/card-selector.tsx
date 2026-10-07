@@ -1,6 +1,7 @@
 "use client";
 
 import { Minus, Plus, Search } from "@/components/icons";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { TRADE_MAX_CARDS, type CollectionCard, type CollectionResponse } from "@wikideck/shared";
 import { WikiCard } from "@/components/wiki-card";
@@ -20,6 +21,8 @@ export function CardSelector({
   selection: Selection;
   onChange: (next: Selection) => void;
 }) {
+  const t = useTranslations("trades.selector");
+  const tc = useTranslations("common");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [cards, setCards] = useState<CollectionCard[]>([]);
@@ -75,8 +78,8 @@ export function CardSelector({
             setQuery(e.target.value);
             setPage(1);
           }}
-          placeholder="Rechercher une carte…"
-          aria-label="Rechercher une carte"
+          placeholder={t("searchPlaceholder")}
+          aria-label={t("searchLabel")}
           className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
         />
       </div>
@@ -89,7 +92,7 @@ export function CardSelector({
 
       <div className="mt-4 max-h-[42vh] overflow-y-auto pr-1">
         {!loading && cards.length === 0 && !error ? (
-          <p className="py-8 text-center text-sm text-fog">Aucune carte.</p>
+          <p className="py-8 text-center text-sm text-fog">{t("empty")}</p>
         ) : (
           <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
             {cards.map((card) => {
@@ -100,7 +103,7 @@ export function CardSelector({
                     type="button"
                     onClick={() => toggle(card)}
                     aria-pressed={!!chosen}
-                    aria-label={`${chosen ? "Retirer" : "Choisir"} ${card.title}`}
+                    aria-label={t(chosen ? "remove" : "choose", { title: card.title })}
                     className={`block w-full rounded-[9.6%/6.5%] text-left outline-none transition focus-visible:ring-2 focus-visible:ring-accent ${
                       chosen ? "ring-2 ring-accent" : "opacity-80 hover:opacity-100"
                     }`}
@@ -111,7 +114,7 @@ export function CardSelector({
                     <div className="mt-1.5 flex items-center justify-center gap-2 text-sm">
                       <button
                         type="button"
-                        aria-label="Moins"
+                        aria-label={t("less")}
                         onClick={() => setQuantity(card, chosen.quantity - 1)}
                         className="rounded-full border border-line p-1 hover:border-accent"
                       >
@@ -122,7 +125,7 @@ export function CardSelector({
                       </span>
                       <button
                         type="button"
-                        aria-label="Plus"
+                        aria-label={t("more")}
                         onClick={() => setQuantity(card, chosen.quantity + 1)}
                         className="rounded-full border border-line p-1 hover:border-accent"
                       >
@@ -135,11 +138,11 @@ export function CardSelector({
             })}
           </ul>
         )}
-        {loading && <p className="py-4 text-center text-sm text-fog">Chargement…</p>}
+        {loading && <p className="py-4 text-center text-sm text-fog">{tc("loading")}</p>}
         {!loading && page < totalPages && (
           <div className="mt-4 text-center">
             <button type="button" className={buttonClass} onClick={() => setPage((p) => p + 1)}>
-              Charger plus
+              {tc("loadMore")}
             </button>
           </div>
         )}
