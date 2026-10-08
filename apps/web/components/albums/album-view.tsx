@@ -6,25 +6,30 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import {
+  ALBUM_MAX_DEPTH,
   ALBUM_NAME_MAX,
   RARITIES,
   type AlbumResponse,
+  type AlbumsResponse,
   type CollectionCard,
 } from "@wikideck/shared";
+import { AlbumTile } from "@/components/albums/album-tile";
 import { AlbumAddDialog } from "@/components/albums/album-add-dialog";
 import { CardDetail } from "@/components/card-detail";
 import { useConfirm } from "@/components/confirm-dialog";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
 import { WikiCard } from "@/components/wiki-card";
+import { moveTargets } from "@/lib/album-tree";
 import { useRarityLabel } from "@/lib/labels";
 import { RARITY_COLOR } from "@/lib/rarity-ui";
-import { apiCall } from "@/lib/tags-api";
+import { apiCall, apiFetch } from "@/lib/tags-api";
 
 function href(
   id: string,
-  { q, rarities, page }: { q?: string; rarities?: string[]; page?: number },
+  { q, rarities, page, scope }: { q?: string; rarities?: string[]; page?: number; scope?: "all" },
 ) {
   const qs = new URLSearchParams();
+  if (scope) qs.set("scope", scope);
   if (q) qs.set("q", q);
   if (rarities?.length) qs.set("rarity", rarities.join(","));
   if (page && page > 1) qs.set("page", String(page));
@@ -47,7 +52,12 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
   const { album } = data;
   const { confirm, dialog: confirmDialog } = useConfirm();
   const renameDialog = useRef<HTMLDialogElement>(null);
+  const subDialog = useRef<HTMLDialogElement>(null);
+  const moveDialog = useRef<HTMLDialogElement>(null);
   const [name, setName] = useState(album.name);
+  const [subName, setSubName] = useState("");
+  const [targets, setTargets] = useState<{ id: string; label: string }[] | null>(null);
+  const [target, setTarget] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -56,9 +66,11 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
 
+  const scope = data.scope === "all" ? ("all" as const) : undefined;
   const base = {
     q: data.query,
     rarities: data.rarities.map((r) => RARITIES.find((x) => x.value === r)!.code),
+    scope,
   };
   const [search, setSearch] = useState(data.query);
   const lastSent = useRef(data.query);
@@ -91,17 +103,52 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
     router.refresh();
   }
 
+  async function createSub() {
+    const clean = subName.trim().replace(/\s+/g, " ");
+    if (!clean || busy) return;
+    setBusy(true);
+    setError(null);
+    const res = await apiCall<{ id: string }>(apiUrl, "/albums", "POST", {
+      name: clean,
+      parentId: album.id,
+    });
+    setBusy(false);
+    if (!res.ok) return setError(res.message);
+    subDialog.current?.close();
+    router.push(`/albums/${res.data.id}`);
+  }
+
+  async function openMove() {
+    setError(null);
+    setTarget(album.parentId ?? "");
+    moveDialog.current?.showModal();
+    const res = await apiFetch<AlbumsResponse>(apiUrl, "/albums");
+    if (res.ok) setTargets(moveTargets(res.data.albums, album.id));
+    else setError(res.message);
+  }
+
+  async function move() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    const res = await apiCall(apiUrl, `/albums/${album.id}`, "PATCH", { parentId: target || null });
+    setBusy(false);
+    if (!res.ok) return setError(res.message);
+    moveDialog.current?.close();
+    router.refresh();
+  }
+
   async function remove() {
     const ok = await confirm({
       title: t("delete.title", { name: album.name }),
-      message: t("delete.message"),
+      message: data.children.length ? t("delete.messageWithChildren") : t("delete.message"),
       confirmLabel: tc("delete"),
       danger: true,
     });
     if (!ok) return;
     const res = await apiCall(apiUrl, `/albums/${album.id}`, "DELETE");
     if (!res.ok) return setError(res.message);
-    router.push("/albums");
+    router.push(album.parentId ? `/albums/${album.parentId}` : "/albums");
   }
 
   async function takeOut() {
@@ -132,10 +179,28 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
     <div className="mx-auto max-w-5xl">
       {confirmDialog}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="/albums" className={`${buttonClass} py-1.5!`}>
-          <ChevronLeft className="size-4" /> {t("back")}
-        </Link>
+        <nav aria-label={t("trailLabel")} className="min-w-0">
+          <ol className="flex flex-wrap items-center gap-1 text-sm text-pale-mist">
+            {[{ id: "", name: t("back") }, ...data.trail].map((step) => (
+              <li key={step.id || "root"} className="flex items-center gap-1">
+                <Link
+                  href={step.id ? `/albums/${step.id}` : "/albums"}
+                  className="rounded-md px-1.5 py-0.5 hover:bg-foreground/10 hover:text-foreground"
+                >
+                  {step.name}
+                </Link>
+                <ChevronRight className="size-3.5 opacity-50" />
+              </li>
+            ))}
+            <li aria-current="page" className="px-1.5 py-0.5 font-bold text-foreground">
+              {album.name}
+            </li>
+          </ol>
+        </nav>
         <div className="flex gap-2">
+          <button type="button" onClick={() => void openMove()} className={buttonClass}>
+            {t("move.button")}
+          </button>
           <button
             type="button"
             aria-label={t("rename.label")}
@@ -170,6 +235,45 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
           {error}
         </p>
       )}
+
+      <section className="mt-8" aria-label={t("sub.title")}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-fog">
+            {t("sub.title")}
+            <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-[11px] tabular-nums">
+              {data.children.length}
+            </span>
+          </h2>
+          {data.depth < ALBUM_MAX_DEPTH && (
+            <button
+              type="button"
+              className={buttonClass}
+              onClick={() => {
+                setSubName("");
+                setError(null);
+                subDialog.current?.showModal();
+              }}
+            >
+              <Plus className="size-4" /> {t("sub.new")}
+            </button>
+          )}
+        </div>
+        {data.children.length === 0 ? (
+          <p className="mt-3 text-sm text-fog">
+            {data.depth < ALBUM_MAX_DEPTH
+              ? t("sub.empty")
+              : t("sub.maxDepth", { max: ALBUM_MAX_DEPTH })}
+          </p>
+        ) : (
+          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {data.children.map((child) => (
+              <li key={child.id}>
+                <AlbumTile album={child} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       {data.highlights.length > 0 && (
         <section className="mt-8" aria-label={t("highlights")}>
@@ -206,10 +310,11 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
             <button type="button" className={primaryButtonClass} onClick={() => setAdding(true)}>
               <Plus className="size-4" /> {tc("add")}
             </button>
+            {scope !== "all" && (
             <button
               type="button"
               aria-pressed={selectMode}
-              disabled={data.count === 0}
+              disabled={data.total === 0}
               onClick={() => {
                 setSelectMode((s) => !s);
                 setPicked(new Set());
@@ -218,8 +323,32 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
             >
               {selectMode ? t("selectDone") : t("select")}
             </button>
+            )}
           </div>
         </div>
+
+        {data.children.length > 0 && (
+          <div
+            role="group"
+            aria-label={t("scope.label")}
+            className="mt-4 inline-flex rounded-full border border-line p-0.5"
+          >
+            {(["own", "all"] as const).map((value) => (
+              <Link
+                key={value}
+                href={href(album.id, {
+                  q: data.query,
+                  rarities: base.rarities,
+                  scope: value === "all" ? "all" : undefined,
+                })}
+                aria-current={data.scope === value}
+                className="rounded-full px-3.5 py-1.5 text-xs font-bold text-pale-mist transition-colors hover:text-foreground aria-current:bg-accent aria-current:text-accent-foreground"
+              >
+                {t(`scope.${value}`)}
+              </Link>
+            ))}
+          </div>
+        )}
 
         <div className="relative mt-4 max-w-md">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
@@ -243,7 +372,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
             return (
               <Link
                 key={rarity}
-                href={href(album.id, { q: data.query, rarities: next })}
+                href={href(album.id, { q: data.query, rarities: next, scope })}
                 title={t("rarityCount", { rarity: rarityLabel(info.value), count })}
                 aria-pressed={active}
                 style={{ color: RARITY_COLOR[rarity] }}
@@ -260,7 +389,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
           })}
           {filtering && (
             <Link
-              href={href(album.id, { q: data.query })}
+              href={href(album.id, { q: data.query, scope })}
               className="ml-2 text-xs opacity-60 hover:opacity-100"
             >
               {tCards("resetFilters")}
@@ -378,6 +507,91 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
           }}
         />
       )}
+
+      <dialog
+        ref={subDialog}
+        onClick={(e) => e.target === subDialog.current && subDialog.current.close()}
+        className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-line bg-surface p-6 text-foreground backdrop:bg-black/70"
+      >
+        <h2 className="text-lg font-bold">{t("sub.dialogTitle", { name: album.name })}</h2>
+        <form
+          className="mt-4 flex flex-col gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void createSub();
+          }}
+        >
+          <input
+            value={subName}
+            onChange={(e) => setSubName(e.target.value)}
+            maxLength={ALBUM_NAME_MAX}
+            placeholder={t("sub.namePlaceholder")}
+            aria-label={t("sub.nameLabel")}
+            className="rounded-lg border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          {error && (
+            <p role="alert" className="text-sm text-danger">
+              {error}
+            </p>
+          )}
+          <div className="flex justify-end gap-3">
+            <button type="button" className={buttonClass} onClick={() => subDialog.current?.close()}>
+              {tc("cancel")}
+            </button>
+            <button type="submit" className={primaryButtonClass} disabled={!subName.trim() || busy}>
+              {tc("create")}
+            </button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog
+        ref={moveDialog}
+        onClick={(e) => e.target === moveDialog.current && moveDialog.current.close()}
+        className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-line bg-surface p-6 text-foreground backdrop:bg-black/70"
+      >
+        <h2 className="text-lg font-bold">{t("move.title", { name: album.name })}</h2>
+        <p className="mt-1 text-sm text-fog">{t("move.help", { max: ALBUM_MAX_DEPTH })}</p>
+        <form
+          className="mt-4 flex flex-col gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void move();
+          }}
+        >
+          <select
+            value={target}
+            onChange={(e) => setTarget(e.target.value)}
+            disabled={!targets}
+            aria-label={t("move.label")}
+            className="rounded-lg border border-line bg-background px-3 py-2 text-sm"
+          >
+            <option value="">{t("move.root")}</option>
+            {targets?.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {error && (
+            <p role="alert" className="text-sm text-danger">
+              {error}
+            </p>
+          )}
+          <div className="flex justify-end gap-3">
+            <button type="button" className={buttonClass} onClick={() => moveDialog.current?.close()}>
+              {tc("cancel")}
+            </button>
+            <button
+              type="submit"
+              className={primaryButtonClass}
+              disabled={busy || !targets || target === (album.parentId ?? "")}
+            >
+              {t("move.confirm")}
+            </button>
+          </div>
+        </form>
+      </dialog>
 
       <dialog
         ref={renameDialog}

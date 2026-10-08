@@ -1,17 +1,13 @@
 "use client";
 
-import { BookBookmark, Plus, X } from "@/components/icons";
-import Link from "next/link";
+import { Plus, X } from "@/components/icons";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { ALBUM_NAME_MAX, type AlbumsResponse } from "@wikideck/shared";
 import { buttonClass, primaryButtonClass } from "@/components/settings/controls";
-import { WikiCard } from "@/components/wiki-card";
+import { AlbumTile } from "@/components/albums/album-tile";
 import { apiCall } from "@/lib/tags-api";
-
-// éventail : la plus belle carte au centre, les deux suivantes de chaque côté
-const FAN = ["z-20 scale-110", "z-10 -translate-x-14 -rotate-6", "z-10 translate-x-14 rotate-6"];
 
 export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: string }) {
   const t = useTranslations("albums");
@@ -21,6 +17,7 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const roots = data.albums.filter((a) => a.parentId === null);
   const full = data.albums.length >= data.max;
 
   async function create() {
@@ -55,40 +52,15 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
         </button>
       </div>
 
-      {data.albums.length === 0 ? (
+      {roots.length === 0 ? (
         <p className="mt-10 text-center opacity-60">
           {t("empty")}
         </p>
       ) : (
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.albums.map((a) => (
+          {roots.map((a) => (
             <li key={a.id}>
-              <div className="group relative rounded-xl border border-line bg-surface p-5 transition-colors hover:border-accent">
-                {/* lien étiré par-dessus : les cartes contiennent déjà un lien, pas de lien dans un lien */}
-                <Link
-                  href={`/albums/${a.id}`}
-                  aria-label={t("open", { name: a.name })}
-                  className="absolute inset-0 z-30 rounded-xl"
-                />
-                <div className="relative flex h-40 items-center justify-center">
-                  {a.top.length === 0 ? (
-                    <BookBookmark className="size-14 text-fog" />
-                  ) : (
-                    a.top.map((card, i) => (
-                      <WikiCard
-                        key={card.id}
-                        card={card}
-                        compact
-                        className={`absolute w-24 transition-transform duration-300 group-hover:-translate-y-1 ${FAN[i]}`}
-                      />
-                    ))
-                  )}
-                </div>
-                <h2 className="mt-4 truncate text-lg font-bold">{a.name}</h2>
-                <p className="text-sm text-fog">
-                  {t("cards", { count: a.cards })}
-                </p>
-              </div>
+              <AlbumTile album={a} />
             </li>
           ))}
         </ul>

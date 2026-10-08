@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import type { AlbumSummary, AlbumsResponse } from "@wikideck/shared";
+import { pathLabel } from "@/lib/album-tree";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
 export function AlbumPicker({ apiUrl, cardId }: { apiUrl: string; cardId: string }) {
@@ -66,7 +67,7 @@ export function AlbumPicker({ apiUrl, cardId }: { apiUrl: string; cardId: string
                 className="flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-sm transition-colors hover:bg-foreground/10 aria-pressed:border-accent aria-pressed:bg-accent/15 aria-pressed:text-accent disabled:opacity-50"
               >
                 {a.hasCard && <Check className="size-3.5" />}
-                {a.name}
+                {pathLabel(albums, a.id)}
               </button>
             </li>
           ))}

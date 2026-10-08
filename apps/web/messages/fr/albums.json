@@ -2,7 +2,7 @@
   "title": "Albums",
   "back": "Albums",
   "loadError": "Impossible de charger vos albums.",
-  "intro": "Rangez vos cartes dans des classeurs : une carte peut figurer dans plusieurs albums. {count} / {max}",
+  "intro": "Rangez vos cartes dans des classeurs, avec autant de sous-albums que vous voulez (par exemple Football › France) : une carte peut figurer dans plusieurs albums. {count} / {max}",
   "new": "Nouvel album",
   "empty": "Aucun album pour l’instant. Créez-en un, puis ajoutez-y des cartes depuis sa page ou depuis la fiche d’une carte.",
   "open": "Ouvrir l’album {name}",
@@ -18,7 +18,8 @@
     "label": "Supprimer l’album",
     "button": "Supprimer",
     "title": "Supprimer l’album « {name} » ?",
-    "message": "Les cartes restent dans votre collection, seul le classeur disparaît."
+    "message": "Les cartes restent dans votre collection, seul le classeur disparaît.",
+    "messageWithChildren": "Les cartes restent dans votre collection, mais l’album et tous ses sous-albums disparaissent."
   },
   "mine": "Mon album · {count, plural, =0 {0 carte} one {# carte} other {# cartes}}",
   "highlights": "Pièces maîtresses",
@@ -52,5 +53,29 @@
   "picker": {
     "none": "Aucun album.",
     "create": "En créer un"
+  },
+  "subAlbums": "{count, plural, one {# sous-album} other {# sous-albums}}",
+  "trailLabel": "Chemin de l’album",
+  "move": {
+    "button": "Déplacer",
+    "title": "Déplacer « {name} »",
+    "help": "Choisissez l’album dans lequel le ranger. Les classeurs vont jusqu’à {max} niveaux.",
+    "label": "Nouvel emplacement",
+    "root": "Premier niveau (aucun album parent)",
+    "confirm": "Déplacer"
+  },
+  "sub": {
+    "title": "Sous-albums",
+    "new": "Nouveau sous-album",
+    "empty": "Aucun sous-album. Créez-en pour trier cet album, par exemple par équipe, par pays ou par époque.",
+    "maxDepth": "Cet album est au niveau maximal ({max}) : il ne peut plus avoir de sous-album.",
+    "dialogTitle": "Nouveau sous-album de « {name} »",
+    "namePlaceholder": "Nom du sous-album",
+    "nameLabel": "Nom du sous-album"
+  },
+  "scope": {
+    "label": "Cartes affichées",
+    "own": "Cet album",
+    "all": "Avec les sous-albums"
   }
 }

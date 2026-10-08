@@ -359,28 +359,36 @@
       "summary": "Supprime une étiquette."
     },
     "get-albums": {
-      "summary": "Tes albums (20 au maximum), avec des cartes mises en avant.",
+      "summary": "Tes albums et sous-albums à plat, avec leur parent. Les cartes de couverture ne sont calculées que pour les albums de premier niveau.",
       "query": {
         "card": "identifiant de carte, pour savoir dans quels albums elle est (facultatif)"
       }
     },
     "post-albums": {
-      "summary": "Crée un album.",
+      "summary": "Crée un album, ou un sous-album avec parentId. Les classeurs vont jusqu’à 4 niveaux et 100 albums au total.",
       "body": {
-        "name": "nom, 40 caractères au maximum"
+        "name": "nom, 40 caractères au maximum",
+        "parentId": "album parent (un album à toi), ou null pour un album de premier niveau"
       }
     },
     "get-albums-id": {
-      "summary": "Détail d’un album."
+      "summary": "Détail d’un album : son chemin (trail), ses sous-albums (children), ses pièces maîtresses et ses cartes.",
+      "query": {
+        "scope": "own (cartes de l’album seul, par défaut) ou all (avec ses sous-albums)",
+        "q": "recherche dans le titre ou le sous-titre",
+        "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
+        "page": "numéro de page"
+      }
     },
     "patch-albums-id": {
-      "summary": "Renomme un album.",
+      "summary": "Renomme et/ou déplace un album. Tous les champs sont facultatifs.",
       "body": {
-        "name": "nouveau nom"
+        "name": "nouveau nom",
+        "parentId": "nouveau parent (un de tes albums, hors lui-même et ses sous-albums), ou null pour le remonter au premier niveau"
       }
     },
     "delete-albums-id": {
-      "summary": "Supprime un album (les cartes restent dans la collection)."
+      "summary": "Supprime un album et tous ses sous-albums. Les cartes restent dans la collection."
     },
     "put-albums-id-cards": {
       "summary": "Ajoute ou retire des cartes (500 par album, 100 ajouts par requête).",

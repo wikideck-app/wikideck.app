@@ -42,8 +42,8 @@
   "already_reported": "Vous avez déjà signalé ce message.",
   "card_locked": "Cette carte est protégée (mise en avant, vitrine, échange ou enchère en cours) : retirez d’abord cette protection.",
   "invalid_name": "Nom invalide (1 à 40 caractères).",
-  "album_exists": "Vous avez déjà un album de ce nom.",
-  "too_many_albums": "Vous avez atteint la limite d’albums.",
+  "album_exists": "Un album de ce nom existe déjà ici.",
+  "too_many_albums": "Vous avez atteint la limite d’albums et de sous-albums.",
   "album_full": "Cet album est plein (500 cartes).",
   "wishlist_full": "Votre liste d’envies est pleine (3 cartes). Retirez-en une pour en ajouter.",
   "nothing_to_recycle": "Vous n’avez aucun doublon à recycler dans ces raretés.",
@@ -60,5 +60,7 @@
   "target_active_auctions": "Ce compte a des enchères en cours (en vente ou en tête) : annulez-les d’abord depuis l’onglet Enchères.",
   "active_auctions": "Terminez d’abord vos enchères en cours (ventes et mises en tête) avant de supprimer le compte.",
   "unknown": "Une erreur est survenue.",
-  "network": "Impossible de joindre le serveur."
+  "network": "Impossible de joindre le serveur.",
+  "album_too_deep": "Les classeurs sont limités à 4 niveaux de sous-albums.",
+  "album_cycle": "Un album ne peut pas être rangé dans l’un de ses propres sous-albums."
 }
