@@ -36,5 +36,6 @@
   "staffAlerts": "Espace staff : {count} à traiter",
   "settings": "Paramètres",
   "logout": "Se déconnecter",
-  "comingSoon": "Bientôt disponible."
+  "comingSoon": "Bientôt disponible.",
+  "copyright": "© {year} Wikideck"
 }

@@ -89,17 +89,24 @@ export function NotificationListener({
     path.current = pathname;
   }, [pathname]);
 
-  // le bonus n'est versé qu'une fois par jour : l'annonce ne s'affiche qu'à ce chargement
+  // le bonus n'est versé qu'une fois par jour : l'annonce ne s'affiche qu'une fois, à ce chargement
+  // (le garde évite le doublon quand l'effet se relance : mode strict, rafraîchissement des messages)
+  const bonusAnnounced = useRef(false);
+  const translate = useRef(t);
   useEffect(() => {
-    if (!dailyBonus) return;
+    translate.current = t;
+  });
+  useEffect(() => {
+    if (!dailyBonus || bonusAnnounced.current) return;
+    bonusAnnounced.current = true;
     const id = Date.now() + Math.random();
     setToasts((prev) => [
       ...prev,
-      { id, text: t("dailyBonus", { amount: dailyBonus }), href: path.current },
+      { id, text: translate.current("dailyBonus", { amount: dailyBonus }), href: path.current },
     ]);
-    const timer = setTimeout(() => setToasts((prev) => prev.filter((x) => x.id !== id)), 7000);
-    return () => clearTimeout(timer);
-  }, [dailyBonus, t]);
+    // pas de nettoyage : le garde empêche toute relance, le toast doit disparaître seul
+    setTimeout(() => setToasts((prev) => prev.filter((x) => x.id !== id)), 7000);
+  }, [dailyBonus]);
 
   useEffect(() => {
     if (!live || typeof EventSource === "undefined") return;
@@ -120,7 +127,7 @@ export function NotificationListener({
       refreshTimer.current = setTimeout(() => router.refresh(), 400);
 
       if (event.type === "message" && path.current.startsWith("/messages")) return;
-      const { text, href } = describe(event, t);
+      const { text, href } = describe(event, translate.current);
       const id = Date.now() + Math.random();
       setToasts((prev) => [...prev.slice(-2), { id, text, href }]);
       setTimeout(() => setToasts((prev) => prev.filter((x) => x.id !== id)), 7000);
@@ -130,7 +137,7 @@ export function NotificationListener({
       setPushConnected(false);
       clearTimeout(refreshTimer.current);
     };
-  }, [live, router, t]);
+  }, [live, router]);
 
   if (!toasts.length) return null;
   return (

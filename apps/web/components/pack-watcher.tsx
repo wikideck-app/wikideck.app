@@ -9,6 +9,10 @@ export function PackWatcher({ initial, apiUrl }: { initial: PackStatus | null; a
   const t = useTranslations("notifications.boosterReady");
   const { settings } = useSettings();
   const enabled = settings.notifications.boosterReady;
+  const translate = useRef(t);
+  useEffect(() => {
+    translate.current = t;
+  });
   const known = useRef(initial?.packs ?? 0);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -23,8 +27,8 @@ export function PackWatcher({ initial, apiUrl }: { initial: PackStatus | null; a
         const status = (await res.json()) as PackStatus;
         if (status.packs > known.current && document.visibilityState === "hidden") {
           if ("Notification" in window && Notification.permission === "granted") {
-            const n = new Notification(t("title"), {
-              body: t("body"),
+            const n = new Notification(translate.current("title"), {
+              body: translate.current("body"),
               icon: "/logo.webp",
               tag: "booster-ready",
             });
@@ -46,7 +50,7 @@ export function PackWatcher({ initial, apiUrl }: { initial: PackStatus | null; a
       cancelled = true;
       clearTimeout(timer.current);
     };
-  }, [enabled, initial, apiUrl, t]);
+  }, [enabled, initial, apiUrl]);
 
   return null;
 }

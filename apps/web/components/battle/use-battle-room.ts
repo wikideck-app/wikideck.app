@@ -17,6 +17,10 @@ const STALE_MS = 12_000;
 
 export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }) {
   const t = useTranslations("battle");
+  const translate = useRef(t);
+  useEffect(() => {
+    translate.current = t;
+  });
   const [room, setRoom] = useState<BattleRoom | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -136,7 +140,7 @@ export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }
           setRoom(res.data.room);
         } else if (res.status === 404) {
           setRoom(null);
-          setError(t("roomGone"));
+          setError(translate.current("roomGone"));
         }
       }
       if (beats >= HEARTBEAT_MS) {
@@ -145,7 +149,7 @@ export function useBattleRoom({ apiUrl, meId }: { apiUrl: string; meId: string }
       }
     }, 1000);
     return () => clearInterval(id);
-  }, [apiUrl, code, send, t]);
+  }, [apiUrl, code, send]);
 
   useEffect(() => {
     if (phase !== "countdown" && phase !== "playing") return;

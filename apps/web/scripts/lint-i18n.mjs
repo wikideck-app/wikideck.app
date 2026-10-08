@@ -224,6 +224,12 @@ for (const dir of SOURCE_DIRS) {
       }
       if (ts.isVariableDeclaration(node) && node.initializer) {
         const call = unwrap(node.initializer);
+        // const translate = useRef(t) : translate.current("clé") est un appel traduit comme t("clé")
+        if (call && ts.isCallExpression(call) && call.expression.getText() === "useRef" && ts.isIdentifier(node.name)) {
+          const arg = call.arguments[0];
+          const ns = arg && ts.isIdentifier(arg) ? resolve(node, arg.text) : undefined;
+          if (ns !== undefined) bind(node, node.name.text, ns);
+        }
         if (call && ts.isCallExpression(call) && ts.isIdentifier(call.expression) && TRANSLATOR_HOOKS.has(call.expression.text)) {
           const ns = namespaceOf(call);
           if (ns === null) usedNamespaces.add("*");
@@ -250,6 +256,9 @@ for (const dir of SOURCE_DIRS) {
       if (ts.isCallExpression(node)) {
         let callee = node.expression;
         let method = "t";
+        if (ts.isPropertyAccessExpression(callee) && callee.name.text === "current" && ts.isIdentifier(callee.expression)) {
+          callee = callee.expression;
+        }
         if (ts.isPropertyAccessExpression(callee) && ts.isIdentifier(callee.expression) && resolve(node, callee.expression.text) !== undefined) {
           method = callee.name.text;
           callee = callee.expression;
