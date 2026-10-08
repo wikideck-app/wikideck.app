@@ -175,6 +175,8 @@ export function PackOpener({
     setPhase("idle");
   }, []);
 
+  const swipeStart = useRef<{ x: number; y: number } | null>(null);
+
   const flippedRef = useRef(flipped);
   useEffect(() => {
     flippedRef.current = flipped;
@@ -364,14 +366,35 @@ export function PackOpener({
           })}
         </p>
 
-        <FlipCard
-          key={index}
-          card={cards[index]}
-          isNew={cards[index].isNew}
-          flipped={flipped.has(index)}
-          onToggle={() => (flipped.has(index) ? setDetailOpen(true) : revealCurrent())}
-          className="animate-card-enter w-72 sm:w-80"
-        />
+        <div
+          className="touch-pan-y"
+          onTouchStart={(e) => {
+            const t0 = e.touches[0];
+            swipeStart.current = e.touches.length === 1 ? { x: t0.clientX, y: t0.clientY } : null;
+          }}
+          onTouchEnd={(e) => {
+            const start = swipeStart.current;
+            swipeStart.current = null;
+            if (!start || detailOpen || cinematic) return;
+            const t0 = e.changedTouches[0];
+            const dx = t0.clientX - start.x;
+            const dy = t0.clientY - start.y;
+            if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+            go(index + (dx < 0 ? 1 : -1));
+          }}
+          onTouchCancel={() => {
+            swipeStart.current = null;
+          }}
+        >
+          <FlipCard
+            key={index}
+            card={cards[index]}
+            isNew={cards[index].isNew}
+            flipped={flipped.has(index)}
+            onToggle={() => (flipped.has(index) ? setDetailOpen(true) : revealCurrent())}
+            className="animate-card-enter w-72 sm:w-80"
+          />
+        </div>
 
         {cinematic && (
           <LegendaryReveal
