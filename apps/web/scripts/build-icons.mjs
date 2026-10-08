@@ -27,6 +27,7 @@ const ICONS = {
   Crown: "crown-bold",
   Database: "database-bold",
   Diamond: "diamonds-four-bold",
+  DiscordLogo: "fa6-brands:discord",
   Download: "download-simple-bold",
   Eye: "eye-bold",
   Flame: "fire-bold",
@@ -86,16 +87,20 @@ const ICONS = {
 };
 
 const require = createRequire(import.meta.url);
-const collection = JSON.parse(
-  readFileSync(require.resolve(`@iconify-json/${SET}/icons.json`), "utf8"),
-);
+const collections = {};
+const loadSet = (set) =>
+  (collections[set] ??= JSON.parse(
+    readFileSync(require.resolve(`@iconify-json/${set}/icons.json`), "utf8"),
+  ));
 
 const data = {};
 const missing = [];
-for (const [component, id] of Object.entries(ICONS)) {
-  const icon = getIconData(collection, id);
+for (const [component, ref] of Object.entries(ICONS)) {
+  // "set:nom" pour un autre jeu que SET
+  const [set, id] = ref.includes(":") ? ref.split(":") : [SET, ref];
+  const icon = getIconData(loadSet(set), id);
   if (icon) data[component] = icon;
-  else missing.push(`${component} → ${SET}:${id}`);
+  else missing.push(`${component} → ${set}:${id}`);
 }
 if (missing.length) {
   console.error("Icônes introuvables dans le jeu :\n  " + missing.join("\n  "));

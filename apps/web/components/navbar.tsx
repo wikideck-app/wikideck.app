@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, LogOut, Menu, Settings, ShieldCheck, X } from "@/components/icons";
+import { ArrowUpRight, ChevronDown, DiscordLogo, LogOut, Menu, Settings, ShieldCheck, User, X } from "@/components/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { PackStatus, SessionUser } from "@wikideck/shared";
 import { Wikibits } from "@/components/wikibit";
+import { DISCORD_URL } from "@/lib/site";
 import { NAV, NAV_GROUPS, type NavGroup, type NavItem } from "@/lib/nav";
 
 type Props = {
@@ -18,9 +19,6 @@ type Props = {
 
 const chip =
   "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-2 border-white/40 px-3.5 py-1.5 text-sm font-bold transition-colors hover:border-white";
-
-const iconButton =
-  "flex aspect-square size-10 shrink-0 items-center justify-center rounded-full border-2 border-white/40 transition-colors hover:border-white hover:bg-white hover:text-(--deep-concord)";
 
 function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
   const t = useTranslations("nav");
@@ -49,7 +47,7 @@ const menuLink =
 
 const MENU_GROUPS = NAV_GROUPS.filter((g) => g !== "account");
 
-type OpenMenu = NavGroup | "all" | null;
+type OpenMenu = NavGroup | "all" | "account" | null;
 
 export function Navbar({ user, logoutUrl, packs }: Props) {
   const t = useTranslations("nav");
@@ -155,6 +153,19 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
     );
   };
 
+  const discordLink = (visibility: string) => (
+    <a
+      href={DISCORD_URL}
+      target="_blank"
+      rel="noreferrer"
+      className={`${visibility} items-center gap-2 whitespace-nowrap rounded-full bg-[#5865f2] px-4 py-2.5 text-xs font-extrabold uppercase tracking-wide text-white transition-colors hover:bg-[#4752c4] 2xl:px-5 2xl:text-sm`}
+    >
+      <DiscordLogo className="size-5" />
+      {t("joinDiscord")}
+      <ArrowUpRight className="size-4" />
+    </a>
+  );
+
   const allPending = MENU_GROUPS.reduce((sum, g) => sum + pendingIn(g), 0);
 
   return (
@@ -195,71 +206,102 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
               />
             )}
           </button>
+
+          {/* centré dans l'espace entre le logo et le premier menu (les menus restent centrés sur la page) */}
+          <div className="hidden min-w-0 flex-1 justify-center xl:flex">
+            {discordLink("inline-flex")}
+          </div>
         </div>
 
         <div className="flex items-center justify-center gap-2">{MENU_GROUPS.map(groupButton)}</div>
 
-        <div className="flex items-center justify-end gap-2 sm:gap-3">
+        <div className="flex items-center justify-end gap-2 sm:gap-3 ">
           {packs && <PackChip packs={packs} />}
           <Link href="/market" className={chip} title={t("wikibitsBalance")}>
             <Wikibits amount={user.wikibits} />
           </Link>
-          <Link
-            href="/profile"
-            title={t("myProfile")}
-            className="hidden items-center gap-2.5 rounded-full p-1 transition-colors hover:bg-white/10 md:flex 2xl:pr-3"
-          >
-            {user.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={user.avatarUrl}
-                alt=""
-                className="size-9 shrink-0 rounded-full ring-2 ring-white/40"
-              />
-            ) : (
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-white/40 text-sm font-bold">
-                {user.username.slice(0, 1).toUpperCase()}
-              </span>
-            )}
-            <span className="hidden max-w-32 truncate text-sm font-bold 2xl:inline">
-              {user.username}
-            </span>
-          </Link>
-          {user.staff && (
-            <Link
-              href="/staff"
-              aria-label={
-                user.staffAlerts ? t("staffAlerts", { count: user.staffAlerts }) : t("staff")
-              }
-              title={t("staff")}
-              className={`${iconButton} relative max-md:hidden`}
+          <div className="relative hidden md:block">
+            <button
+              type="button"
+              aria-haspopup="true"
+              aria-expanded={open === "account"}
+              aria-controls="menu-account"
+              aria-label={t("accountMenu")}
+              onClick={() => setOpen(open === "account" ? null : "account")}
+              className={`relative flex items-center gap-2.5 rounded-full p-1 pr-2.5 transition-colors hover:bg-white/10 ${
+                open === "account" ? "bg-white/15" : ""
+              }`}
             >
-              <ShieldCheck className="size-4" />
-              {user.staffAlerts > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-(--bubblegum) px-1 text-[10px] font-bold leading-none text-white">
-                  {user.staffAlerts > 99 ? "99+" : user.staffAlerts}
+              {user.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={user.avatarUrl}
+                  alt=""
+                  className="size-9 shrink-0 rounded-full ring-2 ring-white/40"
+                />
+              ) : (
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-white/40 text-sm font-bold">
+                  {user.username.slice(0, 1).toUpperCase()}
                 </span>
               )}
-            </Link>
-          )}
-          <Link
-            href="/settings"
-            aria-label={t("settings")}
-            title={t("settings")}
-            className={`${iconButton} max-md:hidden`}
-          >
-            <Settings className="size-4" />
-          </Link>
-          <form action={logoutUrl} method="post" className="max-md:hidden">
-            <button
-              type="submit"
-              aria-label={t("logout")}
-              title={t("logout")}
-              className={iconButton}
-            >
-              <LogOut className="size-4" />
+              <span className="hidden max-w-32 truncate text-sm font-bold 2xl:inline">
+                {user.username}
+              </span>
+              <ChevronDown
+                className={`size-3.5 transition-transform ${open === "account" ? "rotate-180" : ""}`}
+              />
+              {open !== "account" && user.staff && user.staffAlerts > 0 && (
+                <span
+                  aria-hidden
+                  className="absolute -right-0.5 -top-0.5 size-3 rounded-full border-2 border-(--theme-bar-solid) bg-(--bubblegum)"
+                />
+              )}
             </button>
-          </form>
+            {open === "account" && (
+              <nav
+                id="menu-account"
+                aria-label={t("accountMenu")}
+                className="on-light toast-in absolute right-0 top-[calc(100%+10px)] z-10 w-64 rounded-xl bg-surface p-4 shadow-(--shadow-float)"
+              >
+                <p className="truncate px-1 pb-3 text-sm font-bold">{user.username}</p>
+                <ul className="flex flex-col gap-1.5">
+                  <li>
+                    <Link href="/profile" onClick={() => setOpen(null)} className={menuLink}>
+                      <User className="size-[18px]" />
+                      {t("myProfile")}
+                    </Link>
+                  </li>
+                  {user.staff && (
+                    <li>
+                      <Link href="/staff" onClick={() => setOpen(null)} className={menuLink}>
+                        <ShieldCheck className="size-[18px]" />
+                        {t("staff")}
+                        {user.staffAlerts > 0 && (
+                          <span className="ml-auto min-w-5 rounded-full bg-(--bubblegum) px-1.5 text-center text-[11px] font-bold leading-5 text-white">
+                            {user.staffAlerts}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  )}
+                  <li>
+                    <Link href="/settings" onClick={() => setOpen(null)} className={menuLink}>
+                      <Settings className="size-[18px]" />
+                      {t("settings")}
+                    </Link>
+                  </li>
+                  <li>
+                    <form action={logoutUrl} method="post">
+                      <button type="submit" className={`${menuLink} w-full`}>
+                        <LogOut className="size-[18px]" />
+                        {t("logout")}
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </nav>
+            )}
+          </div>
         </div>
       </div>
 
@@ -280,6 +322,16 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           className="on-light toast-in absolute left-3 right-3 top-[68px] max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-xl bg-surface p-5 shadow-(--shadow-float) xl:hidden"
         >
           <div className="flex flex-col gap-5">
+            <a
+              href={DISCORD_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 rounded-full bg-[#5865f2] px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-white"
+            >
+              <DiscordLogo className="size-5" />
+              {t("joinDiscord")}
+              <ArrowUpRight className="size-4" />
+            </a>
             {MENU_GROUPS.map((group) => (
               <section key={group}>
                 <h2 className="px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-fog">

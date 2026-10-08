@@ -30,9 +30,6 @@ export default async function LegalNoticePage() {
               value: t(`publisher.statuses.${publisher.status}`),
             })}
           </li>
-          <li>
-            {t.rich("publisher.address", { ...tags, fill: () => <Fill value={publisher.address} /> })}
-          </li>
           <li>{t.rich("publisher.contact", email)}</li>
         </ul>
         <p>{t.rich("publisher.director", { ...tags, name: publisher.director })}</p>
@@ -42,7 +39,6 @@ export default async function LegalNoticePage() {
         <ul>
           <li>{t.rich("host.name", { ...tags, fill: () => <Fill value={host.name} /> })}</li>
           <li>{t.rich("host.address", { ...tags, fill: () => <Fill value={host.address} /> })}</li>
-          <li>{t.rich("host.phone", { ...tags, fill: () => <Fill value={host.phone} /> })}</li>
           <li>
             {t.rich("host.site", tags)}
             <a href={host.website} target="_blank" rel="noreferrer">

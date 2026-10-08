@@ -33,9 +33,11 @@
   "myProfile": "Mon profil",
   "pending": "{count} en attente",
   "staff": "Espace staff",
-  "staffAlerts": "Espace staff : {count} à traiter",
   "settings": "Paramètres",
   "logout": "Se déconnecter",
   "comingSoon": "Bientôt disponible.",
-  "copyright": "© {year} Wikideck"
+  "copyright": "© {year} Wikideck",
+  "accountMenu": "Menu du compte",
+  "disclaimer": "Jeu indépendant, sans affiliation ni lien officiel avec la Wikimedia Foundation. Wikipédia est une marque de la Wikimedia Foundation.",
+  "joinDiscord": "Rejoindre le Discord"
 }
