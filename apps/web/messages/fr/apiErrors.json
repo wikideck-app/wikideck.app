@@ -62,5 +62,6 @@
   "unknown": "Une erreur est survenue.",
   "network": "Impossible de joindre le serveur.",
   "album_too_deep": "Les classeurs sont limités à 4 niveaux de sous-albums.",
-  "album_cycle": "Un album ne peut pas être rangé dans l’un de ses propres sous-albums."
+  "album_cycle": "Un album ne peut pas être rangé dans l’un de ses propres sous-albums.",
+  "too_many_keys": "Vous avez atteint la limite de clés API actives."
 }

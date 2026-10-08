@@ -6,6 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import type {
   DeletedAccountRow,
   StaffAlert,
+  StaffApiKeyCreated,
+  StaffApiKeyRow,
   StaffAuctionRow,
   StaffAuditRow,
   StaffGuildDetail,
@@ -25,7 +27,7 @@ import { Wikibits } from "@/components/wikibit";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
 type Tab =
-  "overview" | "members" | "alerts" | "reports" | "bugs" | "auctions" | "guilds" | "deleted" | "audit";
+  "overview" | "members" | "alerts" | "reports" | "bugs" | "auctions" | "guilds" | "deleted" | "audit" | "apiKeys";
 
 const panel = "rounded-xl border border-line bg-surface p-5";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
@@ -110,6 +112,9 @@ function describe(row: StaffAuditRow, t: Translator) {
     }
     case "guild_kick":
       return String(d.guild);
+    case "api_key_create":
+    case "api_key_revoke":
+      return t("audit.apiKey", { name: String(d.name) });
     case "guild_dissolve":
       return t("audit.guildDissolve", { guild: String(d.guild), count: Number(d.members) });
     default:
@@ -1574,6 +1579,139 @@ function Audit({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => voi
   );
 }
 
+function ApiKeys({ apiUrl }: { apiUrl: string }) {
+  const t = useTranslations("staff.apiKeys");
+  const tc = useTranslations("common");
+  const format = useFormatter();
+  const { confirm, dialog: confirmDialog } = useConfirm();
+  const [keys, setKeys] = useState<StaffApiKeyRow[] | null>(null);
+  const [name, setName] = useState("");
+  const [fresh, setFresh] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    const res = await apiFetch<{ keys: StaffApiKeyRow[] }>(apiUrl, "/staff/api-keys");
+    if (res.ok) setKeys(res.data.keys);
+    else setError(res.message);
+  }, [apiUrl]);
+  useEffect(() => {
+    void apiFetch<{ keys: StaffApiKeyRow[] }>(apiUrl, "/staff/api-keys").then(
+      (r) => r.ok && setKeys(r.data.keys),
+    );
+  }, [apiUrl]);
+
+  const create = async () => {
+    setBusy(true);
+    setError(null);
+    const res = await apiCall<StaffApiKeyCreated>(apiUrl, "/staff/api-keys", "POST", { name });
+    setBusy(false);
+    if (!res.ok) return setError(res.message);
+    setName("");
+    setCopied(false);
+    setFresh(res.data.key);
+    void load();
+  };
+
+  const revoke = async (k: StaffApiKeyRow) => {
+    const ok = await confirm({
+      title: t("revokeTitle", { name: k.name }),
+      message: t("revokeMessage"),
+      confirmLabel: t("revokeConfirm"),
+      danger: true,
+    });
+    if (!ok) return;
+    const res = await apiCall(apiUrl, `/staff/api-keys/${k.id}`, "DELETE");
+    if (!res.ok) return setError(res.message);
+    void load();
+  };
+
+  const copy = async () => {
+    if (!fresh) return;
+    try {
+      await navigator.clipboard.writeText(fresh);
+      setCopied(true);
+    } catch {
+      /* le champ reste sélectionnable à la main */
+    }
+  };
+
+  return (
+    <div className="mt-6">
+      <p className="prose-serif text-sm text-pale-mist">{t("intro")}</p>
+
+      <form
+        className="mt-4 flex flex-wrap items-end gap-3"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void create();
+        }}
+      >
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-xs text-fog">
+          {t("nameLabel")}
+          <input
+            className={field}
+            value={name}
+            maxLength={40}
+            placeholder={t("namePlaceholder")}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </label>
+        <button type="submit" className={primaryButtonClass} disabled={busy || !name.trim()}>
+          {t("create")}
+        </button>
+      </form>
+      {error && <p className="mt-3 text-sm text-danger">{error}</p>}
+
+      {fresh && (
+        <div className={`${panel} mt-4 border-accent`} role="status">
+          <p className="text-sm font-semibold">{t("created")}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <input
+              readOnly
+              className={`${field} min-w-0 flex-1 font-mono text-xs`}
+              value={fresh}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+            <button type="button" className={buttonClass} onClick={() => void copy()}>
+              {copied ? t("copied") : t("copy")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!keys ? (
+        <p className="mt-6 text-sm text-fog">{tc("loading")}</p>
+      ) : keys.length === 0 ? (
+        <p className="mt-6 text-sm text-fog">{t("none")}</p>
+      ) : (
+        <ul className="mt-6 divide-y divide-line rounded-xl border border-line bg-surface">
+          {keys.map((k) => (
+            <li key={k.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm">
+              <strong className="min-w-0 flex-1 truncate">{k.name}</strong>
+              <span className="font-mono text-xs text-fog">{k.prefix}…</span>
+              <span className="text-xs text-fog">{t("owner", { name: k.ownerName })}</span>
+              <span className="text-xs text-fog">
+                {t("createdAt", { date: format.dateTime(new Date(k.createdAt), "mediumTime") })}
+              </span>
+              <span className="text-xs text-fog">
+                {k.lastUsedAt
+                  ? t("usedAt", { date: format.dateTime(new Date(k.lastUsedAt), "mediumTime") })
+                  : t("neverUsed")}
+              </span>
+              <button type="button" className={dangerButtonClass} onClick={() => void revoke(k)}>
+                {t("revoke")}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {confirmDialog}
+    </div>
+  );
+}
+
 export function StaffView({
   apiUrl,
   role,
@@ -1601,6 +1739,7 @@ export function StaffView({
     "guilds",
     "deleted",
     "audit",
+    ...(role === "ADMIN" ? (["apiKeys"] as const) : []),
   ];
 
   return (
@@ -1653,6 +1792,7 @@ export function StaffView({
       {tab === "guilds" && <Guilds apiUrl={apiUrl} role={role} onOpen={open} />}
       {tab === "deleted" && <Deleted apiUrl={apiUrl} />}
       {tab === "audit" && <Audit apiUrl={apiUrl} onOpen={open} />}
+      {tab === "apiKeys" && <ApiKeys apiUrl={apiUrl} />}
     </div>
   );
 }

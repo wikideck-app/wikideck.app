@@ -34,7 +34,9 @@
     "report_dismiss": "Signalement classé",
     "report_delete": "Message supprimé",
     "bug_resolve": "Bug résolu",
-    "bug_dismiss": "Bug classé"
+    "bug_dismiss": "Bug classé",
+    "api_key_create": "Clé API créée",
+    "api_key_revoke": "Clé API révoquée"
   },
   "auctionStatus": {
     "ACTIVE": "En cours",
@@ -51,7 +53,8 @@
     "auctions": "Enchères",
     "guilds": "Guildes",
     "deleted": "Supprimés",
-    "audit": "Journal"
+    "audit": "Journal",
+    "apiKeys": "Clés API"
   },
   "audit": {
     "none": "Aucune action pour le moment.",
@@ -64,7 +67,8 @@
     "automatic": "automatique",
     "signals": "{count, plural, one {# indice} other {# indices}}",
     "refund": " · {amount} wikibits remboursés à {to}",
-    "guildDissolve": "{guild} ({count, plural, one {# membre} other {# membres}})"
+    "guildDissolve": "{guild} ({count, plural, one {# membre} other {# membres}})",
+    "apiKey": "{name}"
   },
   "overview": {
     "members": "membres",
@@ -219,5 +223,23 @@
     "byPlayer": "supprimé par le joueur lui-même",
     "reason": " · motif : {reason}",
     "discord": "Discord {id}"
+  },
+  "apiKeys": {
+    "intro": "Une clé permet à un bot ou un script d’appeler les routes /staff au nom de votre compte, avec vos droits. Envoyez-la dans l’en-tête « Authorization: Bearer wdk_… ». Elle ne donne accès qu’aux routes /staff.",
+    "nameLabel": "Nom de la clé",
+    "namePlaceholder": "Bot de modération",
+    "create": "Générer une clé",
+    "created": "Copiez cette clé maintenant : elle ne sera plus jamais affichée.",
+    "copy": "Copier",
+    "copied": "Copiée",
+    "none": "Aucune clé active.",
+    "owner": "par {name}",
+    "createdAt": "créée {date}",
+    "neverUsed": "jamais utilisée",
+    "usedAt": "utilisée {date}",
+    "revoke": "Révoquer",
+    "revokeTitle": "Révoquer la clé « {name} » ?",
+    "revokeMessage": "Tout bot ou script qui l’utilise perdra l’accès immédiatement.",
+    "revokeConfirm": "Révoquer"
   }
 }
