@@ -226,7 +226,7 @@
     "discord": "Discord {id}"
   },
   "apiKeys": {
-    "intro": "Une clé permet à un bot ou un script d’appeler les routes /staff au nom de votre compte, avec vos droits. Envoyez-la dans l’en-tête « Authorization: Bearer wdk_… ». Elle ne donne accès qu’aux routes /staff.",
+    "intro": "Une clé permet à un bot ou un script d’utiliser l’API au nom de votre compte, avec vos droits. Envoyez-la dans l’en-tête « Authorization: Bearer wdk_… ». Elle ne peut ni ouvrir de paquet, ni supprimer le compte, ni gérer les clés. Ne la partagez jamais : celui qui la détient agit comme vous.",
     "nameLabel": "Nom de la clé",
     "namePlaceholder": "Bot de modération",
     "create": "Générer une clé",
