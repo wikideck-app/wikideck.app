@@ -13,13 +13,14 @@ export function Countdown({
   endedLabel?: string;
 }) {
   const t = useTranslations("common");
+  const td = useTranslations("common.duration");
   const now = useNow();
   if (now === 0) return <span className={className}>—</span>;
   const left = new Date(endsAt).getTime() - now;
   if (left <= 0) return <span className={className}>{endedLabel ?? t("ended")}</span>;
   return (
     <span className={`tabular-nums ${left < 60_000 ? "text-danger" : ""} ${className}`}>
-      {formatRemaining(left, t)}
+      {formatRemaining(left, td)}
     </span>
   );
 }
