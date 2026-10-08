@@ -436,7 +436,7 @@ function Playing({ game }: { game: ReturnType<typeof useBattleRoom> }) {
           <span>
             {tm("roundShort", { round: room.round, total: room.totalRounds })}
           </span>
-          <span className="rounded-lg bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
+          <span className="rounded-full border border-accent bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
             {t("targetIs", { title: room.targetArticle })}
           </span>
           {game.timeLeft !== null && (

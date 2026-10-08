@@ -17,10 +17,10 @@ type Props = {
 };
 
 const chip =
-  "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-2 border-white/40 px-3.5 py-1.5 text-sm font-bold transition-colors hover:border-white";
+  "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-2 border-line px-3.5 py-1.5 text-sm font-bold transition-colors hover:bg-accent hover:text-accent-foreground";
 
 const iconButton =
-  "flex aspect-square size-10 shrink-0 items-center justify-center rounded-full border-2 border-white/40 transition-colors hover:border-white hover:bg-white hover:text-(--deep-concord)";
+  "flex aspect-square size-10 shrink-0 items-center justify-center rounded-full border border-line transition-colors hover:bg-accent hover:text-accent-foreground";
 
 function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
   const t = useTranslations("nav");
@@ -34,9 +34,9 @@ function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
         {packs.packs}
         <span className="font-medium text-fog"> / {packs.max}</span>
       </span>
-      <span className="hidden h-1 w-10 overflow-hidden rounded-full bg-white/25 2xl:block">
+      <span className="hidden h-1 w-10 overflow-hidden rounded-full bg-foreground/15 2xl:block">
         <span
-          className="block h-full rounded-full bg-white transition-[width] duration-700"
+          className="block h-full rounded-full bg-foreground transition-[width] duration-700"
           style={{ width: `${ratio * 100}%` }}
         />
       </span>
@@ -45,7 +45,7 @@ function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
 }
 
 const menuLink =
-  "flex items-center gap-3 rounded-[15px] bg-(--theme-pill) px-4 py-3 text-sm font-bold text-(--theme-pill-ink) transition-colors hover:bg-(--theme-pill-hover)";
+  "flex items-center gap-3 rounded-full border border-line bg-surface px-4 py-3 text-sm font-bold transition-colors hover:bg-(--sunburst) hover:text-black";
 
 const MENU_GROUPS = NAV_GROUPS.filter((g) => g !== "account");
 
@@ -89,10 +89,10 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           href={`/${slug}`}
           onClick={() => setOpen(null)}
           aria-current={active ? "page" : undefined}
-          className={`flex items-center gap-3 rounded-[15px] px-4 py-3 text-sm font-bold transition-colors ${
+          className={`flex items-center gap-3 rounded-full px-4 py-3 text-sm font-bold transition-colors ${
             active
-              ? "bg-accent text-accent-foreground"
-              : "bg-(--theme-pill) text-(--theme-pill-ink) hover:bg-(--theme-pill-hover)"
+              ? "border border-line bg-accent text-accent-foreground"
+              : "border border-line bg-surface hover:bg-(--sunburst) hover:text-black"
           }`}
         >
           <Icon className="size-[18px]" strokeWidth={active ? 2.2 : 1.9} />
@@ -124,10 +124,10 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           onClick={() => setOpen(expanded ? null : group)}
           className={`relative flex h-10 items-center gap-2 rounded-full border-2 px-3.5 text-sm font-bold transition-colors ${
             expanded
-              ? "border-white bg-white text-(--deep-concord)"
+              ? "border-line bg-accent text-accent-foreground"
               : here
-                ? "border-white/80 bg-white/15"
-                : "border-white/40 hover:border-white"
+                ? "border-line bg-(--sunburst) text-black"
+                : "border-line bg-surface hover:bg-accent hover:text-accent-foreground"
           }`}
         >
           {expanded ? <X className="size-4" /> : <Menu className="size-4" />}
@@ -146,7 +146,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           <nav
             id={`menu-${group}`}
             aria-label={t(`groups.${group}`)}
-            className="on-light toast-in absolute left-0 top-[calc(100%+10px)] z-10 w-64 rounded-xl bg-surface p-4 shadow-(--shadow-float)"
+            className="on-light toast-in absolute left-0 top-[calc(100%+10px)] z-10 w-64 rounded-xl bg-surface p-4 border border-line"
           >
             <ul className="flex flex-col gap-1.5">{items(group).map(link)}</ul>
           </nav>
@@ -183,8 +183,8 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             onClick={() => setOpen(open === "all" ? null : "all")}
             className={`relative flex aspect-square size-10 shrink-0 items-center justify-center rounded-full border-2 transition-colors xl:hidden ${
               open === "all"
-                ? "border-white bg-white text-(--deep-concord)"
-                : "border-white/40 hover:border-white"
+                ? "border-line bg-accent text-accent-foreground"
+                : "border-line bg-surface hover:bg-accent hover:text-accent-foreground"
             }`}
           >
             {open === "all" ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -207,17 +207,17 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           <Link
             href="/profile"
             title={t("myProfile")}
-            className="hidden items-center gap-2.5 rounded-full p-1 transition-colors hover:bg-white/10 md:flex 2xl:pr-3"
+            className="hidden items-center gap-2.5 rounded-full p-1 transition-colors hover:bg-foreground/10 md:flex 2xl:pr-3"
           >
             {user.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.avatarUrl}
                 alt=""
-                className="size-9 shrink-0 rounded-full ring-2 ring-white/40"
+                className="size-9 shrink-0 rounded-full ring-1 ring-line"
               />
             ) : (
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-white/40 text-sm font-bold">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-line text-sm font-bold">
                 {user.username.slice(0, 1).toUpperCase()}
               </span>
             )}
@@ -277,7 +277,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
         <nav
           id="menu-all"
           aria-label={t("mainNavigation")}
-          className="on-light toast-in absolute left-3 right-3 top-[68px] max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-xl bg-surface p-5 shadow-(--shadow-float) xl:hidden"
+          className="on-light toast-in absolute left-3 right-3 top-[68px] max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-xl bg-surface p-5 border border-line xl:hidden"
         >
           <div className="flex flex-col gap-5">
             {MENU_GROUPS.map((group) => (

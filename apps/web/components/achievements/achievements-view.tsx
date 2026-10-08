@@ -221,7 +221,7 @@ export function AchievementsView({ data, apiUrl }: { data: AchievementsResponse;
               type="button"
               disabled={busy !== null}
               onClick={() => claim(def.key)}
-              className="mt-3 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-50"
+              className="mt-3 inline-flex items-center gap-2 rounded-full border border-accent bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground transition-colors hover:bg-(--voltage-violet) hover:text-white disabled:opacity-50"
             >
               {t("claim", { amount: def.reward })}
             </button>
@@ -268,7 +268,7 @@ export function AchievementsView({ data, apiUrl }: { data: AchievementsResponse;
             type="button"
             disabled={busy !== null}
             onClick={() => claim()}
-            className="rounded-lg bg-accent px-5 py-2 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/70 disabled:opacity-50"
+            className="rounded-full border border-accent bg-accent px-5 py-2 text-sm font-bold text-accent-foreground transition-colors hover:bg-(--voltage-violet) hover:text-white disabled:opacity-50"
           >
             {busy === "all" ? "…" : t("claimAll")}
           </button>

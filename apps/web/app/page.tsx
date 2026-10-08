@@ -7,7 +7,7 @@ import { Features } from "@/components/features";
 import { Reveal } from "@/components/reveal";
 import { ShowcaseCards } from "@/components/showcase-cards";
 import { SiteHeader } from "@/components/site-header";
-import { Starfield } from "@/components/starfield";
+import { Ribbon, Stickers } from "@/components/stickers";
 import { Ticker } from "@/components/ticker";
 import { API_URL, getCurrentUser } from "@/lib/api";
 import { getShowcase } from "@/lib/showcase";
@@ -40,74 +40,97 @@ export default async function Page({ searchParams }: PageProps<"/">) {
   return (
     <div
       id="top"
-      className="relative flex flex-1 flex-col overflow-x-clip bg-background text-foreground"
+      className="force-light relative flex flex-1 flex-col overflow-x-clip bg-background text-foreground"
     >
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <SiteHeader />
+      <Ticker />
 
-      <div className="on-grape relative bg-(image:--grape-gradient) [clip-path:inset(0)]">
-        <Starfield />
-        <section className="relative z-10 flex min-h-svh flex-col pt-[72px]">
-          <div className="relative mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-6 py-6">
-            <div className="grid flex-1 items-center gap-12 pb-16 md:grid-cols-2">
-              <div>
-                <h1 className="font-display text-4xl font-medium sm:text-5xl md:text-6xl xl:text-7xl">
-                  {headline.map((word, i) => (
-                    <span key={i}>
-                      <span
-                        className="reveal-word"
-                        style={{ "--delay": `${150 + i * 90}ms` } as React.CSSProperties}
-                      >
-                        {word}
-                      </span>{" "}
-                    </span>
-                  ))}
-                </h1>
-                <p
-                  className="prose-serif fade-up mt-6 max-w-md text-pale-mist"
-                  style={{ "--delay": "800ms" } as React.CSSProperties}
-                >
-                  {t("tagline")}
-                </p>
-              </div>
+      {/* cadre noir, panneau pastel arrondi : la page est une affiche */}
+      <div className="bg-black p-2 sm:p-4">
+        <section
+          id="hero"
+          className="relative flex min-h-[calc(100svh-3.5rem)] flex-col overflow-clip rounded-[28px] bg-(--sky-wash) sm:rounded-[40px]"
+        >
+          <Ribbon />
+          <SiteHeader />
 
-              <div
-                id="login"
-                className="fade-up flex scroll-mt-24 md:justify-end"
-                style={{ "--delay": "950ms" } as React.CSSProperties}
+          <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pb-10 pt-4 text-center">
+            <div className="relative">
+              <p
+                aria-hidden
+                className="font-sculpt reveal-word text-[clamp(6rem,24vw,22rem)] text-black"
               >
-                <DiscordAuth
-                  apiUrl={API_URL}
-                  error={typeof auth_error === "string" ? auth_error : undefined}
-                />
-              </div>
+                {tm("siteName")}
+              </p>
+              <Stickers />
             </div>
 
-            <Image
-              src="/paquet.webp"
-              alt=""
-              aria-hidden
-              width={1101}
-              height={1426}
-              priority
-              className="animate-float-slow pointer-events-none absolute left-[57%] top-1/2 hidden h-60 w-auto xl:block"
-            />
-          </div>
+            <h1 className="mt-6 max-w-4xl text-[clamp(1.75rem,4.6vw,4rem)] font-medium leading-[1.05] tracking-tight">
+              {headline.map((word, i) => (
+                <span key={i}>
+                  <span
+                    className="reveal-word"
+                    style={{ "--delay": `${300 + i * 90}ms` } as React.CSSProperties}
+                  >
+                    {word}
+                  </span>{" "}
+                </span>
+              ))}
+            </h1>
+            <p
+              className="fade-up mt-4 max-w-xl text-base font-medium text-black/80 sm:text-lg"
+              style={{ "--delay": "900ms" } as React.CSSProperties}
+            >
+              {t("tagline")}
+            </p>
 
-          <Ticker />
+            <div
+              className="fade-up mt-8 flex flex-wrap items-center justify-center gap-3"
+              style={{ "--delay": "1050ms" } as React.CSSProperties}
+            >
+              <a
+                href="#login"
+                className="rounded-full border border-black bg-white px-7 py-4 text-sm font-bold uppercase tracking-[0.03em] transition-colors hover:bg-(--sunburst)"
+              >
+                {t("cta.button")}
+              </a>
+              <a
+                href="#game"
+                className="rounded-full border border-black bg-white px-7 py-4 text-sm font-bold uppercase tracking-[0.03em] transition-colors hover:bg-(--sunburst)"
+              >
+                {t("hero.discover")} ↓
+              </a>
+            </div>
+          </div>
         </section>
       </div>
+
+      <section id="login" className="mx-auto flex w-full max-w-[1200px] scroll-mt-4 flex-col items-center gap-10 px-6 py-24 md:flex-row md:justify-center md:gap-20">
+        <Image
+          src="/paquet.webp"
+          alt=""
+          aria-hidden
+          width={1101}
+          height={1426}
+          priority
+          className="animate-float-slow pointer-events-none h-56 w-auto md:h-80"
+        />
+        <DiscordAuth
+          apiUrl={API_URL}
+          error={typeof auth_error === "string" ? auth_error : undefined}
+        />
+      </section>
 
       <main className="relative z-10 flex flex-1 flex-col">
         {showcase.length > 0 && (
           <section id="cards" className="mx-auto w-full max-w-[1200px] scroll-mt-20 px-6 py-28">
             <Reveal className="mx-auto max-w-2xl text-center">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-fog">{t("cards.eyebrow")}</p>
-              <h2 className="font-display mt-4 text-3xl font-medium sm:text-5xl">
+              <h2 className="font-display mt-4 text-3xl sm:text-5xl">
                 {t("cards.title")}
               </h2>
               <p className="prose-serif mt-5 text-pale-mist">
@@ -123,7 +146,7 @@ export default async function Page({ searchParams }: PageProps<"/">) {
         <section id="game" className="mx-auto w-full max-w-[1200px] scroll-mt-20 px-6 pb-28">
           <Reveal className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-fog">{t("game.eyebrow")}</p>
-            <h2 className="font-display mt-4 text-3xl font-medium sm:text-5xl">
+            <h2 className="font-display mt-4 text-3xl sm:text-5xl">
               {t("game.title")}
             </h2>
           </Reveal>
@@ -133,13 +156,13 @@ export default async function Page({ searchParams }: PageProps<"/">) {
         </section>
 
         <section className="mx-auto w-full max-w-[1200px] px-6 pb-28">
-          <Reveal className="on-grape rounded-xl bg-(image:--grape-gradient) px-7 py-16 text-center">
+          <Reveal className="rounded-[40px] border border-black bg-(--electric-blue) px-7 py-16 text-center">
             <h2 className="font-display mx-auto max-w-xl text-3xl font-medium sm:text-5xl">
               {t("cta.title")}
             </h2>
             <a
               href="#login"
-              className="mt-8 inline-flex rounded-full border-2 border-(--deep-concord) bg-white px-6 py-3 text-base font-semibold text-(--deep-concord) shadow-[inset_0_0_0_2px_#fff] transition hover:bg-(--deep-concord) hover:text-white"
+              className="mt-8 inline-flex rounded-full border border-black bg-black px-6 py-3 text-base font-bold text-white transition hover:bg-white hover:text-black"
             >
               {t("cta.button")}
             </a>

@@ -1,68 +1,48 @@
-"use client";
-
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
 
 const LINKS = [
   { href: "#cards", key: "cards" },
   { href: "#game", key: "game" },
 ] as const;
 
+// barre posée en haut du panneau d'accueil : pastille du logo, liens en pastilles blanches
+// à contour noir, bouton plein à droite
 export function SiteHeader() {
   const t = useTranslations("home.header");
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(scrollY > 12);
-    onScroll();
-    addEventListener("scroll", onScroll, { passive: true });
-    return () => removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header
-      data-scrolled={scrolled}
-      className="on-grape fade-up sticky top-0 z-50 mb-[-72px] h-[72px] border-b border-transparent transition-colors duration-500 data-[scrolled=true]:border-white/20 data-[scrolled=true]:bg-(--theme-bar-solid)"
-    >
-      <div className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-4 px-6">
-        <a
-          href="#top"
-          aria-label={t("homeLabel")}
-          className="group flex items-center gap-3"
-        >
-          <Image
-            src="/logo.webp"
-            alt=""
-            width={96}
-            height={96}
-            priority
-            className="size-11 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110 sm:size-12"
-          />
-          <span className="text-xl font-bold tracking-tight sm:text-2xl">Wikideck</span>
-        </a>
+    <header className="fade-up relative z-20 flex items-center justify-between gap-3 p-4 sm:p-6">
+      <a
+        href="#top"
+        aria-label={t("homeLabel")}
+        className="flex items-center gap-3 rounded-full border border-black bg-white p-1.5 pr-4 transition-colors hover:bg-(--sunburst)"
+      >
+        <Image src="/logo.webp" alt="" width={96} height={96} priority className="size-10" />
+        <span className="hidden text-base font-bold uppercase tracking-[0.03em] sm:inline">
+          Wikideck
+        </span>
+      </a>
 
-        <nav className="flex items-center gap-2 sm:gap-6">
-          <ul className="hidden items-center gap-6 sm:flex">
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  className="text-sm font-bold uppercase text-pale-mist transition-colors hover:text-foreground"
-                >
-                  {t(`links.${l.key}`)}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <a
-            href="#login"
-            className="rounded-full border-2 border-(--deep-concord) bg-white px-5 py-2 text-sm font-semibold text-(--deep-concord) shadow-[inset_0_0_0_2px_#fff] transition-colors hover:bg-(--deep-concord) hover:text-white"
-          >
-            {t("signIn")}
-          </a>
-        </nav>
-      </div>
+      <nav className="flex items-center gap-2">
+        <ul className="hidden items-center gap-2 sm:flex">
+          {LINKS.map((l) => (
+            <li key={l.href}>
+              <a
+                href={l.href}
+                className="inline-flex rounded-full border border-black bg-white px-5 py-3 text-sm font-bold uppercase tracking-[0.03em] transition-colors hover:bg-(--sunburst)"
+              >
+                {t(`links.${l.key}`)}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a
+          href="#login"
+          className="rounded-full border border-black bg-black px-5 py-3 text-sm font-bold uppercase tracking-[0.03em] text-white transition-colors hover:bg-(--voltage-violet)"
+        >
+          {t("signIn")}
+        </a>
+      </nav>
     </header>
   );
 }

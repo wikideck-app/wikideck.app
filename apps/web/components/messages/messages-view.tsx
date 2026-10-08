@@ -319,7 +319,7 @@ function Thread({
               type="submit"
               aria-label={t("send")}
               disabled={!draft.trim() || sending}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground transition-colors hover:bg-accent/70 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground transition-colors hover:bg-(--voltage-violet) hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Send className="size-4" />
             </button>
@@ -443,7 +443,7 @@ export function MessagesView({
                       {c.last.mine ? t("you", { body: c.last.body }) : c.last.body}
                     </p>
                     {c.unread > 0 && (
-                      <span className="min-w-5 shrink-0 rounded-lg bg-accent px-1.5 text-center text-[10px] font-bold leading-5 text-accent-foreground">
+                      <span className="min-w-5 shrink-0 rounded-full border border-accent bg-accent px-1.5 text-center text-[10px] font-bold leading-5 text-accent-foreground">
                         {c.unread}
                       </span>
                     )}

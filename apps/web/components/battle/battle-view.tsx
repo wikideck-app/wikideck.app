@@ -304,7 +304,7 @@ function SoloBattle({
           <div className="fixed inset-0 z-90 flex flex-col bg-background text-foreground">
             <div className="flex flex-col gap-1.5 border-b border-line bg-surface px-3 py-2 sm:px-4">
               <div className="flex justify-center">
-                <span className="rounded-lg bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
+                <span className="rounded-full border border-accent bg-accent px-3 py-0.5 text-sm font-bold text-accent-foreground">
                   {t("targetIs", { title: game.puzzle.target })}
                 </span>
               </div>
