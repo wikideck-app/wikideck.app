@@ -113,7 +113,7 @@ export function TagEditor({
               type="button"
               onClick={() => void add()}
               disabled={busy}
-              className="ml-auto rounded-lg bg-accent px-[18px] py-1 text-xs font-bold text-accent-foreground disabled:opacity-50"
+              className="ml-auto rounded-full border border-accent bg-accent px-[18px] py-1 text-xs font-bold text-accent-foreground disabled:opacity-50"
             >
               {tc("create")}
             </button>

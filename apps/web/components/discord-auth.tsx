@@ -22,7 +22,7 @@ export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string 
   }
 
   return (
-    <div className="on-light w-full max-w-sm rounded-xl bg-surface p-8 shadow-(--shadow-float)">
+    <div className="on-light w-full max-w-sm rounded-[30px] border border-black bg-surface p-8">
       <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-fog">{t("eyebrow")}</p>
       <h2 className="font-display mt-3 text-3xl font-medium">{t("title")}</h2>
       <p className="mt-3 font-serif text-[15px] leading-[1.7] text-pale-mist">
@@ -98,8 +98,8 @@ export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string 
         aria-disabled={!accepted}
         className={`group mt-6 flex w-full items-center justify-center gap-2 rounded-full px-4.5 py-3 text-sm font-bold transition-colors ${
           accepted
-            ? "bg-accent text-accent-foreground hover:bg-accent/70"
-            : "border border-line text-fog hover:border-accent"
+            ? "bg-accent text-accent-foreground hover:bg-(--voltage-violet) hover:text-white"
+            : "border border-black bg-surface text-foreground hover:bg-(--sunburst)"
         }`}
       >
         {t("continue")}

@@ -201,7 +201,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
           >
             {label}
             {key === "requests" && data.incoming.length > 0 && (
-              <span className="min-w-5 rounded-lg bg-accent px-1.5 text-center text-[10px] leading-5 text-accent-foreground">
+              <span className="min-w-5 rounded-full border border-accent bg-accent px-1.5 text-center text-[10px] leading-5 text-accent-foreground">
                 {data.incoming.length}
               </span>
             )}

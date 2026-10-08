@@ -147,7 +147,7 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
         <button
           type="button"
           onClick={() => dialog.current?.close()}
-          className="mt-6 w-full rounded-lg bg-accent px-[18px] py-2.5 text-sm font-bold text-accent-foreground sm:w-auto sm:px-10"
+          className="mt-6 w-full rounded-full border border-accent bg-accent px-[18px] py-2.5 text-sm font-bold text-accent-foreground sm:w-auto sm:px-10"
         >
           {t("understood")}
         </button>

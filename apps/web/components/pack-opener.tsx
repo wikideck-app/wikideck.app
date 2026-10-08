@@ -432,7 +432,7 @@ export function PackOpener({
         <button
           type="button"
           onClick={() => (last ? backToIdle() : go(index + 1))}
-          className="rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70"
+          className="rounded-full border border-accent bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-(--voltage-violet) hover:text-white"
         >
           {last ? t("finish") : t("more", { count: left })}
         </button>
@@ -593,7 +593,7 @@ export function PackOpener({
         type="button"
         onClick={open}
         disabled={busy || status.packs < 1}
-        className="mt-6 rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70 disabled:opacity-40"
+        className="mt-6 rounded-full border border-accent bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-(--voltage-violet) hover:text-white disabled:opacity-40"
       >
         {busy ? t("opening") : t("open")}
       </button>

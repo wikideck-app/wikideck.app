@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
-import { Atkinson_Hyperlegible, Newsreader, Outfit } from "next/font/google";
+import { Antonio, Atkinson_Hyperlegible, Bowlby_One, Inter, Newsreader, Outfit } from "next/font/google";
 import { THEME_STORAGE_KEY } from "@wikideck/shared";
 import { ApiErrorMessages } from "@/components/api-error-messages";
 import { SITE_URL } from "@/lib/site";
@@ -12,6 +12,23 @@ import "./globals.css";
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
+});
+// Inter et Bowlby One remplacent Aeonik Pro et Lateral (polices payantes du design Slush)
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["500", "700"],
+});
+// Antonio (condensée, très grasse) tient lieu de Lateral 800 pour le mot géant de l'accueil
+const antonio = Antonio({
+  variable: "--font-antonio",
+  subsets: ["latin"],
+  weight: "700",
+});
+const bowlby = Bowlby_One({
+  variable: "--font-bowlby",
+  subsets: ["latin"],
+  weight: "400",
 });
 const newsreader = Newsreader({
   variable: "--font-newsreader",
@@ -57,7 +74,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang={locale}
       dir={localeDirection(locale)}
       suppressHydrationWarning
-      className={`${outfit.variable} ${readable.variable} ${newsreader.variable} h-full antialiased`}
+      className={`${outfit.variable} ${inter.variable} ${bowlby.variable} ${antonio.variable} ${readable.variable} ${newsreader.variable} h-full antialiased`}
     >
       <head>
         <script

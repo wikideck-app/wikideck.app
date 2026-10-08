@@ -171,8 +171,8 @@ export function Panel({
 }
 
 export const buttonClass =
-  "inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent bg-surface px-5 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex items-center justify-center gap-2 rounded-full border border-accent bg-surface px-5 py-2 text-sm font-bold text-accent transition-colors hover:bg-(--sunburst) hover:text-black disabled:cursor-not-allowed disabled:opacity-40";
 export const primaryButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/80 disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex items-center justify-center gap-2 rounded-full border border-accent bg-accent px-5 py-2 text-sm font-bold text-accent-foreground transition-colors hover:bg-(--voltage-violet) hover:text-white disabled:cursor-not-allowed disabled:opacity-40";
 export const dangerButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-lg bg-danger px-5 py-2 text-sm font-bold text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex items-center justify-center gap-2 rounded-full border border-black bg-danger px-5 py-2 text-sm font-bold text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40";

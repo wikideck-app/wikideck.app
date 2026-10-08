@@ -50,5 +50,8 @@
   },
   "footer": {
     "disclaimer": "Wikideck n’est pas affilié à Wikipédia. Texte des articles : CC BY-SA 4.0 — crédits sur la page de chaque article."
+  },
+  "hero": {
+    "discover": "Découvrir le jeu"
   }
 }

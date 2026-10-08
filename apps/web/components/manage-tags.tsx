@@ -78,7 +78,7 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
       <button
         type="button"
         onClick={() => dialog.current?.showModal()}
-        className="rounded-lg border border-accent/60 px-3 py-1.5 text-[11px] uppercase tracking-wide hover:bg-accent/10"
+        className="rounded-full border border-accent bg-surface px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wide hover:bg-(--sunburst) hover:text-black"
       >
         {t("manage")}
       </button>
@@ -122,7 +122,7 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
             <button
               type="submit"
               disabled={!cleanName || creating || full}
-              className="flex items-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-sm font-semibold text-accent-foreground disabled:opacity-50"
+              className="flex items-center gap-1 rounded-full border border-accent bg-accent px-3 py-1.5 text-sm font-semibold text-accent-foreground disabled:opacity-50"
             >
               <Plus className="size-4" /> {tc("create")}
             </button>

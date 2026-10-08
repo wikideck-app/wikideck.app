@@ -1,21 +1,19 @@
 import { TICKER_TITLES } from "@/lib/showcase";
 
+// bandeau d'annonce tout en haut : lavande, capitales, défile en boucle
 export function Ticker() {
   return (
     <div
       aria-hidden
-      className="relative z-10 overflow-hidden border-y border-line py-4 mask-[linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]"
+      className="relative z-30 overflow-hidden border-b border-black bg-(--lavender) py-2.5 text-black"
     >
       <div className="animate-ticker flex w-max">
         {[0, 1].map((copy) => (
           <ul key={copy} className="flex shrink-0 items-center">
             {TICKER_TITLES.map((title) => (
-              <li
-                key={title}
-                className="flex items-center text-xs font-medium uppercase tracking-[0.2em] text-fog"
-              >
+              <li key={title} className="flex items-center text-xs font-bold uppercase tracking-[0.04em]">
                 <span className="px-6">{title}</span>
-                <span className="text-line">·</span>
+                <span className="opacity-40">·</span>
               </li>
             ))}
           </ul>
