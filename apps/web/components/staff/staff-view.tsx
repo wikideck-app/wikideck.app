@@ -2,6 +2,7 @@
 
 import { ArrowLeft, Ban, Check, Search, ShieldCheck } from "@/components/icons";
 import { useFormatter, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import type {
   DeletedAccountRow,
@@ -777,7 +778,16 @@ function Member({
 function Alerts({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => void }) {
   const t = useTranslations("staff");
   const tc = useTranslations("common");
+  const router = useRouter();
   const [alerts, setAlerts] = useState<StaffAlert[] | null>(null);
+  const markRead = async (body: { userId: string } | { all: true }) => {
+    const res = await apiCall(apiUrl, "/staff/alerts", "POST", body);
+    if (!res.ok) return;
+    setAlerts((prev) =>
+      prev && ("all" in body ? [] : prev.filter((a) => a.id !== body.userId)),
+    );
+    router.refresh();
+  };
   useEffect(() => {
     void apiFetch<{ alerts: StaffAlert[] }>(apiUrl, "/staff/alerts").then(
       (r) => r.ok && setAlerts(r.data.alerts),
@@ -789,13 +799,22 @@ function Alerts({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => vo
       <p className="prose-serif text-pale-mist">
         {t("alerts.intro")}
       </p>
+      {alerts.length > 0 && (
+        <button
+          type="button"
+          className={`${buttonClass} mt-3`}
+          onClick={() => void markRead({ all: true })}
+        >
+          {t("alerts.markAllRead")}
+        </button>
+      )}
       <ul className="mt-4 flex flex-col gap-2">
         {alerts.map((a) => (
-          <li key={a.id}>
+          <li key={a.id} className="flex items-stretch gap-2">
             <button
               type="button"
               onClick={() => onOpen(a.id)}
-              className="flex w-full items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-left hover:border-accent"
+              className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-left hover:border-accent"
             >
               <Avatar url={a.avatarUrl} name={a.username} />
               <div className="min-w-0 flex-1">
@@ -817,6 +836,13 @@ function Alerts({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => vo
               <span className="shrink-0 font-display text-2xl tabular-nums text-danger">
                 {a.riskScore}
               </span>
+            </button>
+            <button
+              type="button"
+              className={buttonClass}
+              onClick={() => void markRead({ userId: a.id })}
+            >
+              {t("alerts.markRead")}
             </button>
           </li>
         ))}

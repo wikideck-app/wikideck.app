@@ -13,7 +13,6 @@
   "signals": {
     "SHARED_DEVICE": "Navigateur partagé",
     "YOUNG_DISCORD": "Compte Discord récent",
-    "FUNNEL": "Transfert de valeur",
     "BATTLE_PAIR": "Manches répétées"
   },
   "actions": {
@@ -149,8 +148,10 @@
     "actionsOn": "Actions du staff sur ce compte"
   },
   "alerts": {
-    "intro": "Comptes dont les indices d’abus des 30 derniers jours totalisent au moins 30. Un indice seul ne restreint jamais un compte : vérifiez avant d’agir.",
-    "none": "Aucune alerte. 🎉"
+    "intro": "Comptes dont les indices d’abus des 30 derniers jours totalisent au moins 30. Un indice seul ne restreint jamais un compte : vérifiez avant d’agir. Une alerte marquée comme lue ne revient que si un nouvel indice apparaît.",
+    "none": "Aucune alerte. 🎉",
+    "markRead": "Marquer comme lu",
+    "markAllRead": "Tout marquer comme lu"
   },
   "pager": {
     "previous": "Précédent",
