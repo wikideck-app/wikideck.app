@@ -20,6 +20,7 @@
   "previous": "Carte précédente",
   "next": "Carte suivante",
   "finish": "Terminer",
+  "nextPack": "Paquet suivant ({count})",
   "more": "{count, plural, one {Encore # carte} other {Encore # cartes}}",
   "errors": {
     "no_packs": "Vous n’avez plus de paquet disponible.",

@@ -429,13 +429,28 @@ export function PackOpener({
           </button>
         </div>
 
-        <button
-          type="button"
-          onClick={() => (last ? backToIdle() : go(index + 1))}
-          className="rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70"
-        >
-          {last ? t("finish") : t("more", { count: left })}
-        </button>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => (last ? backToIdle() : go(index + 1))}
+            className="rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70"
+          >
+            {last ? t("finish") : t("more", { count: left })}
+          </button>
+
+          {last && status.packs > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                backToIdle();
+                open();
+              }}
+              className="rounded-lg border border-foreground/20 px-8 py-2.5 text-sm font-bold transition hover:bg-foreground/10"
+            >
+              {t("nextPack", { count: status.packs })}
+            </button>
+          )}
+        </div>
 
         {detailOpen && (
           <CardDetail
