@@ -21,6 +21,7 @@ import {
   type CollectionCard,
   type CollectionResponse,
   type CollectionSort,
+  type PackKind,
   type Rarity,
 } from "@wikideck/shared";
 import { CardDetail } from "@/components/card-detail";
@@ -46,10 +47,12 @@ type View = {
   rarities?: Rarity[];
   q?: string;
   fav?: boolean;
+  source?: PackKind | null;
 };
 
-function href({ page, sort, tag, rarities, q, fav }: View) {
+function href({ page, sort, tag, rarities, q, fav, source }: View) {
   const qs = new URLSearchParams();
+  if (source === "anime") qs.set("source", "anime");
   if (fav) qs.set("fav", "1");
   if (q) qs.set("q", q);
   if (sort) qs.set("sort", sort);
@@ -106,6 +109,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
     rarities: data.rarities,
     q: data.query,
     fav: data.favoritesOnly,
+    source: data.source,
   };
   const filtering = data.rarities.length > 0;
 
@@ -169,7 +173,28 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
         />
       )}
 
-      <div className="relative mt-8 max-w-sm">
+      <div
+        role="tablist"
+        aria-label={t("sourceLabel")}
+        className="mx-auto mt-8 flex w-fit gap-1 rounded-2xl border border-line p-1"
+      >
+        {(["wikipedia", "anime"] as const).map((k) => (
+          <Link
+            key={k}
+            role="tab"
+            aria-selected={data.source === k}
+            href={href({ ...base, tag: null, rarities: [], q: "", source: k })}
+            className={`rounded-full px-5 py-1.5 text-sm font-semibold transition-colors ${
+              data.source === k ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
+            }`}
+          >
+            {t(`sources.${k}`)}{" "}
+            <span className="tabular-nums opacity-70">{data.sourceCounts[k]}</span>
+          </Link>
+        ))}
+      </div>
+
+      <div className="relative mt-6 max-w-sm">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
         <input
           type="search"
@@ -200,6 +225,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
             rarities: data.rarities,
             q: data.query,
             fav: !data.favoritesOnly,
+            source: data.source,
           })}
           aria-pressed={data.favoritesOnly}
           className="mr-2 flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-sm font-bold transition hover:bg-foreground/10 aria-pressed:border-amber-300 aria-pressed:bg-amber-300/15 aria-pressed:text-amber-300"
@@ -221,6 +247,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                 rarities: next,
                 q: data.query,
                 fav: data.favoritesOnly,
+    source: data.source,
               })}
               title={rarityLabel(r.value)}
               aria-pressed={active}
@@ -235,7 +262,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
         })}
         {filtering && (
           <Link
-            href={href({ sort: data.sort, tag: data.tag, q: data.query, fav: data.favoritesOnly })}
+            href={href({ sort: data.sort, tag: data.tag, q: data.query, fav: data.favoritesOnly, source: data.source })}
             className="ml-2 text-xs opacity-60 hover:opacity-100"
           >
             {tCards("resetFilters")}
@@ -251,6 +278,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
               rarities: data.rarities,
               q: data.query,
               fav: data.favoritesOnly,
+    source: data.source,
             })}
             aria-current={!data.tag}
             className="rounded-full px-3 py-1 text-xs font-semibold aria-current:bg-foreground aria-current:text-background bg-foreground/10"
@@ -266,6 +294,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                 rarities: data.rarities,
                 q: data.query,
                 fav: data.favoritesOnly,
+    source: data.source,
               })}
               aria-current={data.tag === tag.id}
               className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -293,6 +322,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                     rarities: data.rarities,
                     q: data.query,
                     fav: data.favoritesOnly,
+    source: data.source,
                   }),
                 )
               }

@@ -18,6 +18,9 @@ export default async function CollectionPage({ searchParams }: PageProps<"/colle
   const tag = one(params.tag);
   if (sort) query.set("sort", sort);
   if (tag) query.set("tag", tag);
+  // deux collections séparées : Wikipédia par défaut, ou anime / manga
+  const source = one(params.source) === "anime" ? "anime" : "wikipedia";
+  query.set("source", source);
   const q = one(params.q)?.trim();
   if (q) query.set("q", q);
   const rarity = one(params.rarity);
@@ -33,6 +36,7 @@ export default async function CollectionPage({ searchParams }: PageProps<"/colle
     if (data.rarities.length) keep.set("rarity", rarity!);
     if (data.query) keep.set("q", data.query);
     if (fav) keep.set("fav", "1");
+    if (source === "anime") keep.set("source", "anime");
     if (tag && !data.tags.some((t) => t.id === tag))
       redirect(keep.size ? `/collection?${keep}` : "/collection");
     if (tag) keep.set("tag", tag);
@@ -64,7 +68,7 @@ export default async function CollectionPage({ searchParams }: PageProps<"/colle
         <p className="mt-10 text-center text-sm text-danger">
           {t("loadError")}
         </p>
-      ) : data.total === 0 && !tag && !data.rarities.length && !data.query && !fav ? (
+      ) : data.sourceCounts.wikipedia + data.sourceCounts.anime === 0 ? (
         <p className="mt-10 text-center opacity-60">
           {t("emptyStart")}
         </p>

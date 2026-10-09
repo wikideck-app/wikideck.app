@@ -110,5 +110,10 @@
     "duplicatesCount": "Doublons ({count, number})",
     "irreversible": "Cette action est irréversible.",
     "busy": "Recyclage…"
+  },
+  "sourceLabel": "Collection",
+  "sources": {
+    "wikipedia": "Wikipédia",
+    "anime": "Anime / Manga"
   }
 }
