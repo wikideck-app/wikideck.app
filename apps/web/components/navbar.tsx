@@ -18,7 +18,7 @@ type Props = {
 };
 
 const chip =
-  "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-2 border-white/40 px-3.5 py-1.5 text-sm font-bold transition-colors hover:border-white";
+  "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-2 border-white/40 px-3 py-1.5 text-sm font-bold sm:px-3.5 transition-colors hover:border-white";
 
 function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
   const t = useTranslations("nav");
@@ -170,7 +170,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
 
   return (
     <header ref={bar} className="on-grape grape-field sticky top-0 z-40">
-      <div className="mx-auto grid h-16 w-full max-w-[1600px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 sm:px-6">
+      <div className="mx-auto grid h-16 w-full max-w-[1600px] grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-4 sm:px-6 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
         <div className="flex items-center gap-3">
           <Link href="/packs" aria-label={t("brand")} className="group flex items-center gap-3">
             <Image
@@ -213,9 +213,9 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-2">{MENU_GROUPS.map(groupButton)}</div>
+        <div className="hidden items-center justify-center gap-2 xl:flex">{MENU_GROUPS.map(groupButton)}</div>
 
-        <div className="flex items-center justify-end gap-2 sm:gap-3 ">
+        <div className="flex min-w-0 items-center justify-end gap-1.5 sm:gap-3">
           {packs && <PackChip packs={packs} />}
           <Link href="/market" className={chip} title={t("wikibitsBalance")}>
             <Wikibits amount={user.wikibits} />

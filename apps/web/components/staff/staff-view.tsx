@@ -445,7 +445,7 @@ function Member({
 
       <section className={`${panel} flex flex-wrap items-center gap-4`}>
         <Avatar url={m.avatarUrl} name={m.username} size="size-16" />
-        <div className="min-w-0 flex-1">
+        <div className="min-w-48 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-display text-3xl font-medium">{m.username}</h2>
             {m.staff && <Badge className="bg-accent/15 text-accent">{t(`roles.${m.staff}`)}</Badge>}
@@ -664,7 +664,7 @@ function Member({
                     value={bitsReason}
                     onChange={(e) => setBitsReason(e.target.value)}
                     placeholder={tm("reason")}
-                    className={`${field} min-w-0 flex-1`}
+                    className={`${field} min-w-40 flex-1`}
                   />
                   <button
                     type="submit"
@@ -1233,7 +1233,7 @@ function Auctions({ apiUrl, onOpen }: { apiUrl: string; onOpen: (id: string) => 
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder={ta("reasonPlaceholder")}
-                    className={`${field} min-w-0 flex-1`}
+                    className={`${field} min-w-40 flex-1`}
                   />
                   <button
                     type="submit"
@@ -1441,7 +1441,7 @@ function Guilds({
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder={selected.name}
-                className={`${field} min-w-0 flex-1`}
+                className={`${field} min-w-40 flex-1`}
               />
               <button
                 type="submit"
@@ -1526,7 +1526,7 @@ function Deleted({ apiUrl }: { apiUrl: string }) {
       <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface">
         {data.accounts.map((a) => (
           <li key={a.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm">
-            <strong className="min-w-0 flex-1 truncate">{a.username}</strong>
+            <strong className="min-w-32 flex-1 truncate">{a.username}</strong>
             <span className="text-fog">
               {a.by ? t("by", { name: a.by }) : t("byPlayer")}
               {a.reason && t("reason", { reason: a.reason })}
@@ -1674,7 +1674,7 @@ function ApiKeys({ apiUrl }: { apiUrl: string }) {
           void create();
         }}
       >
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-xs text-fog">
+        <label className="flex min-w-40 flex-1 flex-col gap-1 text-xs text-fog">
           {t("nameLabel")}
           <input
             className={field}
@@ -1696,7 +1696,7 @@ function ApiKeys({ apiUrl }: { apiUrl: string }) {
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <input
               readOnly
-              className={`${field} min-w-0 flex-1 font-mono text-xs`}
+              className={`${field} min-w-40 flex-1 font-mono text-xs`}
               value={fresh}
               onFocus={(e) => e.currentTarget.select()}
             />
@@ -1715,7 +1715,7 @@ function ApiKeys({ apiUrl }: { apiUrl: string }) {
         <ul className="mt-6 divide-y divide-line rounded-xl border border-line bg-surface">
           {keys.map((k) => (
             <li key={k.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm">
-              <strong className="min-w-0 flex-1 truncate">{k.name}</strong>
+              <strong className="min-w-32 flex-1 truncate">{k.name}</strong>
               <span className="font-mono text-xs text-fog">{k.prefix}…</span>
               <span className="text-xs text-fog">{t("owner", { name: k.ownerName })}</span>
               <span className="text-xs text-fog">

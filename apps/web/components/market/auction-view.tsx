@@ -137,9 +137,9 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
 
         <div className="min-w-0">
           <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="font-display text-3xl font-medium">{a.card.title}</h1>
-              <p className="mt-1 flex items-center gap-2 text-sm text-fog">
+            <div className="min-w-0">
+              <h1 className="font-display break-words text-3xl font-medium">{a.card.title}</h1>
+              <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-fog">
                 <span className="rounded-full border border-line px-2 py-px text-[11px] font-bold text-pale-mist">
                   {rarityLabel(a.card.rarity)}
                 </span>

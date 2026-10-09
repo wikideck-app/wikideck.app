@@ -101,7 +101,9 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
   return (
     <div className="mx-auto max-w-5xl">
       {confirmDialog}
-      <section className={`${panel} flex flex-wrap items-center gap-6 p-6`}>
+      <section
+        className={`${panel} flex flex-col items-center gap-4 p-6 text-center sm:flex-row sm:flex-wrap sm:gap-6 sm:text-left`}
+      >
         {player.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -114,9 +116,9 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
             {player.username.slice(0, 1).toUpperCase()}
           </span>
         )}
-        <div className="min-w-0 flex-1">
-          <h1 className="font-display truncate text-4xl">{player.username}</h1>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold text-pale-mist">
+        <div className="w-full min-w-0 sm:w-auto sm:flex-1">
+          <h1 className="font-display break-words text-3xl sm:truncate sm:text-4xl">{player.username}</h1>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-pale-mist sm:justify-start">
             <span className="rounded-full border border-line px-3 py-1">
               {t("memberSince", { date: format.dateTime(new Date(profile.createdAt), "monthYear") })}
             </span>
@@ -144,7 +146,7 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:w-auto sm:justify-start">
           {profile.isSelf ? (
             <Link href="/settings" className={buttonClass}>
               <Pencil className="size-4" /> {t("edit")}
@@ -226,11 +228,11 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
             <section>
               <h2 className={heading}>{t("showcase")}</h2>
               {profile.showcase ? (
-                <div className="mt-3 w-64">
+                <div className="mx-auto mt-3 w-64 md:mx-0">
                   <WikiCard card={profile.showcase} />
                 </div>
               ) : (
-                <div className="mt-3 flex aspect-250/370 w-64 items-center justify-center rounded-[9.6%/6.5%] border-2 border-dashed border-line px-6 text-center text-sm text-fog">
+                <div className="mx-auto mt-3 flex aspect-250/370 w-64 items-center md:mx-0  justify-center rounded-[9.6%/6.5%] border-2 border-dashed border-line px-6 text-center text-sm text-fog">
                   {profile.isSelf ? t("pickShowcase") : t("noShowcase")}
                 </div>
               )}
