@@ -96,7 +96,7 @@ export function WikiCard({
               {t("inAlbum")}
             </span>
           )}
-          <span className="cr">{t("credit")}</span>
+          <span className="cr">{card.source === "ANILIST" ? t("creditAnilist") : t("credit")}</span>
         </div>
 
         <div className="tx">

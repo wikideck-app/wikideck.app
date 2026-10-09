@@ -29,7 +29,8 @@
     "unauthorized": "Votre session a expiré, reconnectez-vous.",
     "no_boost": "Vous n’avez plus de booster de chance.",
     "rate_limited": "Trop de requêtes, patientez quelques secondes avant de réessayer.",
-    "overloaded": "Le serveur est très sollicité, réessayez dans un instant (aucun paquet consommé)."
+    "overloaded": "Le serveur est très sollicité, réessayez dans un instant (aucun paquet consommé).",
+    "anilist_unavailable": "AniList ne répond pas, réessayez (aucun paquet consommé)."
   },
   "reveal": {
     "mythic": "Mythique",
@@ -57,5 +58,10 @@
     "godPackKnown": "Avec <strong>{percent}</strong> de chances par paquet, les {size} cartes sont toutes Super rare ou mieux, dont au moins une Ultra rare ou Légendaire.",
     "godPackUnknown": "Très rarement, les {size} cartes sont toutes Super rare ou mieux, dont au moins une Ultra rare ou Légendaire.",
     "understood": "Compris"
+  },
+  "kind": {
+    "label": "Type de paquet",
+    "wikipedia": "Wikipédia",
+    "anime": "Anime / Manga"
   }
 }

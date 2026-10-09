@@ -132,16 +132,16 @@ export function CardDetail({
             rel="noreferrer"
             className="mt-4 inline-flex items-center gap-1 font-bold text-pale-mist hover:text-foreground"
           >
-            {t("viewOnWikipedia")}
+            {card.source === "ANILIST" ? t("viewOnAnilist") : t("viewOnWikipedia")}
             <ArrowUpRight className="size-4" />
           </a>
-          {!card.imageUrl && (
+          {!card.imageUrl && card.source !== "ANILIST" && (
             <p className="mt-3 text-xs text-fog">
               {t("noFreeImage")}
             </p>
           )}
           <p className="mt-3 text-xs opacity-50">
-            {t("license")}
+            {card.source === "ANILIST" ? t("licenseAnilist") : t("license")}
           </p>
         </div>
       </div>

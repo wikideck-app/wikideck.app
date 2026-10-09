@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { OpenPackResponse, PackStatus, TagDto } from "@wikideck/shared";
+import type { OpenPackResponse, PackKind, PackStatus, TagDto } from "@wikideck/shared";
 import { CardDetail } from "@/components/card-detail";
 import { SellDialog } from "@/components/market/sell-dialog";
 import { RecycleDialog } from "@/components/recycle-dialog";
@@ -114,7 +114,11 @@ export function PackOpener({
   const router = useRouter();
   const { settings } = useSettings();
   const { skip, speed } = settings.animations;
-  const [status, setStatus] = useState(initial);
+  const [full, setStatus] = useState(initial);
+  // paquets Wikipédia (réserve principale) ou anime / manga (réserve séparée)
+  const [kind, setKind] = useState<PackKind>("wikipedia");
+  const status: PackStatus =
+    kind === "anime" && full.anime ? { ...full.anime, boosts: 0 } : full;
   const [useBoost, setUseBoost] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [cards, setCards] = useState<OpenPackResponse["cards"]>([]);
@@ -136,16 +140,19 @@ export function PackOpener({
   const [fallback2d, setFallback2d] = useState(false);
   const drag = useRef<{ x: number; y: number; w: number; h: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [deadline, setDeadline] = useState(() =>
-    initial.nextInMs === null ? null : Date.now() + initial.nextInMs,
-  );
-  const [remaining, setRemaining] = useState(initial.nextInMs);
+  const dueOf = (s: { nextInMs: number | null } | undefined) =>
+    !s || s.nextInMs === null ? null : Date.now() + s.nextInMs;
+  const [deadlines, setDeadlines] = useState<Record<PackKind, number | null>>(() => ({
+    wikipedia: dueOf(initial),
+    anime: dueOf(initial.anime),
+  }));
+  const deadline = deadlines[kind];
+  const [remaining, setRemaining] = useState<number | null>(initial.nextInMs);
 
   const applyStatus = useCallback(
     (next: PackStatus) => {
       setStatus(next);
-      setDeadline(next.nextInMs === null ? null : Date.now() + next.nextInMs);
-      setRemaining(next.nextInMs);
+      setDeadlines({ wikipedia: dueOf(next), anime: dueOf(next.anime) });
       router.refresh();
     },
     [router],
@@ -225,7 +232,7 @@ export function PackOpener({
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ boost: useBoost }),
+          body: JSON.stringify({ boost: useBoost && kind === "wikipedia", kind }),
         });
         if (res.status !== 503) break;
         if (tries >= QUEUE_MAX_TRIES) {
@@ -269,7 +276,7 @@ export function PackOpener({
     } finally {
       setQueued(false);
     }
-  }, [apiUrl, applyStatus, backToIdle, skip, speed, useBoost, t, tc]);
+  }, [apiUrl, applyStatus, backToIdle, kind, skip, speed, useBoost, t, tc]);
 
   const revealCurrent = useCallback(() => reveal(index), [reveal, index]);
 
@@ -561,7 +568,36 @@ export function PackOpener({
   const tearAngle = torn ? 55 : tear * 55;
   return (
     <div className="flex flex-col items-center">
-      <div className="mt-6 flex items-center justify-center">
+      {full.anime && (
+        <div
+          role="tablist"
+          aria-label={t("kind.label")}
+          className="mt-6 flex gap-1 rounded-2xl border border-line p-1"
+        >
+          {(["wikipedia", "anime"] as const).map((k) => (
+            <button
+              key={k}
+              type="button"
+              role="tab"
+              aria-selected={kind === k}
+              disabled={phase !== "idle"}
+              onClick={() => setKind(k)}
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
+                kind === k ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
+              }`}
+            >
+              {t(`kind.${k}`)}{" "}
+              <span className="tabular-nums opacity-70">
+                {k === "anime" ? full.anime!.packs : full.packs}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+      <div
+        className="mt-6 flex items-center justify-center"
+        style={kind === "anime" ? { filter: "hue-rotate(155deg) saturate(1.15)" } : undefined}
+      >
         {fallback2d ? (
           <div className="px-14 py-8">
             <div
@@ -677,7 +713,7 @@ export function PackOpener({
           <span className="opacity-50"> / {status.max}</span>
         </p>
         <p className="text-xs opacity-60">{t("available")}</p>
-        {remaining !== null && (
+        {deadline !== null && remaining !== null && (
           <p className="mt-1 text-xs opacity-60">
             {t.rich("nextIn", {
               time: formatCountdown(remaining),

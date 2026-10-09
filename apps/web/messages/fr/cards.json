@@ -28,7 +28,8 @@
     "new": "Nouveau",
     "credit": "Wikipédia · CC BY-SA",
     "inAlbum": "Album",
-    "inAlbumTitle": "Rangée dans un album"
+    "inAlbumTitle": "Rangée dans un album",
+    "creditAnilist": "Personnage · AniList"
   },
   "detail": {
     "sell": "Mettre aux enchères",
@@ -38,7 +39,9 @@
     "locked": "{reason} : cette carte ne peut être ni vendue ni recyclée.",
     "viewOnWikipedia": "Voir l’article sur Wikipédia",
     "noFreeImage": "Wikipédia n’a pas d’image libre de droits pour cet article.",
-    "license": "Texte de l’article : CC BY-SA 4.0 — crédits sur la page Wikipédia."
+    "license": "Texte de l’article : CC BY-SA 4.0 — crédits sur la page Wikipédia.",
+    "viewOnAnilist": "Voir le personnage sur AniList",
+    "licenseAnilist": "Données et images : AniList. Les personnages et œuvres appartiennent à leurs ayants droit."
   },
   "catalog": {
     "title": "Toutes les cartes",
