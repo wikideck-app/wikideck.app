@@ -26,7 +26,9 @@
   "sort": "Trier",
   "wikiCard": {
     "new": "Nouveau",
-    "credit": "Wikipédia · CC BY-SA"
+    "credit": "Wikipédia · CC BY-SA",
+    "inAlbum": "Album",
+    "inAlbumTitle": "Rangée dans un album"
   },
   "detail": {
     "sell": "Mettre aux enchères",

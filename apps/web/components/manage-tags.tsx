@@ -36,7 +36,8 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
   const refresh = () => startTransition(() => router.refresh());
 
   const [name, setName] = useState("");
-  const [color, setColor] = useState<TagColor>(() => randomColor());
+  // couleur fixe au rendu (le serveur et le client doivent s'accorder) ; une couleur aléatoire est tirée à l'ouverture
+  const [color, setColor] = useState<TagColor>("#c193ec");
   const [creating, setCreating] = useState(false);
   const cleanName = name.trim().replace(/\s+/g, " ");
   const full = tags.length >= TAG_MAX_PER_USER;
@@ -77,7 +78,10 @@ export function ManageTags({ apiUrl, tags }: { apiUrl: string; tags: TagRow[] })
     <>
       <button
         type="button"
-        onClick={() => dialog.current?.showModal()}
+        onClick={() => {
+          setColor(randomColor());
+          dialog.current?.showModal();
+        }}
         className="rounded-lg border border-accent/60 px-3 py-1.5 text-[11px] uppercase tracking-wide hover:bg-accent/10"
       >
         {t("manage")}

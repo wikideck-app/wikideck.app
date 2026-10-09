@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { BookBookmark } from "@/components/icons";
 import { useTranslations } from "next-intl";
 import { RARITIES, type CardDto, type TagColor } from "@wikideck/shared";
 import { useRarityLabel } from "@/lib/labels";
@@ -12,10 +13,13 @@ export function WikiCard({
   isNew,
   compact,
   tags,
+  inAlbum,
   className = "",
 }: {
   card: CardDto;
   quantity?: number;
+  /** la carte est rangée dans au moins un album */
+  inAlbum?: boolean;
   tags?: { name: string; color: TagColor }[];
   isNew?: boolean;
   compact?: boolean;
@@ -85,6 +89,12 @@ export function WikiCard({
                 <i key={tag.name} title={tag.name} style={swatchStyle(tag.color)} />
               ))}
             </div>
+          )}
+          {inAlbum && (
+            <span className="album" title={t("inAlbumTitle")}>
+              <BookBookmark aria-hidden />
+              {t("inAlbum")}
+            </span>
           )}
           <span className="cr">{t("credit")}</span>
         </div>

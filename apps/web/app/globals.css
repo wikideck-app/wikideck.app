@@ -678,6 +678,26 @@ body {
   height: auto;
   opacity: 0.9;
 }
+.wk .album {
+  position: absolute;
+  top: 0.7em;
+  right: 0.7em;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.3em 0.8em 0.3em 0.6em;
+  border-radius: 999px;
+  background: rgba(10, 10, 20, 0.8);
+  color: #ffd36a;
+  font-size: 0.85em;
+  font-weight: 800;
+  box-shadow: 0 0 0 1px rgba(255, 211, 106, 0.55);
+}
+.wk .album svg {
+  width: 1.15em;
+  height: 1.15em;
+}
 .wk .cr {
   position: absolute;
   right: 0.8em;

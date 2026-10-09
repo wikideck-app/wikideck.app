@@ -19,7 +19,6 @@
   "view": "Voir {title}",
   "protectedBadge": "🛡️ {reason}",
   "estimate": "≈ {amount, number} wikibits aux enchères",
-  "inAlbum": "Rangée dans un album",
   "unfavorite": "Retirer {title} des favoris",
   "favorite": "Ajouter {title} aux favoris",
   "unfavoriteShort": "Retirer des favoris",

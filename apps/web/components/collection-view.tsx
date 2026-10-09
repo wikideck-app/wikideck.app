@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  BookBookmark,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -347,7 +346,13 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                   isPicked ? "ring-4 ring-accent ring-offset-2 ring-offset-background" : ""
                 } ${selectMode && !isPicked ? "opacity-80 hover:opacity-100" : ""}`}
               >
-                <WikiCard card={card} quantity={card.quantity} tags={card.tags} compact />
+                <WikiCard
+                  card={card}
+                  quantity={card.quantity}
+                  tags={card.tags}
+                  inAlbum={card.inAlbum && !selectMode}
+                  compact
+                />
                 {bulkOpen && !selectMode && (card.protectedReason || card.estimate) && (
                   <span className="pointer-events-none absolute inset-x-1.5 bottom-1.5 flex flex-col items-start gap-1 text-[11px] font-semibold">
                     {card.protectedReason && (
@@ -360,14 +365,6 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
                         {t("estimate", { amount: card.estimate })}
                       </span>
                     ) : null}
-                  </span>
-                )}
-                {card.inAlbum && !selectMode && (
-                  <span
-                    title={t("inAlbum")}
-                    className="pointer-events-none absolute left-1.5 top-1.5 z-10 flex size-7 items-center justify-center rounded-full bg-black/55 text-white/90 shadow"
-                  >
-                    <BookBookmark className="size-4" />
                   </span>
                 )}
                 {!selectMode && (
