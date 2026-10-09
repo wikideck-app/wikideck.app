@@ -5,9 +5,9 @@
   "public": "Profil public",
   "private": "Profil privé",
   "add": "Ajouter un ami",
-  "searchPlaceholder": "Nom d’utilisateur Discord (@nom)…",
-  "searchLabel": "Rechercher un joueur par nom d’utilisateur Discord",
-  "noResult": "Aucun joueur trouvé : saisissez le nom d’utilisateur Discord exact (pas le pseudonyme affiché).",
+  "searchPlaceholder": "Début du nom d’utilisateur Discord (@nom)…",
+  "searchLabel": "Rechercher un joueur par le début de son nom d’utilisateur Discord",
+  "noResult": "Aucun joueur trouvé : tapez le début de son nom d’utilisateur Discord (pas le pseudonyme affiché).",
   "already": "Déjà ami",
   "sent": "Demande envoyée",
   "tabs": {
