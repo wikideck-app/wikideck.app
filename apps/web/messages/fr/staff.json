@@ -12,8 +12,7 @@
   },
   "signals": {
     "SHARED_DEVICE": "Navigateur partagé",
-    "YOUNG_DISCORD": "Compte Discord récent",
-    "BATTLE_PAIR": "Manches répétées"
+    "YOUNG_DISCORD": "Compte Discord récent"
   },
   "actions": {
     "ban": "Suspension",
