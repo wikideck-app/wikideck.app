@@ -28,15 +28,7 @@
     "updated": "Pseudonyme mis à jour.",
     "discordName": "Nom d’utilisateur Discord",
     "discordNameHelp": "Lié à votre compte Discord, non modifiable ici. C’est ce nom que vos amis saisissent pour vous retrouver et vous ajouter ; il est mis à jour à chaque connexion.",
-    "discordUnknown": "Pas encore enregistré : il apparaîtra à votre prochaine connexion.",
-    "showcase": "Carte vitrine",
-    "showcaseHelp": "La carte mise en avant sur votre profil. Choisissez-en une parmi celles que vous possédez.",
-    "noCard": "Aucune carte",
-    "change": "Changer",
-    "choose": "Choisir une carte",
-    "remove": "Retirer",
-    "showcaseUpdated": "Carte vitrine mise à jour.",
-    "showcaseRemoved": "Carte vitrine retirée."
+    "discordUnknown": "Pas encore enregistré : il apparaîtra à votre prochaine connexion."
   },
   "appearance": {
     "title": "Apparence",

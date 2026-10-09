@@ -25,13 +25,11 @@ import {
   USERNAME_MAX,
   USERNAME_MIN,
   USERNAME_PATTERN,
-  type CardDto,
   type DefaultSort,
   type MeProfile,
 } from "@wikideck/shared";
 import { DeleteAccount } from "@/components/settings/delete-account";
 import { PullHistory } from "@/components/settings/pull-history";
-import { ShowcasePicker } from "@/components/settings/showcase-picker";
 import {
   Panel,
   Segmented,
@@ -42,7 +40,6 @@ import {
   buttonClass,
   primaryButtonClass,
 } from "@/components/settings/controls";
-import { WikiCard } from "@/components/wiki-card";
 import { sfx } from "@/lib/audio";
 import { useSettings } from "@/lib/settings-context";
 import { apiCall } from "@/lib/tags-api";
@@ -178,8 +175,6 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
   const [saved, setSaved] = useState(profile.username);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
-  const [showcase, setShowcase] = useState<CardDto | null>(profile.showcase);
-  const [picking, setPicking] = useState(false);
 
   const clean = username.trim().replace(/\s+/g, " ");
   const length = [...clean].length;
@@ -196,13 +191,6 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
     setUsername(result.data.username);
     setMessage({ ok: true, text: t("updated") });
     router.refresh();
-  }
-
-  async function setShowcaseCard(id: string | null, card: CardDto | null) {
-    const result = await apiCall<MeProfile>(apiUrl, "/me", "PATCH", { showcaseCardId: id });
-    if (!result.ok) return setMessage({ ok: false, text: result.message });
-    setShowcase(card);
-    setMessage({ ok: true, text: card ? t("showcaseUpdated") : t("showcaseRemoved") });
   }
 
   return (
@@ -267,35 +255,6 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
         </p>
       </SettingRow>
 
-      <SettingRow
-        title={t("showcase")}
-        description={t("showcaseHelp")}
-      >
-        <div className="flex items-center gap-4">
-          {showcase ? (
-            <WikiCard card={showcase} compact className="w-28" />
-          ) : (
-            <div className="flex aspect-2/3 w-28 items-center justify-center rounded-xl border border-dashed border-line text-center text-[11px] text-fog bg-surface">
-              {t("noCard")}
-            </div>
-          )}
-          <div className="flex flex-col gap-2">
-            <button type="button" className={buttonClass} onClick={() => setPicking(true)}>
-              {showcase ? t("change") : t("choose")}
-            </button>
-            {showcase && (
-              <button
-                type="button"
-                className={buttonClass}
-                onClick={() => setShowcaseCard(null, null)}
-              >
-                {t("remove")}
-              </button>
-            )}
-          </div>
-        </div>
-      </SettingRow>
-
       {message && (
         <p
           role="status"
@@ -303,13 +262,6 @@ function ProfileSection({ profile, apiUrl }: { profile: MeProfile; apiUrl: strin
         >
           {message.text}
         </p>
-      )}
-      {picking && (
-        <ShowcasePicker
-          apiUrl={apiUrl}
-          onSelect={(card) => void setShowcaseCard(card.id, card)}
-          onClose={() => setPicking(false)}
-        />
       )}
     </Panel>
   );

@@ -4,6 +4,8 @@ import {
   ArrowLeftRight,
   BookBookmark,
   Castle,
+  ChevronLeft,
+  ChevronRight,
   Heart,
   Lock,
   MessageCircle,
@@ -76,6 +78,7 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [picking, setPicking] = useState(false);
+  const [pickingShowcase, setPickingShowcase] = useState(false);
   const [pickingAlbums, setPickingAlbums] = useState(false);
   const [detail, setDetail] = useState<(CardDto & { quantity: number }) | null>(null);
   const { player, stats } = profile;
@@ -91,7 +94,38 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
 
   const saveFeatured = (ids: string[]) =>
     act(() => apiCall(apiUrl, "/me", "PATCH", { featuredCardIds: ids }));
-  const featuredIds = profile.featured.map((c) => c.id);
+  const saveShowcase = (id: string | null) =>
+    act(() => apiCall(apiUrl, "/me", "PATCH", { showcaseCardId: id }));
+  // ordre local pendant un glisser-déposer (puis conservé : il est identique à celui enregistré)
+  const [draftIds, setDraftIds] = useState<string[] | null>(null);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const featuredList = (() => {
+    if (!draftIds) return profile.featured;
+    const byId = new Map(profile.featured.map((c) => [c.id, c]));
+    return [
+      ...draftIds.flatMap((id) => byId.get(id) ?? []),
+      ...profile.featured.filter((c) => !draftIds.includes(c.id)),
+    ];
+  })();
+  const featuredIds = featuredList.map((c) => c.id);
+  const canReorder = profile.isSelf && featuredList.length > 1;
+
+  const moveBefore = (ids: string[], id: string, target: number) => {
+    const from = ids.indexOf(id);
+    if (from < 0 || from === target) return ids;
+    const next = [...ids];
+    next.splice(from, 1);
+    next.splice(target, 0, id);
+    return next;
+  };
+  const shift = (id: string, by: -1 | 1) => {
+    const at = featuredIds.indexOf(id);
+    const to = at + by;
+    if (to < 0 || to >= featuredIds.length) return;
+    const next = moveBefore(featuredIds, id, to);
+    setDraftIds(next);
+    void saveFeatured(next);
+  };
 
   const add = () => act(() => apiCall(apiUrl, "/friends", "POST", { userId: player.id }));
   const accept = () =>
@@ -231,9 +265,37 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
                 <div className="mx-auto mt-3 w-64 md:mx-0">
                   <WikiCard card={profile.showcase} />
                 </div>
+              ) : profile.isSelf ? (
+                <button
+                  type="button"
+                  onClick={() => setPickingShowcase(true)}
+                  className="mx-auto mt-3 flex aspect-250/370 w-64 items-center justify-center rounded-[9.6%/6.5%] border-2 border-dashed border-line px-6 text-center text-sm text-fog transition-colors hover:border-accent hover:text-foreground md:mx-0"
+                >
+                  {t("pickShowcase")}
+                </button>
               ) : (
-                <div className="mx-auto mt-3 flex aspect-250/370 w-64 items-center md:mx-0  justify-center rounded-[9.6%/6.5%] border-2 border-dashed border-line px-6 text-center text-sm text-fog">
-                  {profile.isSelf ? t("pickShowcase") : t("noShowcase")}
+                <div className="mx-auto mt-3 flex aspect-250/370 w-64 items-center justify-center rounded-[9.6%/6.5%] border-2 border-dashed border-line px-6 text-center text-sm text-fog md:mx-0">
+                  {t("noShowcase")}
+                </div>
+              )}
+              {profile.isSelf && profile.showcase && (
+                <div className="mx-auto mt-3 flex w-64 flex-wrap gap-2 md:mx-0">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    className={buttonClass}
+                    onClick={() => setPickingShowcase(true)}
+                  >
+                    {t("changeShowcase")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    className={buttonClass}
+                    onClick={() => void saveShowcase(null)}
+                  >
+                    {t("removeShowcase")}
+                  </button>
                 </div>
               )}
             </section>
@@ -292,9 +354,35 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
                   </p>
                 )}
               </div>
+              {canReorder && <p className="mt-1 text-xs text-fog">{t("dragHint")}</p>}
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-                {profile.featured.map((card) => (
-                  <div key={card.id} className="relative">
+                {featuredList.map((card, index) => (
+                  <div
+                    key={card.id}
+                    draggable={canReorder}
+                    onDragStart={(e) => {
+                      if (!canReorder) return;
+                      e.dataTransfer.effectAllowed = "move";
+                      e.dataTransfer.setData("text/plain", card.id);
+                      setDragId(card.id);
+                      setDraftIds(featuredIds);
+                    }}
+                    onDragEnter={() => {
+                      if (dragId && dragId !== card.id)
+                        setDraftIds((prev) => moveBefore(prev ?? featuredIds, dragId, index));
+                    }}
+                    onDragOver={(e) => dragId && e.preventDefault()}
+                    onDrop={(e) => e.preventDefault()}
+                    onDragEnd={() => {
+                      const moved = dragId !== null && draftIds !== null;
+                      setDragId(null);
+                      if (moved && draftIds!.join() !== profile.featured.map((c) => c.id).join())
+                        void saveFeatured(draftIds!);
+                    }}
+                    className={`group relative transition-opacity ${canReorder ? "cursor-grab active:cursor-grabbing" : ""} ${
+                      dragId === card.id ? "opacity-40" : ""
+                    }`}
+                  >
                     <button
                       type="button"
                       aria-label={t("view", { title: card.title })}
@@ -303,6 +391,28 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
                     >
                       <WikiCard card={card} quantity={card.quantity} compact />
                     </button>
+                    {canReorder && (
+                      <div className="absolute inset-x-0 bottom-1 z-10 hidden justify-center gap-1 group-focus-within:flex [@media(pointer:coarse)]:flex">
+                        <button
+                          type="button"
+                          disabled={busy || index === 0}
+                          aria-label={t("moveLeft", { title: card.title })}
+                          onClick={() => shift(card.id, -1)}
+                          className="flex size-7 items-center justify-center rounded-full bg-black/70 text-white shadow disabled:opacity-30"
+                        >
+                          <ChevronLeft className="size-4" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy || index === featuredList.length - 1}
+                          aria-label={t("moveRight", { title: card.title })}
+                          onClick={() => shift(card.id, 1)}
+                          className="flex size-7 items-center justify-center rounded-full bg-black/70 text-white shadow disabled:opacity-30"
+                        >
+                          <ChevronRight className="size-4" />
+                        </button>
+                      </div>
+                    )}
                     {profile.isSelf && (
                       <button
                         type="button"
@@ -318,7 +428,7 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
                   </div>
                 ))}
                 {profile.isSelf &&
-                  Array.from({ length: Math.max(0, FEATURED_MAX - profile.featured.length) }).map(
+                  Array.from({ length: Math.max(0, FEATURED_MAX - featuredList.length) }).map(
                     (_, i) => (
                       <button
                         key={`slot-${i}`}
@@ -434,6 +544,14 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
             )}
           </section>
         </>
+      )}
+
+      {pickingShowcase && (
+        <ShowcasePicker
+          apiUrl={apiUrl}
+          onSelect={(card) => void saveShowcase(card.id)}
+          onClose={() => setPickingShowcase(false)}
+        />
       )}
 
       {picking && (

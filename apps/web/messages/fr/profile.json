@@ -16,7 +16,7 @@
   "remove": "Retirer",
   "privateNotice": "{name} a choisi un profil privé : sa collection, ses statistiques et ses succès ne sont pas visibles. Vous pouvez tout de même lui proposer un échange.",
   "showcase": "Carte vitrine",
-  "pickShowcase": "Choisissez une carte vitrine dans les paramètres.",
+  "pickShowcase": "Choisir une carte vitrine",
   "noShowcase": "Pas de carte vitrine.",
   "stats": "Statistiques",
   "distinct": "Cartes différentes",
@@ -55,5 +55,10 @@
     "none": "Vous n’avez pas encore d’album.",
     "cards": "{count, plural, one {# carte} other {# cartes}}",
     "done": "Terminé"
-  }
+  },
+  "changeShowcase": "Changer",
+  "removeShowcase": "Retirer",
+  "dragHint": "Glissez les cartes pour changer leur ordre.",
+  "moveLeft": "Déplacer {title} vers la gauche",
+  "moveRight": "Déplacer {title} vers la droite"
 }
