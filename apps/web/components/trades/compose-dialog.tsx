@@ -3,7 +3,14 @@
 import { Lock, Search, X } from "@/components/icons";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { TRADE_EXPIRY_DAYS, type CreateTradeBody, type PlayerSummary } from "@wikideck/shared";
+import {
+  TRADE_EXPIRY_DAYS,
+  type CounterTradeBody,
+  type CreateTradeBody,
+  type PlayerSummary,
+  type TradeCard,
+  type TradeDto,
+} from "@wikideck/shared";
 import { buttonClass, primaryButtonClass } from "@/components/settings/controls";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 import { CardSelector, type Selection } from "./card-selector";
@@ -19,24 +26,64 @@ function Avatar({ player }: { player: PlayerSummary }) {
   );
 }
 
+// cartes d'une proposition existante, reprises comme sélection de départ d'une contre-proposition
+const selectionOf = (cards: TradeCard[]): Selection =>
+  new Map(
+    cards.map((c) => [
+      c.id,
+      { card: { ...c, favorite: false, tags: [] }, quantity: c.quantity },
+    ]),
+  );
+
+function Chosen({ selection, onChange }: { selection: Selection; onChange: (s: Selection) => void }) {
+  const t = useTranslations("trades.compose");
+  if (selection.size === 0) return null;
+  return (
+    <ul aria-label={t("chosen")} className="mt-3 flex flex-wrap gap-2">
+      {[...selection.values()].map(({ card, quantity }) => (
+        <li key={card.id}>
+          <button
+            type="button"
+            aria-label={t("removeCard", { title: card.title })}
+            onClick={() => {
+              const next = new Map(selection);
+              next.delete(card.id);
+              onChange(next);
+            }}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-xs font-semibold hover:border-danger"
+          >
+            {quantity > 1 && <span className="tabular-nums">{quantity}×</span>}
+            <span className="max-w-40 truncate">{card.title}</span>
+            <X className="size-3" />
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function ComposeDialog({
   apiUrl,
   initialRecipient,
+  counterOf,
   onCreated,
   onClose,
 }: {
   apiUrl: string;
   initialRecipient?: PlayerSummary;
+  /** proposition reçue à laquelle on répond par une contre-proposition */
+  counterOf?: TradeDto;
   onCreated: () => void;
   onClose: () => void;
 }) {
   const t = useTranslations("trades");
   const tc = useTranslations("common");
-  const [recipient, setRecipient] = useState<PlayerSummary | null>(initialRecipient ?? null);
+  const fixedRecipient = counterOf?.counterparty ?? initialRecipient;
+  const [recipient, setRecipient] = useState<PlayerSummary | null>(fixedRecipient ?? null);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<PlayerSummary[]>([]);
-  const [offer, setOffer] = useState<Selection>(new Map());
-  const [request, setRequest] = useState<Selection>(new Map());
+  const [offer, setOffer] = useState<Selection>(() => selectionOf(counterOf?.give ?? []));
+  const [request, setRequest] = useState<Selection>(() => selectionOf(counterOf?.receive ?? []));
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestId = useRef(0);
@@ -62,12 +109,15 @@ export function ComposeDialog({
     setError(null);
     const lines = (s: Selection) =>
       [...s.values()].map((x) => ({ cardId: x.card.id, quantity: x.quantity }));
-    const body: CreateTradeBody = {
-      recipientId: recipient.id,
-      offer: lines(offer),
-      request: lines(request),
-    };
-    const result = await apiCall(apiUrl, "/trades", "POST", body);
+    const body: CreateTradeBody | CounterTradeBody = counterOf
+      ? { offer: lines(offer), request: lines(request) }
+      : { recipientId: recipient.id, offer: lines(offer), request: lines(request) };
+    const result = await apiCall(
+      apiUrl,
+      counterOf ? `/trades/${counterOf.id}/counter` : "/trades",
+      "POST",
+      body,
+    );
     setSending(false);
     if (!result.ok) {
       setError(
@@ -92,9 +142,11 @@ export function ComposeDialog({
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold">{t("compose.title")}</h2>
+          <h2 className="text-xl font-bold">
+            {counterOf ? t("compose.counterTitle") : t("compose.title")}
+          </h2>
           <p className="mt-1 text-sm text-pale-mist">
-            {t("compose.intro", { days: TRADE_EXPIRY_DAYS })}
+            {t(counterOf ? "compose.counterIntro" : "compose.intro", { days: TRADE_EXPIRY_DAYS })}
           </p>
         </div>
         <button
@@ -118,7 +170,7 @@ export function ComposeDialog({
                 <Lock className="size-3" /> {t("compose.private")}
               </span>
             )}
-            {!initialRecipient && (
+            {!fixedRecipient && (
               <button
                 type="button"
                 className="text-sm text-pale-mist underline"
@@ -182,6 +234,7 @@ export function ComposeDialog({
                 onChange={setOffer}
               />
             </div>
+            <Chosen selection={offer} onChange={setOffer} />
           </section>
 
           <section className="mt-6">
@@ -205,6 +258,7 @@ export function ComposeDialog({
                 {t("compose.privateNotice", { name: recipient.username })}
               </p>
             )}
+            <Chosen selection={request} onChange={setRequest} />
           </section>
         </>
       )}
@@ -228,7 +282,7 @@ export function ComposeDialog({
           disabled={!recipient || empty || sending}
           onClick={send}
         >
-          {sending ? tc("sending") : t("compose.send")}
+          {sending ? tc("sending") : counterOf ? t("compose.counterSend") : t("compose.send")}
         </button>
       </div>
     </dialog>

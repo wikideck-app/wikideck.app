@@ -28,6 +28,7 @@ const STATUS: Record<TradeDto["status"], { icon: IconType; tone: string }> = {
   ACCEPTED: { icon: Check, tone: "border-accent bg-accent text-accent-foreground" },
   DECLINED: { icon: X, tone: "border-danger/60 bg-danger/10 text-danger" },
   CANCELLED: { icon: Ban, tone: "border-line text-fog" },
+  COUNTERED: { icon: ArrowLeftRight, tone: "border-line text-fog" },
   EXPIRED: { icon: Hourglass, tone: "border-line text-fog" },
 };
 
@@ -126,12 +127,14 @@ function TradeRow({
   busy,
   swapping,
   onAct,
+  onCounter,
 }: {
   trade: TradeDto;
   index: number;
   busy: boolean;
   swapping: boolean;
   onAct: (action: "accept" | "decline" | "cancel") => void;
+  onCounter: () => void;
 }) {
   const t = useTranslations("trades");
   const format = useFormatter();
@@ -181,7 +184,14 @@ function TradeRow({
                 ),
               })}
             </p>
-            <p className="text-xs text-fog">{format.dateTime(new Date(trade.createdAt), "mediumTime")}</p>
+            <p className="text-xs text-fog">
+              {format.dateTime(new Date(trade.createdAt), "mediumTime")}
+              {trade.counter && (
+                <span className="ml-2 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent">
+                  {t("counterBadge")}
+                </span>
+              )}
+            </p>
           </div>
         </div>
         <StatusBadge trade={swapping ? { ...trade, status: "ACCEPTED" } : trade} />
@@ -194,7 +204,7 @@ function TradeRow({
       </div>
 
       {trade.status === "PENDING" && !swapping && (
-        <div className="mt-5 flex justify-end gap-3">
+        <div className="mt-5 flex flex-wrap justify-end gap-3">
           {trade.role === "recipient" ? (
             <>
               <button
@@ -204,6 +214,9 @@ function TradeRow({
                 onClick={() => onAct("decline")}
               >
                 {t("decline")}
+              </button>
+              <button type="button" disabled={busy} className={buttonClass} onClick={onCounter}>
+                {t("counterAction")}
               </button>
               <button
                 type="button"
@@ -248,6 +261,7 @@ export function TradesView({
   const [busyId, setBusyId] = useState<string | null>(null);
   const [swappingId, setSwappingId] = useState<string | null>(null);
   const [composing, setComposing] = useState(!!initialRecipient);
+  const [counterOf, setCounterOf] = useState<TradeDto | null>(null);
   const requestId = useRef(0);
 
   const load = useCallback(
@@ -352,12 +366,27 @@ export function TradesView({
                 busy={busyId === trade.id}
                 swapping={swappingId === trade.id}
                 onAct={(a) => act(trade, a)}
+                onCounter={() => setCounterOf(trade)}
               />
             ))}
           </ul>
         )}
       </div>
 
+      {counterOf && (
+        <ComposeDialog
+          key={counterOf.id}
+          apiUrl={apiUrl}
+          counterOf={counterOf}
+          onClose={() => setCounterOf(null)}
+          onCreated={() => {
+            setCounterOf(null);
+            setBox("outgoing");
+            void load("outgoing");
+            router.refresh();
+          }}
+        />
+      )}
       {composing && (
         <ComposeDialog
           apiUrl={apiUrl}

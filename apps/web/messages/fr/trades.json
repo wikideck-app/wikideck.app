@@ -12,7 +12,8 @@
     "ACCEPTED": "Acceptée",
     "DECLINED": "Refusée",
     "CANCELLED": "Annulée",
-    "EXPIRED": "Expirée"
+    "EXPIRED": "Expirée",
+    "COUNTERED": "Contre-proposée"
   },
   "expiresSoon": "expire bientôt",
   "expires": "expire {time}",
@@ -57,7 +58,12 @@
     "request": "Je demande",
     "selected": "({count, plural, one {# sélectionnée} other {# sélectionnées}})",
     "privateNotice": "{name} a un profil privé : vous ne pouvez que lui offrir des cartes.",
-    "send": "Envoyer la proposition"
+    "send": "Envoyer la proposition",
+    "counterTitle": "Contre-proposition",
+    "counterIntro": "Modifiez les cartes : la proposition d’origine sera close et l’autre joueur recevra votre contre-proposition. Sans réponse, elle expire au bout de {days} jours.",
+    "counterSend": "Envoyer la contre-proposition",
+    "removeCard": "Retirer {title}",
+    "chosen": "Cartes choisies"
   },
   "selector": {
     "searchPlaceholder": "Rechercher une carte…",
@@ -67,5 +73,7 @@
     "choose": "Choisir {title}",
     "less": "Moins",
     "more": "Plus"
-  }
+  },
+  "counterBadge": "Contre-proposition",
+  "counterAction": "Contre-proposer"
 }
