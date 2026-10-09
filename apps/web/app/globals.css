@@ -780,6 +780,20 @@ body {
 .wk .pill:empty {
   display: none;
 }
+/* nom de l'œuvre au bas d'une carte anime / manga */
+.wk .series {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.55em;
+  font-weight: 800;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wk .series + .pill {
+  margin-left: 0.6em;
+}
 
 .wk::before,
 .wk::after {

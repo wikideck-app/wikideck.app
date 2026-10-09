@@ -104,6 +104,11 @@ export function WikiCard({
         </div>
 
         <div className="st">
+          {card.source === "ANILIST" && card.description && (
+            <span className="series" title={card.description}>
+              {card.description}
+            </span>
+          )}
           <b className="pill">{pill}</b>
         </div>
       </article>
