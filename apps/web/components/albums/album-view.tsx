@@ -91,6 +91,15 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
     null;
   const filtering = data.rarities.length > 0;
 
+  async function toggleProfile() {
+    setError(null);
+    const res = await apiCall(apiUrl, `/albums/${album.id}`, "PATCH", {
+      onProfile: !album.onProfile,
+    });
+    if (!res.ok) return setError(res.message);
+    router.refresh();
+  }
+
   async function rename() {
     const clean = name.trim().replace(/\s+/g, " ");
     if (!clean || busy) return;
@@ -198,6 +207,14 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
           </ol>
         </nav>
         <div className="flex gap-2">
+          <button
+            type="button"
+            aria-pressed={album.onProfile}
+            onClick={() => void toggleProfile()}
+            className={buttonClass}
+          >
+            {album.onProfile ? t("profile.hide") : t("profile.show")}
+          </button>
           <button type="button" onClick={() => void openMove()} className={buttonClass}>
             {t("move.button")}
           </button>

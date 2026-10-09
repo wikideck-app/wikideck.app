@@ -63,5 +63,6 @@
   "network": "Impossible de joindre le serveur.",
   "album_too_deep": "Les classeurs sont limités à 4 niveaux de sous-albums.",
   "album_cycle": "Un album ne peut pas être rangé dans l’un de ses propres sous-albums.",
-  "too_many_keys": "Vous avez atteint la limite de clés API actives."
+  "too_many_keys": "Vous avez atteint la limite de clés API actives.",
+  "profile_albums_full": "Vous pouvez afficher 6 albums au maximum sur votre profil : retirez-en un d’abord."
 }

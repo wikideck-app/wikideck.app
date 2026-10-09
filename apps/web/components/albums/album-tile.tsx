@@ -7,16 +7,20 @@ import { WikiCard } from "@/components/wiki-card";
 // éventail : la plus belle carte au centre, les deux suivantes de chaque côté
 const FAN = ["z-20 scale-110", "z-10 -translate-x-14 -rotate-6", "z-10 translate-x-14 rotate-6"];
 
-export function AlbumTile({ album: a }: { album: AlbumSummary }) {
+export function AlbumTile({ album: a, readOnly = false }: { album: AlbumSummary; readOnly?: boolean }) {
   const t = useTranslations("albums");
   return (
-    <div className="group relative rounded-xl border border-line bg-surface p-5 transition-colors hover:border-accent">
+    <div
+      className={`group relative rounded-xl border border-line bg-surface p-5 transition-colors ${readOnly ? "" : "hover:border-accent"}`}
+    >
       {/* lien étiré par-dessus : les cartes contiennent déjà un lien, pas de lien dans un lien */}
-      <Link
-        href={`/albums/${a.id}`}
-        aria-label={t("open", { name: a.name })}
-        className="absolute inset-0 z-30 rounded-xl"
-      />
+      {!readOnly && (
+        <Link
+          href={`/albums/${a.id}`}
+          aria-label={t("open", { name: a.name })}
+          className="absolute inset-0 z-30 rounded-xl"
+        />
+      )}
       <div className="relative flex h-40 items-center justify-center">
         {a.top.length === 0 ? (
           <BookBookmark className="size-14 text-fog" />

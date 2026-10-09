@@ -44,5 +44,16 @@
   "achievements": "Succès · {count} / {total}",
   "noAchievements": "Aucun succès débloqué pour l’instant.",
   "pickerTitle": "Ajouter une carte en vedette",
-  "pickerDescription": "Jusqu’à {max} cartes de votre collection, mises en avant sur votre profil."
+  "pickerDescription": "Jusqu’à {max} cartes de votre collection, mises en avant sur votre profil.",
+  "albums": "Albums · {count} / {max}",
+  "manageAlbums": "Choisir mes albums",
+  "noAlbums": "Aucun album affiché.",
+  "noAlbumsSelf": "Aucun album affiché. Utilisez « Choisir mes albums » pour en mettre en avant.",
+  "albumsPicker": {
+    "title": "Albums du profil",
+    "description": "Cochez les albums à afficher sur votre profil : {count} / {max}.",
+    "none": "Vous n’avez pas encore d’album.",
+    "cards": "{count, plural, one {# carte} other {# cartes}}",
+    "done": "Terminé"
+  }
 }

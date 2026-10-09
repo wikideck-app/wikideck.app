@@ -2,6 +2,7 @@
 
 import {
   ArrowLeftRight,
+  BookBookmark,
   Castle,
   Heart,
   Lock,
@@ -21,11 +22,14 @@ import { useState } from "react";
 import {
   ACHIEVEMENTS,
   FEATURED_MAX,
+  PROFILE_ALBUMS_MAX,
   RARITIES,
   WISHLIST_MAX,
   type CardDto,
   type ProfileDto,
 } from "@wikideck/shared";
+import { AlbumTile } from "@/components/albums/album-tile";
+import { ProfileAlbumsPicker } from "@/components/profile/profile-albums-picker";
 import { useConfirm } from "@/components/confirm-dialog";
 import { ACHIEVEMENT_ICONS } from "@/components/achievements/achievements-view";
 import { CardDetail } from "@/components/card-detail";
@@ -72,6 +76,7 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [picking, setPicking] = useState(false);
+  const [pickingAlbums, setPickingAlbums] = useState(false);
   const [detail, setDetail] = useState<(CardDto & { quantity: number }) | null>(null);
   const { player, stats } = profile;
 
@@ -330,6 +335,35 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
             </section>
           )}
 
+          {(profile.isSelf || profile.albums.length > 0) && (
+            <section className="mt-10">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className={`${heading} flex items-center gap-2`}>
+                  <BookBookmark className="size-3.5" />{" "}
+                  {t("albums", { count: profile.albums.length, max: PROFILE_ALBUMS_MAX })}
+                </h2>
+                {profile.isSelf && (
+                  <button
+                    type="button"
+                    onClick={() => setPickingAlbums(true)}
+                    className="text-xs text-fog underline hover:text-foreground"
+                  >
+                    {t("manageAlbums")}
+                  </button>
+                )}
+              </div>
+              {profile.albums.length === 0 ? (
+                <p className="mt-3 text-sm text-fog">{t(profile.isSelf ? "noAlbumsSelf" : "noAlbums")}</p>
+              ) : (
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {profile.albums.map((album) => (
+                    <AlbumTile key={album.id} album={album} readOnly={!profile.isSelf} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
           {(profile.isSelf || profile.wishlist.length > 0) && (
             <section className="mt-10">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -413,6 +447,15 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
         />
       )}
 
+      {pickingAlbums && (
+        <ProfileAlbumsPicker
+          apiUrl={apiUrl}
+          onClose={() => {
+            setPickingAlbums(false);
+            router.refresh();
+          }}
+        />
+      )}
       {detail && (
         <CardDetail
           card={detail}
