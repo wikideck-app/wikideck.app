@@ -1,27 +1,18 @@
 import { getTranslations } from "next-intl/server";
-import {
-  PACK_SIZE,
-  type DropRatesResponse,
-  PackStatus,
-  type ReferralInfo,
-  TagDto,
-} from "@wikideck/shared";
+import { PACK_SIZE, type DropRatesResponse, PackStatus, TagDto } from "@wikideck/shared";
 import { HowItWorks } from "@/components/how-it-works";
 import { PackOpener } from "@/components/pack-opener";
-import { ReferralCard } from "@/components/referral-card";
 import { API_URL, apiGet } from "@/lib/api";
-import { SITE_URL } from "@/lib/site";
 import { pageMetadata } from "@/i18n/metadata";
 
 export const generateMetadata = pageMetadata("packs");
 
 export default async function PacksPage() {
-  const [t, status, tags, drops, referral] = await Promise.all([
+  const [t, status, tags, drops] = await Promise.all([
     getTranslations("packs"),
     apiGet<PackStatus>("/packs"),
     apiGet<{ tags: TagDto[] }>("/tags"),
     apiGet<DropRatesResponse>("/cards/rates"),
-    apiGet<ReferralInfo>("/me/referral"),
   ]);
 
   return (
@@ -35,8 +26,6 @@ export default async function PacksPage() {
       ) : (
         <p className="mt-10 text-sm text-danger">{t("loadError")}</p>
       )}
-
-      {referral && <ReferralCard info={referral} siteUrl={SITE_URL} />}
     </div>
   );
 }

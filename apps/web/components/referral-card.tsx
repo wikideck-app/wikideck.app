@@ -22,7 +22,7 @@ export function ReferralCard({ info, siteUrl }: { info: ReferralInfo; siteUrl: s
   }
 
   return (
-    <section className="mt-12 w-full max-w-xl rounded-xl border border-line bg-surface p-5 text-left">
+    <section className="mt-6 w-full rounded-xl border border-line bg-surface p-5 text-left">
       <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-fog">
         <UserPlus className="size-3.5" /> {t("title")}
       </h2>

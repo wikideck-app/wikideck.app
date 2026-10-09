@@ -29,8 +29,10 @@ import {
   WISHLIST_MAX,
   type CardDto,
   type ProfileDto,
+  type ReferralInfo,
 } from "@wikideck/shared";
 import { AlbumTile } from "@/components/albums/album-tile";
+import { ReferralCard } from "@/components/referral-card";
 import { ProfileAlbumsPicker } from "@/components/profile/profile-albums-picker";
 import { useConfirm } from "@/components/confirm-dialog";
 import { ACHIEVEMENT_ICONS } from "@/components/achievements/achievements-view";
@@ -63,7 +65,18 @@ function Stat({
   );
 }
 
-export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: string }) {
+export function ProfileView({
+  profile,
+  apiUrl,
+  referral,
+  siteUrl,
+}: {
+  profile: ProfileDto;
+  apiUrl: string;
+  /** lien de parrainage, seulement sur son propre profil */
+  referral?: ReferralInfo | null;
+  siteUrl?: string;
+}) {
   const t = useTranslations("profile");
   const tc = useTranslations("common");
   const tAch = useTranslations("achievements");
@@ -248,6 +261,8 @@ export function ProfileView({ profile, apiUrl }: { profile: ProfileDto; apiUrl: 
           </p>
         )}
       </section>
+
+      {profile.isSelf && referral && siteUrl && <ReferralCard info={referral} siteUrl={siteUrl} />}
 
       {!profile.visible || !stats ? (
         <section className={`${panel} mt-6 flex items-center gap-4`}>
