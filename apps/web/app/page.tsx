@@ -14,7 +14,7 @@ import { getShowcase } from "@/lib/showcase";
 import { SITE_URL } from "@/lib/site";
 
 export default async function Page({ searchParams }: PageProps<"/">) {
-  const [user, { auth_error }, showcase, t] = await Promise.all([
+  const [user, { auth_error, ref }, showcase, t] = await Promise.all([
     getCurrentUser(),
     searchParams,
     getShowcase(),
@@ -83,6 +83,7 @@ export default async function Page({ searchParams }: PageProps<"/">) {
                 <DiscordAuth
                   apiUrl={API_URL}
                   error={typeof auth_error === "string" ? auth_error : undefined}
+                  referral={typeof ref === "string" ? ref : undefined}
                 />
               </div>
             </div>

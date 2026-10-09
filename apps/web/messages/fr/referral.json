@@ -1,0 +1,8 @@
+{
+  "title": "Parrainage",
+  "text": "Invitez un ami avec votre lien : à sa première connexion, vous recevez chacun {count, plural, one {# paquet} other {# paquets}} en plus.",
+  "linkLabel": "Votre lien de parrainage",
+  "copy": "Copier le lien",
+  "copied": "Copié",
+  "progress": "{count} / {max} filleuls récompensés"
+}

@@ -23,6 +23,7 @@ import packs from "./packs.json";
 import privacy from "./privacy.json";
 import profile from "./profile.json";
 import ranking from "./ranking.json";
+import referral from "./referral.json";
 import settings from "./settings.json";
 import staff from "./staff.json";
 import tags from "./tags.json";
@@ -58,6 +59,7 @@ const catalog = {
   privacy,
   profile,
   ranking,
+  referral,
   settings,
   staff,
   tags,

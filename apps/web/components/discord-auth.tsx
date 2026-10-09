@@ -3,7 +3,8 @@
 import { ArrowRight, Check, Info } from "@/components/icons";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { REFERRAL_CODE_PATTERN } from "@wikideck/shared";
 
 const ERROR_KEYS = ["denied", "state", "token", "profile", "banned"] as const;
 const isErrorKey = (value: string): value is (typeof ERROR_KEYS)[number] =>
@@ -11,14 +12,43 @@ const isErrorKey = (value: string): value is (typeof ERROR_KEYS)[number] =>
 
 const legalLink = "font-bold text-foreground underline underline-offset-2";
 
-export function DiscordAuth({ apiUrl, error }: { apiUrl: string; error?: string }) {
+const REFERRAL_STORAGE = "wikideck_ref";
+
+export function DiscordAuth({
+  apiUrl,
+  error,
+  referral,
+}: {
+  apiUrl: string;
+  error?: string;
+  /** code de parrainage du lien `/?ref=…` */
+  referral?: string;
+}) {
   const t = useTranslations("auth");
   const [accepted, setAccepted] = useState(false);
   const [missing, setMissing] = useState(false);
 
+  // le code survit à une navigation (CGU, confidentialité…) avant la connexion
+  useEffect(() => {
+    const code = referral?.toLowerCase();
+    if (!code || !REFERRAL_CODE_PATTERN.test(code)) return;
+    try {
+      localStorage.setItem(REFERRAL_STORAGE, code);
+    } catch {}
+  }, [referral]);
+
   function submit() {
     if (!accepted) return setMissing(true);
-    window.location.assign(`${apiUrl}/auth/discord`);
+    let code = referral?.toLowerCase() ?? "";
+    if (!REFERRAL_CODE_PATTERN.test(code)) {
+      try {
+        code = localStorage.getItem(REFERRAL_STORAGE) ?? "";
+      } catch {
+        code = "";
+      }
+    }
+    const query = REFERRAL_CODE_PATTERN.test(code) ? `?ref=${code}` : "";
+    window.location.assign(`${apiUrl}/auth/discord${query}`);
   }
 
   return (
