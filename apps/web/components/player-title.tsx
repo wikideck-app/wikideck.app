@@ -1,36 +1,60 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { playerTitle } from "@wikideck/shared";
+import { animeTitle, playerTitle } from "@wikideck/shared";
 
-/** Titre gagné avec le nombre de cartes Wikipédia différentes (l'anime / manga ne compte pas). */
-export function PlayerTitleBadge({ cards, className = "" }: { cards: number; className?: string }) {
+type Kind = "wikipedia" | "anime";
+
+// titre gagné avec le nombre de cartes différentes : Wikipédia d'un côté, anime / manga de l'autre
+function useTitle(kind: Kind, cards: number) {
   const t = useTranslations("titles");
+  const result = kind === "anime" ? animeTitle(cards) : playerTitle(cards);
+  const nameOf = (key: string) => t(`${kind === "anime" ? "animeNames" : "names"}.${key}` as never);
+  return { t, ...result, nameOf };
+}
+
+export function PlayerTitleBadge({
+  cards,
+  kind = "wikipedia",
+  className = "",
+}: {
+  cards: number;
+  kind?: Kind;
+  className?: string;
+}) {
   const format = useFormatter();
-  const { title } = playerTitle(cards);
+  const { t, title, nameOf } = useTitle(kind, cards);
   return (
     <span
-      title={t("hint", { count: format.number(title.min) })}
+      title={t(kind === "anime" ? "hintAnime" : "hint", { count: format.number(title.min) })}
       className={`inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-accent/10 px-3 py-1 text-xs font-bold ${className}`}
     >
       <span aria-hidden>{title.emoji}</span>
-      {t(`names.${title.key}`)}
+      {nameOf(title.key)}
     </span>
   );
 }
 
 /** Progression vers le titre suivant. */
-export function PlayerTitleProgress({ cards, className = "" }: { cards: number; className?: string }) {
-  const t = useTranslations("titles");
+export function PlayerTitleProgress({
+  cards,
+  kind = "wikipedia",
+  className = "",
+}: {
+  cards: number;
+  kind?: Kind;
+  className?: string;
+}) {
   const format = useFormatter();
-  const { title, next } = playerTitle(cards);
-  if (!next) return <p className={className}>{t("max", { name: `${title.emoji} ${t(`names.${title.key}`)}` })}</p>;
+  const { t, title, next, nameOf } = useTitle(kind, cards);
+  if (!next)
+    return <p className={className}>{t("max", { name: `${title.emoji} ${nameOf(title.key)}` })}</p>;
   const ratio = Math.min(1, (cards - title.min) / (next.min - title.min));
   return (
     <div className={className}>
       <p>
-        {t("next", {
-          name: `${next.emoji} ${t(`names.${next.key}`)}`,
+        {t(kind === "anime" ? "nextAnime" : "next", {
+          name: `${next.emoji} ${nameOf(next.key)}`,
           missing: format.number(next.min - cards),
           count: format.number(next.min),
         })}

@@ -168,6 +168,9 @@ export function ProfileView({
           <h1 className="font-display break-words text-3xl sm:truncate sm:text-4xl">{player.username}</h1>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-pale-mist sm:justify-start">
             {profile.stats && <PlayerTitleBadge cards={profile.stats.wikipediaCards} />}
+            {profile.stats && profile.stats.animeCards > 0 && (
+              <PlayerTitleBadge cards={profile.stats.animeCards} kind="anime" />
+            )}
             <span className="rounded-full border border-line px-3 py-1">
               {t("memberSince", { date: format.dateTime(new Date(profile.createdAt), "monthYear") })}
             </span>
@@ -194,10 +197,10 @@ export function ProfileView({
             )}
           </div>
           {profile.isSelf && profile.stats && (
-            <PlayerTitleProgress
-              cards={profile.stats.wikipediaCards}
-              className="mx-auto mt-3 max-w-md text-xs text-pale-mist sm:mx-0"
-            />
+            <div className="mx-auto mt-3 flex max-w-md flex-col gap-3 text-xs text-pale-mist sm:mx-0">
+              <PlayerTitleProgress cards={profile.stats.wikipediaCards} />
+              <PlayerTitleProgress cards={profile.stats.animeCards} kind="anime" />
+            </div>
           )}
         </div>
 

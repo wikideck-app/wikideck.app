@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ACHIEVEMENTS,
+  ANIME_TITLES,
   CATALOG_OWNERSHIP,
   CATALOG_SORTS,
   COLLECTION_SORTS,
@@ -37,6 +38,7 @@ describe("couverture des textes pilotés par les données", () => {
 
   it("chaque titre de joueur a un nom", () => {
     for (const t of PLAYER_TITLES) expect(has(`titles.names.${t.key}`), t.key).toBe(true);
+    for (const t of ANIME_TITLES) expect(has(`titles.animeNames.${t.key}`), t.key).toBe(true);
   });
 
   it("chaque succès a un nom et une description", () => {

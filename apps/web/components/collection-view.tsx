@@ -175,8 +175,14 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
       )}
 
       <div className="mt-6 flex flex-col items-center gap-2 text-center text-xs text-pale-mist">
-        <PlayerTitleBadge cards={data.sourceCounts.wikipedia} />
-        <PlayerTitleProgress cards={data.sourceCounts.wikipedia} />
+        <PlayerTitleBadge
+          cards={data.sourceCounts[data.source ?? "wikipedia"]}
+          kind={data.source ?? "wikipedia"}
+        />
+        <PlayerTitleProgress
+          cards={data.sourceCounts[data.source ?? "wikipedia"]}
+          kind={data.source ?? "wikipedia"}
+        />
       </div>
 
       <div

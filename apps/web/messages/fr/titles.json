@@ -15,5 +15,21 @@
     "master": "Maître du savoir",
     "legend": "Légende de Wikideck",
     "guardian": "Gardien de Wikipédia"
+  },
+  "hintAnime": "Titre obtenu à partir de {count} personnages anime / manga différents",
+  "nextAnime": "Prochain titre : {name}, à {count} personnages anime / manga · encore {missing}",
+  "animeNames": {
+    "newFan": "Nouveau fan",
+    "viewer": "Spectateur",
+    "otakuBeginner": "Otaku débutant",
+    "mangaReader": "Lecteur de mangas",
+    "fan": "Fan",
+    "enthusiast": "Passionné",
+    "otaku": "Otaku confirmé",
+    "heroHunter": "Chasseur de héros",
+    "sensei": "Sensei",
+    "otakuMaster": "Maître otaku",
+    "animationLegend": "Légende de l’animation",
+    "animeGuardian": "Gardien de l’anime"
   }
 }

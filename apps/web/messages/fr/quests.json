@@ -10,5 +10,10 @@
   "claim": "Récupérer",
   "locked": "À débloquer",
   "claimed": "Récupérée",
-  "claimedNotice": "Récompense récupérée : +{amount} wikibits."
+  "claimedNotice": "Récompense récupérée : +{amount} wikibits.",
+  "progressAnime": "{current} / {target} personnages anime / manga différents",
+  "sections": {
+    "wikipedia": "Wikipédia",
+    "anime": "Anime / Manga"
+  }
 }
