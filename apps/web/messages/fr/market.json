@@ -104,5 +104,11 @@
     "label": "Évolution des prix de vente",
     "average": "Moy. {value, number}",
     "price": "{price, number} wikibits"
+  },
+  "sourceLabel": "Type de cartes",
+  "sources": {
+    "all": "Toutes",
+    "wikipedia": "Wikipédia",
+    "anime": "Anime / Manga"
   }
 }

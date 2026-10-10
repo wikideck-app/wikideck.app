@@ -39,6 +39,7 @@ export function MarketView({ data, apiUrl }: { data: MarketResponse; apiUrl: str
     sort: data.sort,
     rarities: data.rarities,
     query: data.query,
+    source: data.source,
   };
   const filtering = data.rarities.length > 0;
 
@@ -97,6 +98,25 @@ export function MarketView({ data, apiUrl }: { data: MarketResponse; apiUrl: str
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div
+          role="tablist"
+          aria-label={t("sourceLabel")}
+          className="flex w-fit gap-1 rounded-2xl border border-line p-1"
+        >
+          {([null, "wikipedia", "anime"] as const).map((k) => (
+            <Link
+              key={k ?? "all"}
+              role="tab"
+              aria-selected={data.source === k}
+              href={marketHref({ ...base, source: k, page: 1 })}
+              className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
+                data.source === k ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
+              }`}
+            >
+              {t(`sources.${k ?? "all"}`)}
+            </Link>
+          ))}
+        </div>
         <div className="relative w-full max-w-xs">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
           <input

@@ -16,7 +16,7 @@ export default async function MarketPage({ searchParams }: PageProps<"/market">)
 
   const page = Math.max(1, Math.floor(Number(one(params.page))) || 1);
   const query = new URLSearchParams({ page: String(page) });
-  for (const key of ["view", "sort", "q", "rarity"] as const) {
+  for (const key of ["view", "sort", "q", "rarity", "source"] as const) {
     const value = one(params[key])?.trim();
     if (value) query.set(key, value);
   }

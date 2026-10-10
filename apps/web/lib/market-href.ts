@@ -1,4 +1,10 @@
-import { RARITIES, type MarketSort, type MarketView, type Rarity } from "@wikideck/shared";
+import {
+  RARITIES,
+  type MarketSort,
+  type MarketView,
+  type PackKind,
+  type Rarity,
+} from "@wikideck/shared";
 
 export type MarketViewState = {
   page?: number;
@@ -6,10 +12,12 @@ export type MarketViewState = {
   sort?: MarketSort;
   rarities?: Rarity[];
   query?: string;
+  source?: PackKind | null;
 };
 
-export function marketHref({ page, view, sort, rarities, query }: MarketViewState) {
+export function marketHref({ page, view, sort, rarities, query, source }: MarketViewState) {
   const qs = new URLSearchParams();
+  if (source) qs.set("source", source);
   if (query) qs.set("q", query);
   if (view && view !== "all") qs.set("view", view);
   if (sort && sort !== "ending") qs.set("sort", sort);
