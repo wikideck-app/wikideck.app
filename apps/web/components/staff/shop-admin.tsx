@@ -317,7 +317,7 @@ export function ShopAdmin({ apiUrl }: { apiUrl: string }) {
       ) : items.length === 0 ? (
         <p className="mt-6 text-sm text-fog">{t("none")}</p>
       ) : (
-        <ul className="mt-6 divide-y divide-line rounded-xl border border-line bg-surface">
+        <ul className="mt-6 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
           {items.map((i) => (
             <li key={i.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 text-sm">
               <div className="min-w-48 flex-1">

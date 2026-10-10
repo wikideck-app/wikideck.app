@@ -323,7 +323,7 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
           {a.bids.length === 0 ? (
             <p className="mt-3 text-sm text-fog">{t("noBids")}</p>
           ) : (
-            <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface">
+            <ul className="mt-3 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
               {a.bids.map((b, i) => (
                 <li
                   key={b.id}

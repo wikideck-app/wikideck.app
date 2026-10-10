@@ -130,7 +130,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
           />
         </div>
         {searching && (
-          <ul className="mt-3 max-w-md divide-y divide-line rounded-xl border border-line bg-surface">
+          <ul className="mt-3 max-w-md divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
             {results.length === 0 && (
               <li className="p-3 text-sm text-fog">
                 {t("noResult")}
@@ -285,7 +285,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
             {data.incoming.length === 0 ? (
               <p className="mt-4 text-sm text-fog">{t("noReceived")}</p>
             ) : (
-              <ul className="mt-4 divide-y divide-line rounded-xl border border-line bg-surface">
+              <ul className="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
                 {data.incoming.map((r) => (
                   <li key={r.id} className="flex items-center gap-3 p-4">
                     <Avatar player={r.player} size="size-9" />
@@ -320,7 +320,7 @@ export function FriendsView({ initial, apiUrl }: { initial: FriendsResponse; api
             {data.outgoing.length === 0 ? (
               <p className="mt-4 text-sm text-fog">{t("noSent")}</p>
             ) : (
-              <ul className="mt-4 divide-y divide-line rounded-xl border border-line bg-surface">
+              <ul className="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
                 {data.outgoing.map((r) => (
                   <li key={r.id} className="flex items-center gap-3 p-4">
                     <Avatar player={r.player} size="size-9" />

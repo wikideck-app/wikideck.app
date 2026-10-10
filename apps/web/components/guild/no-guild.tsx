@@ -120,7 +120,7 @@ export function NoGuild({ apiUrl }: { apiUrl: string }) {
         ) : guilds.length === 0 ? (
           <p className="py-8 text-center text-sm text-fog">{t("empty")}</p>
         ) : (
-          <ul className="mt-4 divide-y divide-line rounded-xl border border-line bg-surface">
+          <ul className="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
             {guilds.map((g) => (
               <li key={g.id} className="flex items-center justify-between gap-3 p-4">
                 <div className="min-w-0">

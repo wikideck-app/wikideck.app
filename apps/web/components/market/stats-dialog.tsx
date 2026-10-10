@@ -133,7 +133,7 @@ export function StatsDialog({
           {stats.recent.length === 0 ? (
             <p className="mt-3 text-sm text-fog">{t("noSales")}</p>
           ) : (
-            <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface">
+            <ul className="mt-3 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
               {stats.recent.map((s, i) => (
                 <li key={i} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
                   <span className="text-fog">{format.dateTime(new Date(s.at), "longTime")}</span>

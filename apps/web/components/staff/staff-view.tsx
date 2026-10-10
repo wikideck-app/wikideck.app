@@ -1538,7 +1538,7 @@ function Deleted({ apiUrl }: { apiUrl: string }) {
   return (
     <div className="mt-6">
       <p className="text-sm text-fog">{t("count", { count: data.total })}</p>
-      <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface">
+      <ul className="mt-3 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
         {data.accounts.map((a) => (
           <li key={a.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm">
             <strong className="min-w-32 flex-1 truncate">{a.username}</strong>
@@ -1727,7 +1727,7 @@ function ApiKeys({ apiUrl }: { apiUrl: string }) {
       ) : keys.length === 0 ? (
         <p className="mt-6 text-sm text-fog">{t("none")}</p>
       ) : (
-        <ul className="mt-6 divide-y divide-line rounded-xl border border-line bg-surface">
+        <ul className="mt-6 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
           {keys.map((k) => (
             <li key={k.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm">
               <strong className="min-w-32 flex-1 truncate">{k.name}</strong>

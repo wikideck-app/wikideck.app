@@ -414,7 +414,7 @@ function RankingTab({ apiUrl }: { apiUrl: string }) {
           {data.entries.length === 0 ? (
             <p className="mt-4 text-sm text-fog">{t("ranking.none")}</p>
           ) : (
-            <ul className="mt-4 divide-y divide-line rounded-xl border border-line bg-surface">
+            <ul className="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
               {data.entries.map(row)}
               {data.mine && <li className="px-4 py-1 text-center text-fog">…</li>}
               {data.mine && row(data.mine)}
