@@ -71,6 +71,7 @@
       "anime": "Anime / Manga"
     },
     "locked": "dès {count} cartes",
-    "done": "Terminé"
+    "done": "Terminé",
+    "none": "Aucun titre"
   }
 }

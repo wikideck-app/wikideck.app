@@ -24,6 +24,7 @@ import { useState } from "react";
 import {
   ACHIEVEMENTS,
   FEATURED_MAX,
+  NO_TITLE,
   PROFILE_ALBUMS_MAX,
   RARITIES,
   WISHLIST_MAX,
@@ -170,6 +171,7 @@ export function ProfileView({
           <h1 className="font-display break-words text-3xl sm:truncate sm:text-4xl">{player.username}</h1>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-pale-mist sm:justify-start">
             {profile.stats &&
+              profile.displayedTitle !== NO_TITLE &&
               (profile.displayedTitle ? (
                 <ChosenTitleBadge id={profile.displayedTitle} />
               ) : (

@@ -2,11 +2,7 @@
 
 import { Check, X } from "@/components/icons";
 import { useFormatter, useTranslations } from "next-intl";
-import {
-  ANIME_TITLES,
-  PLAYER_TITLES,
-  titleId,
-} from "@wikideck/shared";
+import { ANIME_TITLES, NO_TITLE, PLAYER_TITLES, titleId } from "@wikideck/shared";
 import { useState } from "react";
 import { buttonClass } from "@/components/settings/controls";
 import { apiCall } from "@/lib/tags-api";
@@ -97,6 +93,15 @@ export function TitlePicker({
         >
           <span className="flex-1 font-semibold">{t("automatic")}</span>
           {selected === null && <Check className="size-4 text-accent" />}
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void choose(NO_TITLE)}
+          className={`${option(selected === NO_TITLE)} mt-1.5`}
+        >
+          <span className="flex-1 font-semibold">{t("none")}</span>
+          {selected === NO_TITLE && <Check className="size-4 text-accent" />}
         </button>
         {(["wikipedia", "anime"] as const).map((kind) => (
           <section key={kind} className="mt-4">
