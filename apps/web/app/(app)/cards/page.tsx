@@ -15,6 +15,7 @@ export default async function CatalogPage({ searchParams }: PageProps<"/cards">)
 
   const page = Math.max(1, Math.floor(Number(one(params.page))) || 1);
   const query = new URLSearchParams({ page: String(page) });
+  if (one(params.source) === "anime") query.set("source", "anime");
   for (const key of ["sort", "show", "q", "rarity"] as const) {
     const value = one(params[key])?.trim();
     if (value) query.set(key, value);
@@ -30,7 +31,7 @@ export default async function CatalogPage({ searchParams }: PageProps<"/cards">)
     <div className="mx-auto max-w-[1600px]">
       <h1 className="text-center font-display text-5xl font-medium">{t("title")}</h1>
       <p className="prose-serif mt-2 text-center text-pale-mist">
-        {t("subtitle")}
+        {data?.source === "anime" ? t("subtitleAnime") : t("subtitle")}
       </p>
       {data && <CatalogSummary data={data} />}
       {!data ? (

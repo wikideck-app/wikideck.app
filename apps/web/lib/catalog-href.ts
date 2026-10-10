@@ -1,4 +1,10 @@
-import { RARITIES, type CatalogOwnership, type CatalogSort, type Rarity } from "@wikideck/shared";
+import {
+  RARITIES,
+  type CatalogOwnership,
+  type CatalogSort,
+  type PackKind,
+  type Rarity,
+} from "@wikideck/shared";
 
 export type CatalogViewState = {
   page?: number;
@@ -6,10 +12,12 @@ export type CatalogViewState = {
   ownership?: CatalogOwnership;
   rarities?: Rarity[];
   query?: string;
+  source?: PackKind;
 };
 
-export function catalogHref({ page, sort, ownership, rarities, query }: CatalogViewState) {
+export function catalogHref({ page, sort, ownership, rarities, query, source }: CatalogViewState) {
   const qs = new URLSearchParams();
+  if (source === "anime") qs.set("source", "anime");
   if (query) qs.set("q", query);
   if (sort && sort !== "rarity_desc") qs.set("sort", sort);
   if (ownership && ownership !== "all") qs.set("show", ownership);

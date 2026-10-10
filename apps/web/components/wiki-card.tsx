@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { BookBookmark } from "@/components/icons";
 import { useTranslations } from "next-intl";
-import { RARITIES, type CardDto, type TagColor } from "@wikideck/shared";
+import { RARITIES, isAnimeSource, type CardDto, type TagColor } from "@wikideck/shared";
 import { useRarityLabel } from "@/lib/labels";
 import { swatchStyle } from "@/lib/tag-style";
 
@@ -96,7 +96,11 @@ export function WikiCard({
               {t("inAlbum")}
             </span>
           )}
-          <span className="cr">{card.source === "ANILIST" ? t("creditAnilist") : t("credit")}</span>
+          <span className="cr">{card.source === "ANILIST"
+              ? t("creditAnilist")
+              : card.source === "KITSU"
+                ? t("creditKitsu")
+                : t("credit")}</span>
         </div>
 
         <div className="tx">
@@ -104,7 +108,7 @@ export function WikiCard({
         </div>
 
         <div className="st">
-          {card.source === "ANILIST" && card.description && (
+          {isAnimeSource(card.source) && card.description && (
             <span className="series" title={card.description}>
               {card.description}
             </span>

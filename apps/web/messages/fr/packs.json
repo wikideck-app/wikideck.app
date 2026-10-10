@@ -63,9 +63,9 @@
       "wikipedia": "Wikipédia",
       "anime": "Anime / Manga"
     },
-    "animeIntro": "Chaque carte est un personnage d’anime ou de manga, issu d’AniList. Sa rareté dépend de sa popularité : plus il a de favoris sur AniList, plus la carte est rare.",
+    "animeIntro": "Chaque carte est un personnage d’anime ou de manga, issu d’AniList ou de Kitsu. La rareté dépend de sa popularité : les personnages les plus aimés d’AniList sont les plus rares.",
     "animeRank": "Rang AniList",
-    "animeNote": "Le rang classe les personnages par nombre de favoris (1 = le plus aimé). Une fois la rareté tirée, chaque personnage de la tranche a la même chance de sortir. Seuls les 5 000 personnages les plus populaires sont en jeu. Une légendaire sur 20 sort en version mythique.",
+    "animeNote": "Pour les personnages d’AniList, le rang classe les personnages par nombre de favoris (1 = le plus aimé) et chaque personnage de la tranche a la même chance de sortir. Les personnages de Kitsu, bien plus nombreux, sont communs, peu communs ou rares selon leur rôle et la popularité de leur œuvre. Une légendaire sur 20 sort en version mythique.",
     "animeSpecialTitle": "Particularités",
     "animeSpecialText": "Les paquets anime / manga ont leur propre réserve et leur propre recharge. Ils n’ont ni God Pack ni booster de chance."
   },

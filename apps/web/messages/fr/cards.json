@@ -29,7 +29,8 @@
     "credit": "Wikipédia · CC BY-SA",
     "inAlbum": "Album",
     "inAlbumTitle": "Rangée dans un album",
-    "creditAnilist": "Personnage · AniList"
+    "creditAnilist": "Personnage · AniList",
+    "creditKitsu": "Personnage · Kitsu"
   },
   "detail": {
     "sell": "Mettre aux enchères",
@@ -41,7 +42,9 @@
     "noFreeImage": "Wikipédia n’a pas d’image libre de droits pour cet article.",
     "license": "Texte de l’article : CC BY-SA 4.0 — crédits sur la page Wikipédia.",
     "viewOnAnilist": "Voir le personnage sur AniList",
-    "licenseAnilist": "Données et images : AniList. Les personnages et œuvres appartiennent à leurs ayants droit."
+    "licenseAnilist": "Données et images : AniList. Les personnages et œuvres appartiennent à leurs ayants droit.",
+    "viewOnKitsu": "Voir le personnage sur Kitsu",
+    "licenseKitsu": "Données et images : Kitsu. Les personnages et œuvres appartiennent à leurs ayants droit."
   },
   "catalog": {
     "title": "Toutes les cartes",
@@ -56,6 +59,12 @@
     "owners": "{count, plural, =0 {Jamais tirée} one {# joueur} other {# joueurs}}",
     "ownedBy": "{count, plural, =0 {Aucun joueur ne la possède pour l’instant} one {Possédée par # joueur} other {Possédée par # joueurs}}",
     "youMiss": " · il vous manque cette carte",
-    "summary": "{catalog, plural, one {# carte} other {# cartes}} au total · vous en possédez {owned, number}"
+    "summary": "{catalog, plural, one {# carte} other {# cartes}} au total · vous en possédez {owned, number}",
+    "subtitleAnime": "Chaque personnage d’anime ou de manga d’AniList est une carte.",
+    "sourceLabel": "Catalogue",
+    "sources": {
+      "wikipedia": "Wikipédia",
+      "anime": "Anime / Manga"
+    }
   }
 }

@@ -3,7 +3,7 @@
 import { ArrowUpRight, Gavel, Lock, Recycle, X } from "@/components/icons";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, type ReactNode } from "react";
-import { RECYCLE_VALUES, type CardDto } from "@wikideck/shared";
+import { RECYCLE_VALUES, isAnimeSource, type CardDto } from "@wikideck/shared";
 import { buttonClass, primaryButtonClass } from "@/components/settings/controls";
 import { WikiCard } from "@/components/wiki-card";
 import { AlbumPicker } from "@/components/albums/album-picker";
@@ -132,16 +132,24 @@ export function CardDetail({
             rel="noreferrer"
             className="mt-4 inline-flex items-center gap-1 font-bold text-pale-mist hover:text-foreground"
           >
-            {card.source === "ANILIST" ? t("viewOnAnilist") : t("viewOnWikipedia")}
+            {card.source === "ANILIST"
+              ? t("viewOnAnilist")
+              : card.source === "KITSU"
+                ? t("viewOnKitsu")
+                : t("viewOnWikipedia")}
             <ArrowUpRight className="size-4" />
           </a>
-          {!card.imageUrl && card.source !== "ANILIST" && (
+          {!card.imageUrl && !isAnimeSource(card.source) && (
             <p className="mt-3 text-xs text-fog">
               {t("noFreeImage")}
             </p>
           )}
           <p className="mt-3 text-xs opacity-50">
-            {card.source === "ANILIST" ? t("licenseAnilist") : t("license")}
+            {card.source === "ANILIST"
+              ? t("licenseAnilist")
+              : card.source === "KITSU"
+                ? t("licenseKitsu")
+                : t("license")}
           </p>
         </div>
       </div>

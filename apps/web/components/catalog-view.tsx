@@ -34,6 +34,7 @@ export function CatalogView({ data, apiUrl }: { data: CatalogResponse; apiUrl: s
     ownership: data.ownership,
     rarities: data.rarities,
     query: data.query,
+    source: data.source,
   };
   const filtering = data.rarities.length > 0;
 
@@ -60,7 +61,27 @@ export function CatalogView({ data, apiUrl }: { data: CatalogResponse; apiUrl: s
 
   return (
     <>
-      <div className="relative mt-8 max-w-sm">
+      <div
+        role="tablist"
+        aria-label={t("catalog.sourceLabel")}
+        className="mx-auto mt-8 flex w-fit gap-1 rounded-2xl border border-line p-1"
+      >
+        {(["wikipedia", "anime"] as const).map((k) => (
+          <Link
+            key={k}
+            role="tab"
+            aria-selected={data.source === k}
+            href={catalogHref({ sort: data.sort, ownership: data.ownership, source: k })}
+            className={`rounded-full px-5 py-1.5 text-sm font-semibold transition-colors ${
+              data.source === k ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
+            }`}
+          >
+            {t(`catalog.sources.${k}`)}
+          </Link>
+        ))}
+      </div>
+
+      <div className="relative mt-6 max-w-sm">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
         <input
           type="search"
