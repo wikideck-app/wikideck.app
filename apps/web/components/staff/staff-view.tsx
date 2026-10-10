@@ -643,46 +643,57 @@ function Member({
             <>
               <h3 className={`${heading} mt-6`}>{tm("economy")}</h3>
               <div className="mt-3 flex flex-col gap-4">
-                <form
-                  className="flex flex-wrap gap-2"
-                  onSubmit={async (e) => {
-                    e.preventDefault();
+                {(() => {
+                  // montant saisi en positif ; « Ajouter » crédite, « Retirer » débite
+                  const value = Math.abs(Number(amount));
+                  const invalid =
+                    busy || !Number.isInteger(value) || value === 0 || bitsReason.trim().length < 3;
+                  const apply = async (sign: 1 | -1) => {
                     const ok = await run(
-                      { action: "wikibits", amount: Number(amount), reason: bitsReason },
+                      { action: "wikibits", amount: sign * value, reason: bitsReason },
                       tm("balanceUpdated"),
                     );
                     if (ok) {
                       setAmount("");
                       setBitsReason("");
                     }
-                  }}
-                >
-                  <input
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    inputMode="numeric"
-                    placeholder={tm("bitsPlaceholder")}
-                    className={`${field} w-28`}
-                  />
-                  <input
-                    value={bitsReason}
-                    onChange={(e) => setBitsReason(e.target.value)}
-                    placeholder={tm("reason")}
-                    className={`${field} min-w-40 flex-1`}
-                  />
-                  <button
-                    type="submit"
-                    className={buttonClass}
-                    disabled={
-                      busy ||
-                      !Number.isInteger(Number(amount)) ||
-                      !Number(amount) ||
-                      bitsReason.trim().length < 3
-                    }
-                  >
-                    {tm("apply")}
-                  </button>
-                </form>
+                  };
+                  return (
+                    <form
+                      className="flex flex-wrap gap-2"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!invalid) void apply(1);
+                      }}
+                    >
+                      <input
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        inputMode="numeric"
+                        placeholder={tm("bitsPlaceholder")}
+                        aria-label={tm("bitsPlaceholder")}
+                        className={`${field} w-32`}
+                      />
+                      <input
+                        value={bitsReason}
+                        onChange={(e) => setBitsReason(e.target.value)}
+                        placeholder={tm("reason")}
+                        className={`${field} min-w-40 flex-1`}
+                      />
+                      <button type="submit" className={buttonClass} disabled={invalid}>
+                        {tm("bitsAdd")}
+                      </button>
+                      <button
+                        type="button"
+                        className={dangerButtonClass}
+                        disabled={invalid}
+                        onClick={() => void apply(-1)}
+                      >
+                        {tm("bitsRemove")}
+                      </button>
+                    </form>
+                  );
+                })()}
                 <form
                   className="flex gap-2"
                   onSubmit={async (e) => {

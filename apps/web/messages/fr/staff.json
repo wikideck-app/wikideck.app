@@ -135,7 +135,7 @@
     "banned": "Compte suspendu.",
     "outranked": "Ce compte a un rang égal ou supérieur au vôtre : seules ses informations sont consultables.",
     "economy": "Économie et rôles",
-    "bitsPlaceholder": "± wikibits",
+    "bitsPlaceholder": "Montant (wikibits)",
     "reason": "Motif (obligatoire)",
     "apply": "Appliquer",
     "balanceUpdated": "Solde modifié.",
@@ -148,7 +148,9 @@
     "danger": "Zone dangereuse",
     "dangerText": "Supprime définitivement le compte et ses données, sans retour possible. Si le joueur a des enchères en cours, annulez-les d’abord. Pour une simple sanction, préférez la suspension.",
     "typeName": "Tapez « {name} » pour confirmer",
-    "actionsOn": "Actions du staff sur ce compte"
+    "actionsOn": "Actions du staff sur ce compte",
+    "bitsAdd": "Ajouter",
+    "bitsRemove": "Retirer"
   },
   "alerts": {
     "intro": "Comptes dont les indices d’abus des 30 derniers jours totalisent au moins 30. Un indice seul ne restreint jamais un compte : vérifiez avant d’agir. Une alerte marquée comme lue ne revient que si un nouvel indice apparaît.",
