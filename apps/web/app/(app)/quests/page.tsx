@@ -1,0 +1,22 @@
+import { getTranslations } from "next-intl/server";
+import type { QuestsResponse } from "@wikideck/shared";
+import { QuestsView } from "@/components/quests/quests-view";
+import { API_URL, apiGet } from "@/lib/api";
+import { pageMetadata } from "@/i18n/metadata";
+
+export const generateMetadata = pageMetadata("quests");
+
+export default async function QuestsPage() {
+  const [t, data] = await Promise.all([getTranslations("quests"), apiGet<QuestsResponse>("/quests")]);
+  return (
+    <div className="mx-auto max-w-3xl">
+      <h1 className="text-center font-display text-5xl font-medium">{t("title")}</h1>
+      <p className="prose-serif mt-2 text-center text-pale-mist">{t("subtitle")}</p>
+      {data ? (
+        <QuestsView initial={data} apiUrl={API_URL} />
+      ) : (
+        <p className="mt-10 text-center text-sm text-danger">{t("loadError")}</p>
+      )}
+    </div>
+  );
+}

@@ -5,6 +5,7 @@ import {
   CATALOG_SORTS,
   COLLECTION_SORTS,
   MARKET_SORTS,
+  PLAYER_TITLES,
   RANKING_BOARDS,
   RARITIES,
 } from "@wikideck/shared";
@@ -32,6 +33,10 @@ describe("couverture des textes pilotés par les données", () => {
         expect(has(`ranking.boards.${b.value}.${part}`), b.value).toBe(true);
       }
     }
+  });
+
+  it("chaque titre de joueur a un nom", () => {
+    for (const t of PLAYER_TITLES) expect(has(`titles.names.${t.key}`), t.key).toBe(true);
   });
 
   it("chaque succès a un nom et une description", () => {

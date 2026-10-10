@@ -32,6 +32,7 @@ import {
   type ReferralInfo,
 } from "@wikideck/shared";
 import { AlbumTile } from "@/components/albums/album-tile";
+import { PlayerTitleBadge, PlayerTitleProgress } from "@/components/player-title";
 import { ReferralCard } from "@/components/referral-card";
 import { ProfileAlbumsPicker } from "@/components/profile/profile-albums-picker";
 import { useConfirm } from "@/components/confirm-dialog";
@@ -166,6 +167,7 @@ export function ProfileView({
         <div className="w-full min-w-0 sm:w-auto sm:flex-1">
           <h1 className="font-display break-words text-3xl sm:truncate sm:text-4xl">{player.username}</h1>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-pale-mist sm:justify-start">
+            {profile.stats && <PlayerTitleBadge cards={profile.stats.wikipediaCards} />}
             <span className="rounded-full border border-line px-3 py-1">
               {t("memberSince", { date: format.dateTime(new Date(profile.createdAt), "monthYear") })}
             </span>
@@ -191,6 +193,12 @@ export function ProfileView({
               </span>
             )}
           </div>
+          {profile.isSelf && profile.stats && (
+            <PlayerTitleProgress
+              cards={profile.stats.wikipediaCards}
+              className="mx-auto mt-3 max-w-md text-xs text-pale-mist sm:mx-0"
+            />
+          )}
         </div>
 
         <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:w-auto sm:justify-start">

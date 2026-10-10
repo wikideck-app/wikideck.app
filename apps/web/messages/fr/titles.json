@@ -1,0 +1,19 @@
+{
+  "hint": "Titre obtenu à partir de {count} cartes Wikipédia différentes",
+  "next": "Prochain titre : {name}, à {count} cartes Wikipédia · encore {missing}",
+  "max": "Titre maximal atteint : {name}",
+  "names": {
+    "newPlayer": "Nouveau joueur",
+    "reader": "Lecteur",
+    "curious": "Curieux",
+    "amateur": "Amateur",
+    "connoisseur": "Connaisseur",
+    "scholar": "Érudit",
+    "encyclopedist": "Encyclopédiste",
+    "historian": "Historien",
+    "expert": "Expert",
+    "master": "Maître du savoir",
+    "legend": "Légende de Wikideck",
+    "guardian": "Gardien de Wikipédia"
+  }
+}

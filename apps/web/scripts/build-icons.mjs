@@ -72,6 +72,7 @@ const ICONS = {
   StarFill: "star-fill",
   Sun: "sun-bold",
   Swords: "sword-bold",
+  Scroll: "scroll-bold",
   ShoppingBag: "shopping-bag-bold",
   Tags: "tag-bold",
   Trash2: "trash-bold",

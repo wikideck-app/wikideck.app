@@ -34,6 +34,7 @@ import { Wikibits } from "@/components/wikibit";
 import { SelectMenu } from "@/components/select-menu";
 import { ManageTags } from "@/components/manage-tags";
 import { TagChip } from "@/components/tag-chip";
+import { PlayerTitleBadge, PlayerTitleProgress } from "@/components/player-title";
 import { TagEditor } from "@/components/tag-editor";
 import { WikiCard } from "@/components/wiki-card";
 import { useRarityLabel } from "@/lib/labels";
@@ -173,10 +174,15 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
         />
       )}
 
+      <div className="mt-6 flex flex-col items-center gap-2 text-center text-xs text-pale-mist">
+        <PlayerTitleBadge cards={data.sourceCounts.wikipedia} />
+        <PlayerTitleProgress cards={data.sourceCounts.wikipedia} />
+      </div>
+
       <div
         role="tablist"
         aria-label={t("sourceLabel")}
-        className="mx-auto mt-8 flex w-fit gap-1 rounded-2xl border border-line p-1"
+        className="mx-auto mt-6 flex w-fit gap-1 rounded-2xl border border-line p-1"
       >
         {(["wikipedia", "anime"] as const).map((k) => (
           <Link

@@ -82,6 +82,9 @@
     },
     "boutique-staff": {
       "title": "Boutique (administrateur)"
+    },
+    "quetes": {
+      "title": "Quêtes"
     }
   },
   "endpoints": {
@@ -620,6 +623,12 @@
     },
     "delete-staff-shop-id": {
       "summary": "Supprime un article ; les achats déjà faits sont conservés."
+    },
+    "get-quests": {
+      "summary": "Quêtes avec ta progression, ce que tu peux récupérer et ce qui est déjà récupéré."
+    },
+    "post-quests-id-claim": {
+      "summary": "Récupère la récompense en wikibits d'une quête atteinte (une seule fois). L'identifiant contient « : » : encode-le dans l'adresse."
     }
   }
 }

@@ -1,0 +1,14 @@
+{
+  "title": "Quêtes",
+  "subtitle": "Atteignez des objectifs et récupérez des wikibits en récompense.",
+  "balance": "Votre solde : <amount></amount>",
+  "summary": "{done} / {total} quêtes terminées",
+  "toClaim": "{count, plural, one {# récompense à récupérer} other {# récompenses à récupérer}}",
+  "loadError": "Impossible de charger les quêtes.",
+  "questTitle": "Atteindre le titre « {name} »",
+  "progress": "{current} / {target} cartes Wikipédia différentes",
+  "claim": "Récupérer",
+  "locked": "À débloquer",
+  "claimed": "Récupérée",
+  "claimedNotice": "Récompense récupérée : +{amount} wikibits."
+}

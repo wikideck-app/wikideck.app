@@ -22,6 +22,7 @@ import notifications from "./notifications.json";
 import packs from "./packs.json";
 import privacy from "./privacy.json";
 import profile from "./profile.json";
+import quests from "./quests.json";
 import ranking from "./ranking.json";
 import referral from "./referral.json";
 import settings from "./settings.json";
@@ -29,6 +30,7 @@ import shop from "./shop.json";
 import staff from "./staff.json";
 import tags from "./tags.json";
 import terms from "./terms.json";
+import titles from "./titles.json";
 import trades from "./trades.json";
 import wheel from "./wheel.json";
 import wishlist from "./wishlist.json";
@@ -59,6 +61,7 @@ const catalog = {
   packs,
   privacy,
   profile,
+  quests,
   ranking,
   referral,
   settings,
@@ -66,6 +69,7 @@ const catalog = {
   staff,
   tags,
   terms,
+  titles,
   trades,
   wheel,
   wishlist,

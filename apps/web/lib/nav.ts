@@ -9,6 +9,7 @@ import {
   Notebook,
   MessageCircle,
   Puzzle,
+  Scroll,
   Settings,
   ShoppingBag,
   Swords,
@@ -24,7 +25,7 @@ export type NavGroup = "play" | "community" | "competition" | "account";
 export type NavSlug =
   | "packs" | "collection" | "albums" | "cards" | "wheel" | "wishlist" | "shop"
   | "trades" | "market" | "guild" | "friends" | "messages"
-  | "battle" | "achievements" | "ranking" | "profile" | "settings";
+  | "battle" | "achievements" | "quests" | "ranking" | "profile" | "settings";
 export type NavItem = { slug: NavSlug; icon: IconType; group: NavGroup };
 
 export const NAV_GROUPS: NavGroup[] = ["play", "community", "competition", "account"];
@@ -44,6 +45,7 @@ export const NAV: NavItem[] = [
   { slug: "messages", icon: MessageCircle, group: "community" },
   { slug: "battle", icon: Swords, group: "competition" },
   { slug: "achievements", icon: Trophy, group: "competition" },
+  { slug: "quests", icon: Scroll, group: "competition" },
   { slug: "ranking", icon: Medal, group: "competition" },
   { slug: "profile", icon: User, group: "account" },
   { slug: "settings", icon: Settings, group: "account" },

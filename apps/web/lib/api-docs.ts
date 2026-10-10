@@ -152,6 +152,13 @@ export const USER_DOCS: DocSection[] = [
     ],
   },
   {
+    id: "quetes",
+    endpoints: [
+      { key: "get-quests", method: "GET", path: "/quests", limit: { max: 60, minutes: 1 } },
+      { key: "post-quests-id-claim", method: "POST", path: "/quests/{id}/claim", errors: ["not_found", "quest_not_ready", "quest_already_claimed"], limit: { max: 30, minutes: 1 } },
+    ],
+  },
+  {
     id: "boutique",
     endpoints: [
       { key: "get-shop", method: "GET", path: "/shop", limit: { max: 60, minutes: 1 } },
