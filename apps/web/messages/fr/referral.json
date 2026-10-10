@@ -1,6 +1,6 @@
 {
   "title": "Parrainage",
-  "text": "Invitez un ami avec votre lien : à sa première connexion, vous recevez chacun {count, plural, one {# paquet} other {# paquets}} en plus.",
+  "text": "Invitez un ami avec votre lien : à sa première connexion, vous recevez chacun {count, plural, one {# paquet bonus} other {# paquets bonus}}. Les paquets bonus s’ajoutent à vos réserves et ne bloquent jamais leur recharge.",
   "linkLabel": "Votre lien de parrainage",
   "copy": "Copier le lien",
   "copied": "Copié",

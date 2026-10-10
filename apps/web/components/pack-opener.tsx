@@ -120,6 +120,9 @@ export function PackOpener({
   const [kind, setKind] = useState<PackKind>("wikipedia");
   const status: PackStatus =
     kind === "anime" && full.anime ? { ...full.anime, boosts: 0 } : full;
+  // paquets bonus (parrainage) : ils prennent le relais quand la réserve du type choisi est vide
+  const bonus = full.bonus ?? 0;
+  const available = status.packs + (status.packs < 1 ? bonus : 0);
   const [useBoost, setUseBoost] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [cards, setCards] = useState<OpenPackResponse["cards"]>([]);
@@ -299,7 +302,7 @@ export function PackOpener({
       if (phase === "idle") {
         if (key === " ") {
           e.preventDefault();
-          if (status.packs >= 1 && !e.repeat) void open();
+          if (available >= 1 && !e.repeat) void open();
         }
         return;
       }
@@ -348,7 +351,7 @@ export function PackOpener({
     flipped,
     detailOpen,
     cinematic,
-    status.packs,
+    available,
     open,
     revealCurrent,
     backToIdle,
@@ -476,7 +479,7 @@ export function PackOpener({
             {last ? t("finish") : t("more", { count: left })}
           </button>
 
-          {last && status.packs > 0 && (
+          {last && available > 0 && (
             <button
               type="button"
               onClick={() => {
@@ -485,7 +488,7 @@ export function PackOpener({
               }}
               className="rounded-lg border border-foreground/20 px-8 py-2.5 text-sm font-bold transition hover:bg-foreground/10"
             >
-              {t("nextPack", { count: status.packs })}
+              {t("nextPack", { count: available })}
             </button>
           )}
         </div>
@@ -551,7 +554,7 @@ export function PackOpener({
   }
 
   const dragStart = (e: React.PointerEvent<HTMLElement>) => {
-    if (phase !== "idle" || status.packs < 1) return;
+    if (phase !== "idle" || available < 1) return;
     const box = e.currentTarget.getBoundingClientRect();
     drag.current = { x: e.clientX, y: e.clientY, w: box.width, h: box.height };
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -572,7 +575,7 @@ export function PackOpener({
   };
 
   const busy = phase !== "idle";
-  const canTear = !busy && status.packs >= 1;
+  const canTear = !busy && available >= 1;
   const tearAngle = torn ? 55 : tear * 55;
   return (
     <div className="flex flex-col items-center">
@@ -688,7 +691,7 @@ export function PackOpener({
       <button
         type="button"
         onClick={open}
-        disabled={busy || status.packs < 1}
+        disabled={busy || available < 1}
         className="mt-6 rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70 disabled:opacity-40"
       >
         {busy ? t("opening") : t("open")}
@@ -719,7 +722,7 @@ export function PackOpener({
           {t("queued")}
         </p>
       )}
-      {!busy && status.packs >= 1 && (
+      {!busy && available >= 1 && (
         <p className="mt-1 hidden text-xs opacity-40 sm:block">{t("spaceHint")}</p>
       )}
 
@@ -733,8 +736,12 @@ export function PackOpener({
         <p className="text-xl font-bold">
           <span>{status.packs}</span>
           <span className="opacity-50"> / {status.max}</span>
+          {bonus > 0 && <span className="ml-2 text-base text-accent">+ {bonus}</span>}
         </p>
         <p className="text-xs opacity-60">{t("available")}</p>
+        {bonus > 0 && (
+          <p className="mt-1 max-w-56 text-xs text-accent">{t("bonus", { count: bonus })}</p>
+        )}
         {deadline !== null && remaining !== null && (
           <p className="mt-1 text-xs opacity-60">
             {t.rich("nextIn", {

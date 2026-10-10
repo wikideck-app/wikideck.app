@@ -80,5 +80,6 @@
     "shield": "Protection contre les doublons : {count, plural, one {# paquet} other {# paquets}} restant",
     "reduction": "Réduction des doublons jusqu’au {date}",
     "avoided": "{count, plural, one {# doublon évité} other {# doublons évités}}"
-  }
+  },
+  "bonus": "{count, plural, one {# paquet bonus (parrainage)} other {# paquets bonus (parrainage)}} : il{count, plural, one { sert} other { servent}} quand votre réserve est vide, sans bloquer la recharge."
 }

@@ -14,7 +14,9 @@ import { NAV, NAV_GROUPS, type NavGroup, type NavItem } from "@/lib/nav";
 type Props = {
   user: SessionUser;
   logoutUrl: string;
-  packs: (Pick<PackStatus, "packs" | "max"> & { anime?: Pick<PackStatus, "packs" | "max"> }) | null;
+  packs:
+    | (Pick<PackStatus, "packs" | "max" | "bonus"> & { anime?: Pick<PackStatus, "packs" | "max"> })
+    | null;
 };
 
 const chip =
@@ -54,7 +56,7 @@ function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
       title={t("packsAvailable")}
       aria-label={`${t("packsAvailable")} : ${wiki} ${packs.packs}/${packs.max}${
         packs.anime ? `, ${anime} ${packs.anime.packs}/${packs.anime.max}` : ""
-      }`}
+      }${(packs.bonus ?? 0) > 0 ? `, ${t("packsBonus")} ${packs.bonus}` : ""}`}
     >
       <span className="hidden text-[11px] uppercase tracking-[0.12em] text-pale-mist 2xl:inline">
         {t("packsShort")}
@@ -64,6 +66,14 @@ function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
         <>
           <span aria-hidden className="h-4 w-px bg-white/30" />
           <PackCount label={t("packsAnimeShort")} title={anime} packs={packs.anime} />
+        </>
+      )}
+      {(packs.bonus ?? 0) > 0 && (
+        <>
+          <span aria-hidden className="h-4 w-px bg-white/30" />
+          <span title={t("packsBonus")} className="tabular-nums text-(--bubblegum)">
+            +{packs.bonus}
+          </span>
         </>
       )}
     </Link>
