@@ -60,5 +60,17 @@
   "removeShowcase": "Retirer",
   "dragHint": "Glissez les cartes pour changer leur ordre.",
   "moveLeft": "Déplacer {title} vers la gauche",
-  "moveRight": "Déplacer {title} vers la droite"
+  "moveRight": "Déplacer {title} vers la droite",
+  "chooseTitle": "Choisir mon titre",
+  "titlePicker": {
+    "title": "Titre affiché",
+    "description": "Choisissez le titre affiché sur votre profil parmi ceux que vous avez obtenus.",
+    "automatic": "Automatique (mes titres les plus élevés)",
+    "sections": {
+      "wikipedia": "Wikipédia",
+      "anime": "Anime / Manga"
+    },
+    "locked": "dès {count} cartes",
+    "done": "Terminé"
+  }
 }

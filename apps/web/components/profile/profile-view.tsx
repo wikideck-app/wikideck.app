@@ -32,7 +32,8 @@ import {
   type ReferralInfo,
 } from "@wikideck/shared";
 import { AlbumTile } from "@/components/albums/album-tile";
-import { PlayerTitleBadge, PlayerTitleProgress } from "@/components/player-title";
+import { ChosenTitleBadge, PlayerTitleBadge, PlayerTitleProgress } from "@/components/player-title";
+import { TitlePicker } from "@/components/profile/title-picker";
 import { ReferralCard } from "@/components/referral-card";
 import { ProfileAlbumsPicker } from "@/components/profile/profile-albums-picker";
 import { useConfirm } from "@/components/confirm-dialog";
@@ -94,6 +95,7 @@ export function ProfileView({
   const [picking, setPicking] = useState(false);
   const [pickingShowcase, setPickingShowcase] = useState(false);
   const [pickingAlbums, setPickingAlbums] = useState(false);
+  const [pickingTitle, setPickingTitle] = useState(false);
   const [detail, setDetail] = useState<(CardDto & { quantity: number }) | null>(null);
   const { player, stats } = profile;
 
@@ -167,9 +169,25 @@ export function ProfileView({
         <div className="w-full min-w-0 sm:w-auto sm:flex-1">
           <h1 className="font-display break-words text-3xl sm:truncate sm:text-4xl">{player.username}</h1>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-pale-mist sm:justify-start">
-            {profile.stats && <PlayerTitleBadge cards={profile.stats.wikipediaCards} />}
-            {profile.stats && profile.stats.animeCards > 0 && (
-              <PlayerTitleBadge cards={profile.stats.animeCards} kind="anime" />
+            {profile.stats &&
+              (profile.displayedTitle ? (
+                <ChosenTitleBadge id={profile.displayedTitle} />
+              ) : (
+                <>
+                  <PlayerTitleBadge cards={profile.stats.wikipediaCards} />
+                  {profile.stats.animeCards > 0 && (
+                    <PlayerTitleBadge cards={profile.stats.animeCards} kind="anime" />
+                  )}
+                </>
+              ))}
+            {profile.isSelf && profile.stats && (
+              <button
+                type="button"
+                onClick={() => setPickingTitle(true)}
+                className="text-xs text-fog underline hover:text-foreground"
+              >
+                {t("chooseTitle")}
+              </button>
             )}
             <span className="rounded-full border border-line px-3 py-1">
               {t("memberSince", { date: format.dateTime(new Date(profile.createdAt), "monthYear") })}
@@ -590,6 +608,19 @@ export function ProfileView({
               void saveFeatured([...featuredIds, card.id]);
           }}
           onClose={() => setPicking(false)}
+        />
+      )}
+
+      {pickingTitle && profile.stats && (
+        <TitlePicker
+          apiUrl={apiUrl}
+          wikipediaCards={profile.stats.wikipediaCards}
+          animeCards={profile.stats.animeCards}
+          current={profile.displayedTitle}
+          onClose={(changed) => {
+            setPickingTitle(false);
+            if (changed) router.refresh();
+          }}
         />
       )}
 

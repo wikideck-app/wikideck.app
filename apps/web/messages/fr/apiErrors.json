@@ -71,5 +71,6 @@
   "shop_unavailable": "Cet article n’est pas (ou plus) en vente.",
   "shop_daily_limit_reached": "Vous avez atteint la limite d’achats du jour pour cet article : revenez demain.",
   "quest_not_ready": "Vous n’avez pas encore atteint cet objectif.",
-  "quest_already_claimed": "Vous avez déjà récupéré cette récompense."
+  "quest_already_claimed": "Vous avez déjà récupéré cette récompense.",
+  "title_locked": "Vous n’avez pas encore obtenu ce titre."
 }

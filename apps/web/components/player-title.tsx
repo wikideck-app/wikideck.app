@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { animeTitle, playerTitle } from "@wikideck/shared";
+import { ANIME_TITLES, PLAYER_TITLES, animeTitle, parseTitleId, playerTitle } from "@wikideck/shared";
 
 type Kind = "wikipedia" | "anime";
 
@@ -11,6 +11,25 @@ function useTitle(kind: Kind, cards: number) {
   const result = kind === "anime" ? animeTitle(cards) : playerTitle(cards);
   const nameOf = (key: string) => t(`${kind === "anime" ? "animeNames" : "names"}.${key}` as never);
   return { t, ...result, nameOf };
+}
+
+/** Titre précis choisi par le joueur (« wikipedia:scholar », « anime:sensei »). */
+export function ChosenTitleBadge({ id, className = "" }: { id: string; className?: string }) {
+  const t = useTranslations("titles");
+  const format = useFormatter();
+  const chosen = parseTitleId(id);
+  if (!chosen) return null;
+  const list = chosen.kind === "anime" ? ANIME_TITLES : PLAYER_TITLES;
+  const title = list.find((x) => x.key === chosen.key)!;
+  return (
+    <span
+      title={t(chosen.kind === "anime" ? "hintAnime" : "hint", { count: format.number(title.min) })}
+      className={`inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-accent/10 px-3 py-1 text-xs font-bold ${className}`}
+    >
+      <span aria-hidden>{title.emoji}</span>
+      {t(`${chosen.kind === "anime" ? "animeNames" : "names"}.${chosen.key}` as never)}
+    </span>
+  );
 }
 
 export function PlayerTitleBadge({

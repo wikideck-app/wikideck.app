@@ -1,19 +1,24 @@
 {
-  "title": "Quêtes",
-  "subtitle": "Atteignez des objectifs et récupérez des wikibits en récompense.",
-  "balance": "Votre solde : <amount></amount>",
+  "subtitle": "Atteignez des objectifs et récupérez des wikibits en récompense. Plus vous explorez, plus vous débloquez de nouvelles quêtes !",
   "summary": "{done} / {total} quêtes terminées",
   "toClaim": "{count, plural, one {# récompense à récupérer} other {# récompenses à récupérer}}",
   "loadError": "Impossible de charger les quêtes.",
-  "questTitle": "Atteindre le titre « {name} »",
-  "progress": "{current} / {target} cartes Wikipédia différentes",
   "claim": "Récupérer",
-  "locked": "À débloquer",
+  "locked": "En cours",
   "claimed": "Récupérée",
   "claimedNotice": "Récompense récupérée : +{amount} wikibits.",
-  "progressAnime": "{current} / {target} personnages anime / manga différents",
   "sections": {
     "wikipedia": "Wikipédia",
     "anime": "Anime / Manga"
-  }
+  },
+  "eyebrow": "Quêtes",
+  "heading": "Accomplissez des quêtes, <accent>gagnez des wikibits !</accent>",
+  "balanceLabel": "Votre solde",
+  "claimAll": "Tout récupérer",
+  "nothingToClaim": "Aucune récompense à récupérer",
+  "sectionHintWikipedia": "Explorez la connaissance et collectionnez des cartes sur tous les sujets !",
+  "sectionHintAnime": "Plongez dans l’univers de l’animation et collectionnez vos séries préférées !",
+  "finished": "{done} / {total} terminées",
+  "description": "Obtenir {target} cartes Wikipédia différentes.",
+  "descriptionAnime": "Obtenir {target} personnages anime / manga différents."
 }
