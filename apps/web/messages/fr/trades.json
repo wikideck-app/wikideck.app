@@ -72,7 +72,13 @@
     "remove": "Retirer {title}",
     "choose": "Choisir {title}",
     "less": "Moins",
-    "more": "Plus"
+    "more": "Plus",
+    "sourceLabel": "Type de cartes",
+    "sources": {
+      "all": "Toutes",
+      "wikipedia": "Wikipédia",
+      "anime": "Anime / Manga"
+    }
   },
   "counterBadge": "Contre-proposition",
   "counterAction": "Contre-proposer"

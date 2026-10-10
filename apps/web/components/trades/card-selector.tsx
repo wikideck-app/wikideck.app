@@ -24,6 +24,7 @@ export function CardSelector({
   const t = useTranslations("trades.selector");
   const tc = useTranslations("common");
   const [query, setQuery] = useState("");
+  const [source, setSource] = useState<"all" | "wikipedia" | "anime">("all");
   const [page, setPage] = useState(1);
   const [cards, setCards] = useState<CollectionCard[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -38,6 +39,7 @@ export function CardSelector({
         setLoading(true);
         const params = new URLSearchParams({ sort: "rarity_desc", page: String(page) });
         if (query.trim()) params.set("q", query.trim());
+        if (source !== "all") params.set("source", source);
         const result = await apiFetch<CollectionResponse>(apiUrl, `${endpoint}?${params}`);
         if (id !== requestId.current) return;
         if (!result.ok) {
@@ -52,7 +54,7 @@ export function CardSelector({
       page === 1 && query ? 300 : 0,
     );
     return () => clearTimeout(timer);
-  }, [apiUrl, endpoint, query, page]);
+  }, [apiUrl, endpoint, query, source, page]);
 
   function toggle(card: CollectionCard) {
     const next = new Map(selection);
@@ -69,6 +71,25 @@ export function CardSelector({
 
   return (
     <div>
+      <div role="tablist" aria-label={t("sourceLabel")} className="mb-3 flex w-fit gap-1 rounded-2xl border border-line p-1">
+        {(["all", "wikipedia", "anime"] as const).map((k) => (
+          <button
+            key={k}
+            type="button"
+            role="tab"
+            aria-selected={source === k}
+            onClick={() => {
+              setSource(k);
+              setPage(1);
+            }}
+            className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
+              source === k ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
+            }`}
+          >
+            {t(`sources.${k}`)}
+          </button>
+        ))}
+      </div>
       <div className="relative max-w-xs">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
         <input
