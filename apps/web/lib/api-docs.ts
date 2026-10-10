@@ -152,6 +152,13 @@ export const USER_DOCS: DocSection[] = [
     ],
   },
   {
+    id: "boutique",
+    endpoints: [
+      { key: "get-shop", method: "GET", path: "/shop", limit: { max: 60, minutes: 1 } },
+      { key: "post-shop-id-buy", method: "POST", path: "/shop/{id}/buy", errors: ["not_found", "insufficient_funds", "shop_sold_out", "shop_limit_reached", "shop_daily_limit_reached", "shop_unavailable"], limit: { max: 20, minutes: 1 } },
+    ],
+  },
+  {
     id: "bataille",
     endpoints: [
       { key: "get-battle-puzzle", method: "GET", path: "/battle/puzzle", limit: { max: 30, minutes: 1 } },
@@ -167,6 +174,15 @@ export const USER_DOCS: DocSection[] = [
 ];
 
 export const STAFF_DOCS: DocSection[] = [
+  {
+    id: "boutique-staff",
+    endpoints: [
+      { key: "get-staff-shop", method: "GET", path: "/staff/shop", limit: { max: 60, minutes: 1 } },
+      { key: "post-staff-shop", method: "POST", path: "/staff/shop", body: ["name", "kind", "amount", "price"], errors: ["invalid", "shop_full"] },
+      { key: "put-staff-shop-id", method: "PUT", path: "/staff/shop/{id}", body: ["name", "kind", "amount", "price"], errors: ["invalid", "not_found"] },
+      { key: "delete-staff-shop-id", method: "DELETE", path: "/staff/shop/{id}", errors: ["not_found"] },
+    ],
+  },
   {
     id: "tableau",
     endpoints: [

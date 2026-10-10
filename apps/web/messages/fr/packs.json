@@ -73,5 +73,10 @@
     "label": "Type de paquet",
     "wikipedia": "Wikipédia",
     "anime": "Anime / Manga"
+  },
+  "duplicates": {
+    "shield": "Protection contre les doublons : {count, plural, one {# paquet} other {# paquets}} restant",
+    "reduction": "Réduction des doublons jusqu’au {date}",
+    "avoided": "{count, plural, one {# doublon évité} other {# doublons évités}}"
   }
 }

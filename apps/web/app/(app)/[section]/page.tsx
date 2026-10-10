@@ -21,6 +21,7 @@ export function generateStaticParams() {
         "profile",
         "battle",
         "albums",
+        "shop",
       ].includes(item.slug),
   ).map(({ slug }) => ({ section: slug }));
 }

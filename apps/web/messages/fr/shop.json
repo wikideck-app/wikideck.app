@@ -1,0 +1,26 @@
+{
+  "title": "Boutique",
+  "subtitle": "Dépensez vos wikibits en paquets et en boosters.",
+  "balance": "Votre solde : <amount></amount>",
+  "empty": "La boutique est vide pour le moment. Revenez bientôt !",
+  "loadError": "Impossible de charger la boutique.",
+  "buy": "Acheter",
+  "soldOut": "Épuisé",
+  "limitReached": "Limite atteinte",
+  "tooExpensive": "Solde insuffisant",
+  "bought": "« {name} » acheté.",
+  "stock": "{count, plural, =0 {Plus d’exemplaire} one {# exemplaire restant} other {# exemplaires restants}}",
+  "limit": "Déjà acheté : {bought} / {max}",
+  "kinds": {
+    "WIKIPEDIA_PACKS": "{count, plural, one {# paquet Wikipédia} other {# paquets Wikipédia}}",
+    "ANIME_PACKS": "{count, plural, one {# paquet anime / manga} other {# paquets anime / manga}}",
+    "LUCK_BOOST": "{count, plural, one {# booster de chance} other {# boosters de chance}}",
+    "DUPLICATE_SHIELD": "Protection contre les doublons : {count, plural, one {# paquet} other {# paquets}}",
+    "DUPLICATE_REDUCTION": "Réduction des doublons pendant {count, plural, one {# heure} other {# heures}}"
+  },
+  "limitedTime": "Durée limitée",
+  "endsIn": "Se termine dans",
+  "ended": "Terminé",
+  "dailyLimit": "Aujourd’hui : {bought} / {max}",
+  "dailyLimitReached": "Revenez demain"
+}

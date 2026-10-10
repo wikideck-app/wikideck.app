@@ -23,12 +23,13 @@ import type {
   TrustLevel,
 } from "@wikideck/shared";
 import { useConfirm } from "@/components/confirm-dialog";
+import { ShopAdmin } from "@/components/staff/shop-admin";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
 import { Wikibits } from "@/components/wikibit";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
 type Tab =
-  "overview" | "members" | "alerts" | "reports" | "bugs" | "auctions" | "guilds" | "deleted" | "audit" | "apiKeys";
+  "overview" | "members" | "alerts" | "reports" | "bugs" | "auctions" | "guilds" | "deleted" | "audit" | "apiKeys" | "shop";
 
 const panel = "rounded-xl border border-line bg-surface p-5";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
@@ -115,6 +116,9 @@ function describe(row: StaffAuditRow, t: Translator) {
       return String(d.guild);
     case "api_key_create":
     case "api_key_revoke":
+    case "shop_create":
+    case "shop_update":
+    case "shop_delete":
       return t("audit.apiKey", { name: String(d.name) });
     case "guild_dissolve":
       return t("audit.guildDissolve", { guild: String(d.guild), count: Number(d.members) });
@@ -1765,7 +1769,7 @@ export function StaffView({
     "guilds",
     "deleted",
     "audit",
-    ...(role === "ADMIN" ? (["apiKeys"] as const) : []),
+    ...(role === "ADMIN" ? (["shop", "apiKeys"] as const) : []),
   ];
 
   return (
@@ -1819,6 +1823,7 @@ export function StaffView({
       {tab === "deleted" && <Deleted apiUrl={apiUrl} />}
       {tab === "audit" && <Audit apiUrl={apiUrl} onOpen={open} />}
       {tab === "apiKeys" && <ApiKeys apiUrl={apiUrl} />}
+      {tab === "shop" && <ShopAdmin apiUrl={apiUrl} />}
     </div>
   );
 }

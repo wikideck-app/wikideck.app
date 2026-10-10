@@ -64,5 +64,10 @@
   "album_too_deep": "Les classeurs sont limités à 4 niveaux de sous-albums.",
   "album_cycle": "Un album ne peut pas être rangé dans l’un de ses propres sous-albums.",
   "too_many_keys": "Vous avez atteint la limite de clés API actives.",
-  "profile_albums_full": "Vous pouvez afficher 6 albums au maximum sur votre profil : retirez-en un d’abord."
+  "profile_albums_full": "Vous pouvez afficher 6 albums au maximum sur votre profil : retirez-en un d’abord.",
+  "shop_sold_out": "Cet article est épuisé.",
+  "shop_limit_reached": "Vous avez atteint la limite d’achats pour cet article.",
+  "shop_full": "La boutique contient déjà le nombre maximum d’articles.",
+  "shop_unavailable": "Cet article n’est pas (ou plus) en vente.",
+  "shop_daily_limit_reached": "Vous avez atteint la limite d’achats du jour pour cet article : revenez demain."
 }

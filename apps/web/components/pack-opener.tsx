@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "@/components/icons";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -111,6 +111,7 @@ export function PackOpener({
 }) {
   const t = useTranslations("packs");
   const tc = useTranslations("common");
+  const format = useFormatter();
   const router = useRouter();
   const { settings } = useSettings();
   const { skip, speed } = settings.animations;
@@ -132,6 +133,7 @@ export function PackOpener({
   const [tear, setTear] = useState(0);
   const [torn, setTorn] = useState(false);
   const [godpack, setGodpack] = useState(false);
+  const [avoided, setAvoided] = useState(0);
   const [cinematic, setCinematic] = useState<{
     index: number;
     duration: number;
@@ -257,6 +259,7 @@ export function PackOpener({
       }
       const result = data as OpenPackResponse;
       setGodpack(!!result.godpack);
+      setAvoided(result.duplicatesAvoided ?? 0);
       if (!skip) {
         await wait(Math.max(0, MIN_SHAKE_MS / speed - (Date.now() - started)));
         setPhase("bursting");
@@ -364,6 +367,11 @@ export function PackOpener({
               <small>{t("godPackText")}</small>
             </div>
           </>
+        )}
+        {avoided > 0 && (
+          <p role="status" className="text-xs font-semibold text-success">
+            {t("duplicates.avoided", { count: avoided })}
+          </p>
         )}
         <p className="text-sm opacity-60">
           {t.rich("cardOf", {
@@ -594,6 +602,20 @@ export function PackOpener({
           ))}
         </div>
       )}
+      {(full.duplicateShield ?? 0) > 0 || full.duplicateReductionUntil ? (
+        <ul className="mt-4 flex flex-col items-center gap-1 text-xs text-pale-mist">
+          {(full.duplicateShield ?? 0) > 0 && (
+            <li>{t("duplicates.shield", { count: full.duplicateShield ?? 0 })}</li>
+          )}
+          {full.duplicateReductionUntil && (
+            <li>
+              {t("duplicates.reduction", {
+                date: format.dateTime(new Date(full.duplicateReductionUntil), "mediumTime"),
+              })}
+            </li>
+          )}
+        </ul>
+      ) : null}
       <div
         className="mt-6 flex items-center justify-center"
         style={kind === "anime" ? { filter: "hue-rotate(155deg) saturate(1.15)" } : undefined}

@@ -34,7 +34,10 @@
     "bug_resolve": "Bug résolu",
     "bug_dismiss": "Bug classé",
     "api_key_create": "Clé API créée",
-    "api_key_revoke": "Clé API révoquée"
+    "api_key_revoke": "Clé API révoquée",
+    "shop_create": "Article de boutique créé",
+    "shop_update": "Article de boutique modifié",
+    "shop_delete": "Article de boutique supprimé"
   },
   "auctionStatus": {
     "ACTIVE": "En cours",
@@ -52,7 +55,8 @@
     "guilds": "Guildes",
     "deleted": "Supprimés",
     "audit": "Journal",
-    "apiKeys": "Clés API"
+    "apiKeys": "Clés API",
+    "shop": "Boutique"
   },
   "audit": {
     "none": "Aucune action pour le moment.",
@@ -241,5 +245,56 @@
     "revokeTitle": "Révoquer la clé « {name} » ?",
     "revokeMessage": "Tout bot ou script qui l’utilise perdra l’accès immédiatement.",
     "revokeConfirm": "Révoquer"
+  },
+  "shop": {
+    "intro": "Créez les articles vendus dans la boutique, payés en wikibits. Un article inactif n’est plus visible des joueurs ; les achats déjà faits sont conservés même si l’article est supprimé.",
+    "newTitle": "Nouvel article",
+    "editTitle": "Modifier l’article",
+    "name": "Nom",
+    "kind": "Contenu",
+    "description": "Description (facultative)",
+    "amount": "Quantité par achat",
+    "price": "Prix (wikibits)",
+    "maxPerUser": "Achats maximum par joueur",
+    "stock": "Stock",
+    "unlimited": "Illimité",
+    "sortOrder": "Ordre d’affichage",
+    "active": "Visible dans la boutique",
+    "create": "Créer l’article",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "activate": "Activer",
+    "deactivate": "Désactiver",
+    "delete": "Supprimer",
+    "deleteTitle": "Supprimer « {name} » ?",
+    "deleteMessage": "L’article disparaît de la boutique. Les achats déjà faits ne sont pas annulés.",
+    "none": "Aucun article pour le moment : la boutique est vide.",
+    "inactive": "inactif",
+    "sold": "{count, plural, =0 {aucune vente} one {# vente} other {# ventes}}",
+    "stockLeft": "{count, plural, =0 {épuisé} one {# restant} other {# restants}}",
+    "kinds": {
+      "WIKIPEDIA_PACKS": "Paquets Wikipédia",
+      "ANIME_PACKS": "Paquets anime / manga",
+      "LUCK_BOOST": "Boosters de chance",
+      "DUPLICATE_SHIELD": "Protection contre les doublons",
+      "DUPLICATE_REDUCTION": "Réduction temporaire des doublons"
+    },
+    "availableFrom": "Disponible à partir du (facultatif)",
+    "availableUntil": "Disponible jusqu’au (facultatif)",
+    "windowHint": "Pour une offre à durée limitée, renseignez une date de fin : l’article disparaît de la boutique à ce moment-là, avec un compte à rebours pour les joueurs. Une date de début programme sa mise en vente.",
+    "scheduled": "programmé",
+    "expired": "terminé",
+    "from": "dès le {date}",
+    "until": "jusqu’au {date}",
+    "maxPerUserPerDay": "Achats maximum par joueur et par jour",
+    "perUserShort": "{count} max / joueur",
+    "perDayShort": "{count} max / joueur / jour",
+    "amountHint": {
+      "WIKIPEDIA_PACKS": "nombre de paquets",
+      "ANIME_PACKS": "nombre de paquets",
+      "LUCK_BOOST": "nombre de boosters",
+      "DUPLICATE_SHIELD": "nombre de paquets protégés : toute carte déjà possédée y est remplacée par une carte nouvelle de même rareté",
+      "DUPLICATE_REDUCTION": "durée en heures : pendant ce temps, une carte déjà possédée sur deux est remplacée par une carte nouvelle"
+    }
   }
 }

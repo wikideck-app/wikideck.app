@@ -10,6 +10,7 @@ import {
   MessageCircle,
   Puzzle,
   Settings,
+  ShoppingBag,
   Swords,
   Trophy,
   User,
@@ -21,7 +22,7 @@ import {
 // les libellés sont dans messages/fr/nav.json (nav.groups.<group>, nav.items.<slug>)
 export type NavGroup = "play" | "community" | "competition" | "account";
 export type NavSlug =
-  | "packs" | "collection" | "albums" | "cards" | "wheel" | "wishlist"
+  | "packs" | "collection" | "albums" | "cards" | "wheel" | "wishlist" | "shop"
   | "trades" | "market" | "guild" | "friends" | "messages"
   | "battle" | "achievements" | "ranking" | "profile" | "settings";
 export type NavItem = { slug: NavSlug; icon: IconType; group: NavGroup };
@@ -35,6 +36,7 @@ export const NAV: NavItem[] = [
   { slug: "cards", icon: Globe, group: "play" },
   { slug: "wheel", icon: Gift, group: "play" },
   { slug: "wishlist", icon: Heart, group: "play" },
+  { slug: "shop", icon: ShoppingBag, group: "play" },
   { slug: "trades", icon: Handshake, group: "community" },
   { slug: "market", icon: Gavel, group: "community" },
   { slug: "guild", icon: Castle, group: "community" },

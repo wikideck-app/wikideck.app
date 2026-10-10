@@ -76,6 +76,12 @@
     },
     "moderation": {
       "title": "Modération"
+    },
+    "boutique": {
+      "title": "Boutique"
+    },
+    "boutique-staff": {
+      "title": "Boutique (administrateur)"
     }
   },
   "endpoints": {
@@ -584,6 +590,36 @@
       "body": {
         "action": "edit '{' name?, description? '}', kick '{' userId '}', dissolve '{' confirmName '}'"
       }
+    },
+    "get-shop": {
+      "summary": "Articles actuellement en vente, avec ton solde, le nombre d’achats que tu as déjà faits de chacun et la fin de l’offre (availableUntil) s’il y en a une."
+    },
+    "post-shop-id-buy": {
+      "summary": "Achète un article en wikibits : les paquets ou boosters sont crédités immédiatement. Refusé si l’offre est terminée, épuisée ou si une limite d’achats (totale ou du jour) est atteinte."
+    },
+    "get-staff-shop": {
+      "summary": "Tous les articles, actifs ou non, avec leur nombre de ventes."
+    },
+    "post-staff-shop": {
+      "summary": "Crée un article (aussi : description, maxPerUser, maxPerUserPerDay, stock, active, sortOrder ; availableFrom et availableUntil, dates ISO, pour une offre à durée limitée).",
+      "body": {
+        "name": "nom de l’article",
+        "kind": "WIKIPEDIA_PACKS, ANIME_PACKS, LUCK_BOOST, DUPLICATE_SHIELD (protection contre les doublons) ou DUPLICATE_REDUCTION (réduction temporaire, amount en heures)",
+        "amount": "quantité accordée par achat",
+        "price": "prix en wikibits"
+      }
+    },
+    "put-staff-shop-id": {
+      "summary": "Remplace un article ; mêmes champs qu’à la création.",
+      "body": {
+        "name": "nom de l’article",
+        "kind": "WIKIPEDIA_PACKS, ANIME_PACKS ou LUCK_BOOST",
+        "amount": "quantité accordée par achat",
+        "price": "prix en wikibits"
+      }
+    },
+    "delete-staff-shop-id": {
+      "summary": "Supprime un article ; les achats déjà faits sont conservés."
     }
   }
 }

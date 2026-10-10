@@ -25,6 +25,7 @@ import profile from "./profile.json";
 import ranking from "./ranking.json";
 import referral from "./referral.json";
 import settings from "./settings.json";
+import shop from "./shop.json";
 import staff from "./staff.json";
 import tags from "./tags.json";
 import terms from "./terms.json";
@@ -61,6 +62,7 @@ const catalog = {
   ranking,
   referral,
   settings,
+  shop,
   staff,
   tags,
   terms,
