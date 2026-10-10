@@ -43,7 +43,7 @@
   "card_locked": "Cette carte est protégée (mise en avant, vitrine, échange ou enchère en cours) : retirez d’abord cette protection.",
   "invalid_name": "Nom invalide (1 à 40 caractères).",
   "album_exists": "Un album de ce nom existe déjà ici.",
-  "too_many_albums": "Vous avez atteint la limite d’albums et de sous-albums.",
+  "too_many_albums": "Vous avez atteint la limite d’albums et de sous-albums. Achetez un album supplémentaire dans la boutique pour en créer un de plus.",
   "album_full": "Cet album est plein (500 cartes).",
   "wishlist_full": "Votre liste d’envies est pleine. Retirez une carte, ou achetez un emplacement supplémentaire dans la boutique.",
   "nothing_to_recycle": "Vous n’avez aucun doublon à recycler dans ces raretés.",
@@ -73,5 +73,6 @@
   "quest_not_ready": "Vous n’avez pas encore atteint cet objectif.",
   "quest_already_claimed": "Vous avez déjà récupéré cette récompense.",
   "title_locked": "Vous n’avez pas encore obtenu ce titre.",
-  "shop_wishlist_full": "Votre liste d’envies a déjà atteint le nombre maximum d’emplacements."
+  "shop_wishlist_full": "Votre liste d’envies a déjà atteint le nombre maximum d’emplacements.",
+  "shop_album_full": "Vous avez déjà acheté le nombre maximum d’albums supplémentaires."
 }

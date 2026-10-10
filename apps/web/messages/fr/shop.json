@@ -17,7 +17,8 @@
     "LUCK_BOOST": "{count, plural, one {# booster de chance} other {# boosters de chance}}",
     "DUPLICATE_SHIELD": "Protection contre les doublons : {count, plural, one {# paquet} other {# paquets}}",
     "DUPLICATE_REDUCTION": "Réduction des doublons pendant {count, plural, one {# heure} other {# heures}}",
-    "WISHLIST_SLOT": "{count, plural, one {# emplacement de liste d’envies} other {# emplacements de liste d’envies}}"
+    "WISHLIST_SLOT": "{count, plural, one {# emplacement de liste d’envies} other {# emplacements de liste d’envies}}",
+    "ALBUM_SLOT": "{count, plural, one {# album supplémentaire} other {# albums supplémentaires}}"
   },
   "limitedTime": "Durée limitée",
   "endsIn": "Se termine dans",

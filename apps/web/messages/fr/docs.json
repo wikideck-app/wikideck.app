@@ -616,7 +616,7 @@
       "summary": "Crée un article (aussi : description, maxPerUser, maxPerUserPerDay, stock, active, sortOrder ; availableFrom et availableUntil, dates ISO, pour une offre à durée limitée).",
       "body": {
         "name": "nom de l’article",
-        "kind": "WIKIPEDIA_PACKS, ANIME_PACKS, LUCK_BOOST, DUPLICATE_SHIELD (protection contre les doublons), DUPLICATE_REDUCTION (réduction temporaire, amount en heures) ou WISHLIST_SLOT (emplacements de liste d’envies)",
+        "kind": "WIKIPEDIA_PACKS, ANIME_PACKS, LUCK_BOOST, DUPLICATE_SHIELD (protection contre les doublons), DUPLICATE_REDUCTION (réduction temporaire, amount en heures), WISHLIST_SLOT (emplacements de liste d’envies) ou ALBUM_SLOT (albums supplémentaires)",
         "amount": "quantité accordée par achat",
         "price": "prix en wikibits"
       }

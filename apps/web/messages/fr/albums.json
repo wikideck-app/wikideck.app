@@ -86,5 +86,6 @@
   "backToProfile": "Profil de {name}",
   "ownerLine": "Album de {name} · {count, plural, =0 {0 carte} one {# carte} other {# cartes}}",
   "dragHint": "Glissez un album sur un autre pour le ranger dedans.",
-  "dragHintSub": "Glissez un sous-album sur un autre pour le ranger dedans, ou sur le chemin au-dessus pour le remonter."
+  "dragHintSub": "Glissez un sous-album sur un autre pour le ranger dedans, ou sur le chemin au-dessus pour le remonter.",
+  "fullHint": "Limite d’albums atteinte : achetez un album supplémentaire dans la <shop>boutique</shop>."
 }

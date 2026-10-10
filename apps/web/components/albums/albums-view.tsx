@@ -2,6 +2,7 @@
 
 import { Plus, X } from "@/components/icons";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { ALBUM_NAME_MAX, type AlbumsResponse } from "@wikideck/shared";
@@ -61,6 +62,17 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
           <Plus className="size-4" /> {t("new")}
         </button>
       </div>
+      {full && (
+        <p className="mt-3 text-center text-xs text-fog">
+          {t.rich("fullHint", {
+            shop: (chunks) => (
+              <Link href="/shop" className="underline hover:text-foreground">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
+      )}
 
       {roots.length === 0 ? (
         <p className="mt-10 text-center opacity-60">
