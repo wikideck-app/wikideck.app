@@ -503,11 +503,18 @@
       "summary": "Journal des actions du staff (qui, quoi, sur qui)."
     },
     "get-staff-users": {
-      "summary": "Recherche de membres.",
+      "summary": "Recherche de membres (la fiche contient l’identifiant et le nom d’utilisateur Discord).",
       "query": {
-        "q": "pseudo",
+        "q": "pseudo, nom d’utilisateur Discord ou identifiant Discord exact",
         "filter": "banned (bannis) ou staff (équipe) ; vide pour tous",
         "page": "numéro de page"
+      }
+    },
+    "get-staff-users-sync": {
+      "summary": "Export de tous les membres (identifiant Discord, pseudo, wikibits, cartes…), par curseur, pour synchroniser un bot. Administrateur.",
+      "query": {
+        "limit": "nombre de membres par page, 500 au maximum (100 par défaut)",
+        "after": "curseur `next` de la page précédente"
       }
     },
     "get-staff-users-id": {
