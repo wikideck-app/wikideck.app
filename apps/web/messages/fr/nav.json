@@ -39,5 +39,9 @@
   "copyright": "© {year} Wikideck",
   "accountMenu": "Menu du compte",
   "disclaimer": "Jeu indépendant, sans affiliation ni lien officiel avec la Wikimedia Foundation. Wikipédia est une marque de la Wikimedia Foundation.",
-  "joinDiscord": "Rejoindre le Discord"
+  "joinDiscord": "Rejoindre le Discord",
+  "packsWikipedia": "Paquets Wikipédia",
+  "packsAnime": "Paquets anime / manga",
+  "packsWikipediaShort": "W",
+  "packsAnimeShort": "A"
 }

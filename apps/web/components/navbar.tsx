@@ -14,30 +14,58 @@ import { NAV, NAV_GROUPS, type NavGroup, type NavItem } from "@/lib/nav";
 type Props = {
   user: SessionUser;
   logoutUrl: string;
-  packs: Pick<PackStatus, "packs" | "max"> | null;
+  packs: (Pick<PackStatus, "packs" | "max"> & { anime?: Pick<PackStatus, "packs" | "max"> }) | null;
 };
 
 const chip =
   "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-2 border-white/40 px-3 py-1.5 text-sm font-bold sm:px-3.5 transition-colors hover:border-white";
 
-function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
-  const t = useTranslations("nav");
-  const ratio = Math.min(1, packs.packs / packs.max);
+function PackCount({
+  label,
+  title,
+  packs,
+}: {
+  label: string;
+  title: string;
+  packs: { packs: number; max: number };
+}) {
   return (
-    <Link href="/packs" className={chip} title={t("packsAvailable")}>
-      <span className="hidden text-[11px] uppercase tracking-[0.12em] text-pale-mist 2xl:inline">
-        {t("packsShort")}
+    <span title={title} className="flex items-baseline gap-1">
+      <span aria-hidden className="text-[10px] font-extrabold uppercase text-pale-mist">
+        {label}
       </span>
       <span className="tabular-nums">
         {packs.packs}
-        <span className="font-medium text-fog"> / {packs.max}</span>
+        <span className="hidden font-medium text-fog sm:inline"> / {packs.max}</span>
       </span>
-      <span className="hidden h-1 w-10 overflow-hidden rounded-full bg-white/25 2xl:block">
-        <span
-          className="block h-full rounded-full bg-white transition-[width] duration-700"
-          style={{ width: `${ratio * 100}%` }}
-        />
+    </span>
+  );
+}
+
+// deux réserves : paquets Wikipédia et paquets anime / manga
+function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
+  const t = useTranslations("nav");
+  const wiki = t("packsWikipedia");
+  const anime = t("packsAnime");
+  return (
+    <Link
+      href="/packs"
+      className={chip}
+      title={t("packsAvailable")}
+      aria-label={`${t("packsAvailable")} : ${wiki} ${packs.packs}/${packs.max}${
+        packs.anime ? `, ${anime} ${packs.anime.packs}/${packs.anime.max}` : ""
+      }`}
+    >
+      <span className="hidden text-[11px] uppercase tracking-[0.12em] text-pale-mist 2xl:inline">
+        {t("packsShort")}
       </span>
+      <PackCount label={t("packsWikipediaShort")} title={wiki} packs={packs} />
+      {packs.anime && (
+        <>
+          <span aria-hidden className="h-4 w-px bg-white/30" />
+          <PackCount label={t("packsAnimeShort")} title={anime} packs={packs.anime} />
+        </>
+      )}
     </Link>
   );
 }

@@ -60,7 +60,7 @@
     "ownedBy": "{count, plural, =0 {Aucun joueur ne la possède pour l’instant} one {Possédée par # joueur} other {Possédée par # joueurs}}",
     "youMiss": " · il vous manque cette carte",
     "summary": "{catalog, plural, one {# carte} other {# cartes}} au total · vous en possédez {owned, number}",
-    "subtitleAnime": "Chaque personnage d’anime ou de manga d’AniList est une carte.",
+    "subtitleAnime": "Chaque personnage d’anime ou de manga d’AniList et de Kitsu est une carte.",
     "sourceLabel": "Catalogue",
     "sources": {
       "wikipedia": "Wikipédia",
