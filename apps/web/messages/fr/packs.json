@@ -67,7 +67,9 @@
     "animeRank": "Rang AniList",
     "animeNote": "Pour les personnages d’AniList, le rang classe les personnages par nombre de favoris (1 = le plus aimé) et chaque personnage de la tranche a la même chance de sortir. Les personnages de Kitsu, bien plus nombreux, sont communs, peu communs ou rares selon leur rôle et la popularité de leur œuvre. Une légendaire sur 20 sort en version mythique.",
     "animeSpecialTitle": "Particularités",
-    "animeSpecialText": "Les paquets anime / manga ont leur propre réserve et leur propre recharge. Ils n’ont ni God Pack ni booster de chance."
+    "animeSpecialText": "Les paquets anime / manga ont leur propre réserve et leur propre recharge. Ils n’ont ni God Pack ni booster de chance.",
+    "characters": "Personnages",
+    "animeTotal": "Le catalogue compte {total, number} personnages (AniList et Kitsu) et se complète peu à peu. Une fois la rareté tirée, {anilist} % des tirages vont aux personnages d’AniList, plus connus, et {kitsu} % à ceux de Kitsu (quand les deux existent dans cette rareté) ; chaque personnage d’une même source a ensuite la même chance."
   },
   "kind": {
     "label": "Type de paquet",

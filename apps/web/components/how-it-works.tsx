@@ -3,6 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import {
+  ANIME_ANILIST_SHARE,
   ANIME_DROP_BANDS,
   PACK_MAX,
   PACK_REGEN_MS,
@@ -13,7 +14,13 @@ import {
   type DropRatesResponse,
 } from "@wikideck/shared";
 
-export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
+export function HowItWorks({
+  drops,
+  animeDrops,
+}: {
+  drops?: DropRatesResponse | null;
+  animeDrops?: DropRatesResponse | null;
+}) {
   const t = useTranslations("packs.how");
   const tc = useTranslations("common");
   const tr = useTranslations("cards.rarity");
@@ -89,6 +96,9 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
                   <th className="pb-1.5 text-right font-bold">
                     {anime ? t("animeRank") : t("viewsPerMonth")}
                   </th>
+                  {anime && animeDrops && (
+                    <th className="pb-1.5 text-right font-bold">{t("characters")}</th>
+                  )}
                   {(anime || drops) && <th className="pb-1.5 text-right font-bold">{t("perCard")}</th>}
                   {(anime || drops) && <th className="pb-1.5 text-right font-bold">{t("perPack")}</th>}
                 </tr>
@@ -107,6 +117,13 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
                           <td className="py-1.5 text-right tabular-nums opacity-70">
                             {format.number(band.from)} – {format.number(band.to)}
                           </td>
+                          {animeDrops && (
+                            <td className="py-1.5 text-right tabular-nums opacity-70">
+                              {format.number(
+                                animeDrops.rates.find((r) => r.rarity === band.rarity)?.count ?? 0,
+                              )}
+                            </td>
+                          )}
                           <td className="py-1.5 text-right font-bold tabular-nums">
                             {percent(p * 100)}
                           </td>
@@ -153,7 +170,18 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
               })}
             </p>
             {anime ? (
-              <p className="mt-2 text-[11px] leading-relaxed text-fog">{t("animeNote")}</p>
+              <>
+                {animeDrops && (
+                  <p className="mt-2 text-[11px] leading-relaxed text-fog">
+                    {t("animeTotal", {
+                      total: animeDrops.total,
+                      anilist: Math.round(ANIME_ANILIST_SHARE * 100),
+                      kitsu: Math.round((1 - ANIME_ANILIST_SHARE) * 100),
+                    })}
+                  </p>
+                )}
+                <p className="mt-2 text-[11px] leading-relaxed text-fog">{t("animeNote")}</p>
+              </>
             ) : (
               drops && (
                 <p className="mt-2 text-[11px] leading-relaxed text-fog">

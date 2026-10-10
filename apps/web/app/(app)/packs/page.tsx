@@ -8,18 +8,19 @@ import { pageMetadata } from "@/i18n/metadata";
 export const generateMetadata = pageMetadata("packs");
 
 export default async function PacksPage() {
-  const [t, status, tags, drops] = await Promise.all([
+  const [t, status, tags, drops, animeDrops] = await Promise.all([
     getTranslations("packs"),
     apiGet<PackStatus>("/packs"),
     apiGet<{ tags: TagDto[] }>("/tags"),
     apiGet<DropRatesResponse>("/cards/rates"),
+    apiGet<DropRatesResponse>("/cards/rates?source=anime"),
   ]);
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
       <h1 className="font-display text-5xl font-medium">{t("title")}</h1>
       <p className="mt-2 opacity-60">{t("subtitle", { count: PACK_SIZE })}</p>
-      <HowItWorks drops={drops} />
+      <HowItWorks drops={drops} animeDrops={animeDrops} />
 
       {status ? (
         <PackOpener initial={status} apiUrl={API_URL} tags={tags?.tags} />
