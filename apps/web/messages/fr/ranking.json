@@ -20,7 +20,7 @@
     "battle": {
       "label": "Bataille",
       "unit": "victoires",
-      "hint": "Parties de Bataille gagnées"
+      "hint": "Parties de Bataille multijoueur gagnées (le solo n’est pas compté)"
     }
   }
 }
