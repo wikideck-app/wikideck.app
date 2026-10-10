@@ -279,7 +279,8 @@
       "ANIME_PACKS": "Paquets anime / manga",
       "LUCK_BOOST": "Boosters de chance",
       "DUPLICATE_SHIELD": "Protection contre les doublons",
-      "DUPLICATE_REDUCTION": "Réduction temporaire des doublons"
+      "DUPLICATE_REDUCTION": "Réduction temporaire des doublons",
+      "WISHLIST_SLOT": "Emplacements de liste d’envies"
     },
     "availableFrom": "Disponible à partir du (facultatif)",
     "availableUntil": "Disponible jusqu’au (facultatif)",
@@ -296,7 +297,8 @@
       "ANIME_PACKS": "nombre de paquets",
       "LUCK_BOOST": "nombre de boosters",
       "DUPLICATE_SHIELD": "nombre de paquets protégés : toute carte déjà possédée y est remplacée par une carte nouvelle de même rareté",
-      "DUPLICATE_REDUCTION": "durée en heures : pendant ce temps, une carte déjà possédée sur deux est remplacée par une carte nouvelle"
+      "DUPLICATE_REDUCTION": "durée en heures : pendant ce temps, une carte déjà possédée sur deux est remplacée par une carte nouvelle",
+      "WISHLIST_SLOT": "nombre d’emplacements ajoutés à la liste d’envies (47 au maximum par joueur en plus des 3 de base)"
     }
   }
 }

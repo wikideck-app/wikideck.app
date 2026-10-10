@@ -162,7 +162,7 @@ export const USER_DOCS: DocSection[] = [
     id: "boutique",
     endpoints: [
       { key: "get-shop", method: "GET", path: "/shop", limit: { max: 60, minutes: 1 } },
-      { key: "post-shop-id-buy", method: "POST", path: "/shop/{id}/buy", errors: ["not_found", "insufficient_funds", "shop_sold_out", "shop_limit_reached", "shop_daily_limit_reached", "shop_unavailable"], limit: { max: 20, minutes: 1 } },
+      { key: "post-shop-id-buy", method: "POST", path: "/shop/{id}/buy", errors: ["not_found", "insufficient_funds", "shop_sold_out", "shop_limit_reached", "shop_daily_limit_reached", "shop_unavailable", "shop_wishlist_full"], limit: { max: 20, minutes: 1 } },
     ],
   },
   {

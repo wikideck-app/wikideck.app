@@ -27,7 +27,6 @@ import {
   NO_TITLE,
   PROFILE_ALBUMS_MAX,
   RARITIES,
-  WISHLIST_MAX,
   type CardDto,
   type ProfileDto,
   type ReferralInfo,
@@ -527,7 +526,7 @@ export function ProfileView({
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className={`${heading} flex items-center gap-2`}>
                   <Heart className="size-3.5" />{" "}
-                  {t("wishlist", { count: profile.wishlist.length, max: WISHLIST_MAX })}
+                  {t("wishlist", { count: profile.wishlist.length, max: profile.wishlistMax })}
                 </h2>
                 {profile.isSelf && (
                   <Link

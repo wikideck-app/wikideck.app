@@ -45,7 +45,7 @@
   "album_exists": "Un album de ce nom existe déjà ici.",
   "too_many_albums": "Vous avez atteint la limite d’albums et de sous-albums.",
   "album_full": "Cet album est plein (500 cartes).",
-  "wishlist_full": "Votre liste d’envies est pleine (3 cartes). Retirez-en une pour en ajouter.",
+  "wishlist_full": "Votre liste d’envies est pleine. Retirez une carte, ou achetez un emplacement supplémentaire dans la boutique.",
   "nothing_to_recycle": "Vous n’avez aucun doublon à recycler dans ces raretés.",
   "already_spun": "Vous avez déjà tourné la roue aujourd’hui.",
   "already_resolved": "Cet élément a déjà été traité.",
@@ -72,5 +72,6 @@
   "shop_daily_limit_reached": "Vous avez atteint la limite d’achats du jour pour cet article : revenez demain.",
   "quest_not_ready": "Vous n’avez pas encore atteint cet objectif.",
   "quest_already_claimed": "Vous avez déjà récupéré cette récompense.",
-  "title_locked": "Vous n’avez pas encore obtenu ce titre."
+  "title_locked": "Vous n’avez pas encore obtenu ce titre.",
+  "shop_wishlist_full": "Votre liste d’envies a déjà atteint le nombre maximum d’emplacements."
 }
