@@ -1,8 +1,9 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
+  ANIME_DROP_BANDS,
   PACK_MAX,
   PACK_REGEN_MS,
   PACK_SIZE,
@@ -18,6 +19,8 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
   const tr = useTranslations("cards.rarity");
   const format = useFormatter();
   const dialog = useRef<HTMLDialogElement>(null);
+  const [kind, setKind] = useState<"wikipedia" | "anime">("wikipedia");
+  const anime = kind === "anime";
   // part en pourcentage : plus la valeur est petite, plus on affiche de décimales
   const percent = (value: number) => {
     const digits = value >= 0.1 ? (value >= 1 ? 1 : 2) : 3;
@@ -44,7 +47,7 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
           <div>
             <h2 className="font-display text-2xl font-medium">{t("title")}</h2>
             <p className="prose-serif mt-1.5 max-w-xl text-pale-mist">
-              {t("intro")}
+              {anime ? t("animeIntro") : t("intro")}
             </p>
           </div>
           <button
@@ -57,6 +60,23 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
           </button>
         </div>
 
+        <div role="tablist" aria-label={t("kindLabel")} className="mt-4 flex w-fit gap-1 rounded-2xl border border-line p-1">
+          {(["wikipedia", "anime"] as const).map((k) => (
+            <button
+              key={k}
+              type="button"
+              role="tab"
+              aria-selected={kind === k}
+              onClick={() => setKind(k)}
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+                kind === k ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
+              }`}
+            >
+              {t(`kinds.${k}`)}
+            </button>
+          ))}
+        </div>
+
         <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           <section>
             <h3 className="text-[11px] font-bold uppercase tracking-[0.14em] text-fog">
@@ -66,13 +86,39 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-widest text-fog">
                   <th className="pb-1.5 font-bold">{t("rarity")}</th>
-                  <th className="pb-1.5 text-right font-bold">{t("viewsPerMonth")}</th>
-                  {drops && <th className="pb-1.5 text-right font-bold">{t("perCard")}</th>}
-                  {drops && <th className="pb-1.5 text-right font-bold">{t("perPack")}</th>}
+                  <th className="pb-1.5 text-right font-bold">
+                    {anime ? t("animeRank") : t("viewsPerMonth")}
+                  </th>
+                  {(anime || drops) && <th className="pb-1.5 text-right font-bold">{t("perCard")}</th>}
+                  {(anime || drops) && <th className="pb-1.5 text-right font-bold">{t("perPack")}</th>}
                 </tr>
               </thead>
               <tbody>
-                {DROP_RARITIES.map((r, i) => {
+                {anime
+                  ? ANIME_DROP_BANDS.map((band) => {
+                      const info = RARITIES.find((x) => x.value === band.rarity)!;
+                      const p = band.weight;
+                      return (
+                        <tr key={band.rarity} className="border-t border-line">
+                          <td className="py-1.5">
+                            <strong className="inline-block w-8">{info.code}</strong>
+                            <span className="opacity-60">{tr(band.rarity)}</span>
+                          </td>
+                          <td className="py-1.5 text-right tabular-nums opacity-70">
+                            {format.number(band.from)} – {format.number(band.to)}
+                          </td>
+                          <td className="py-1.5 text-right font-bold tabular-nums">
+                            {percent(p * 100)}
+                          </td>
+                          <td className="py-1.5 text-right tabular-nums opacity-70">
+                            {percent((1 - (1 - p) ** PACK_SIZE) * 100)}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : null}
+                {!anime &&
+                  DROP_RARITIES.map((r, i) => {
                   const rate = rateOf(r.value);
                   return (
                     <tr key={r.value} className="border-t border-line">
@@ -106,10 +152,14 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
                 strong: (chunks) => <strong>{chunks}</strong>,
               })}
             </p>
-            {drops && (
-              <p className="mt-2 text-[11px] leading-relaxed text-fog">
-                {t("totalNote", { total: drops.total })}
-              </p>
+            {anime ? (
+              <p className="mt-2 text-[11px] leading-relaxed text-fog">{t("animeNote")}</p>
+            ) : (
+              drops && (
+                <p className="mt-2 text-[11px] leading-relaxed text-fog">
+                  {t("totalNote", { total: drops.total })}
+                </p>
+              )
             )}
           </section>
 
@@ -127,7 +177,15 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
               </p>
             </section>
 
-            <section className="rounded-lg border border-line bg-[linear-gradient(135deg,rgb(255_200_80/0.14),rgb(255_138_210/0.1),rgb(133_214_255/0.12))] p-4">
+            {anime ? (
+              <section className="rounded-lg border border-line p-4">
+                <h3 className="text-[11px] font-bold uppercase tracking-[0.14em] text-fog">
+                  {t("animeSpecialTitle")}
+                </h3>
+                <p className="prose-serif mt-1.5 text-sm text-pale-mist">{t("animeSpecialText")}</p>
+              </section>
+            ) : (
+              <section className="rounded-lg border border-line bg-[linear-gradient(135deg,rgb(255_200_80/0.14),rgb(255_138_210/0.1),rgb(133_214_255/0.12))] p-4">
               <h3 className="text-[11px] font-bold uppercase tracking-[0.14em] text-fog">
                 {t("godPackTitle")}
               </h3>
@@ -140,7 +198,8 @@ export function HowItWorks({ drops }: { drops?: DropRatesResponse | null }) {
                     })
                   : t("godPackUnknown", { size: PACK_SIZE })}
               </p>
-            </section>
+              </section>
+            )}
           </div>
         </div>
 

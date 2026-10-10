@@ -57,7 +57,17 @@
     "godPackTitle": "God Pack",
     "godPackKnown": "Avec <strong>{percent}</strong> de chances par paquet, les {size} cartes sont toutes Super rare ou mieux, dont au moins une Ultra rare ou Légendaire.",
     "godPackUnknown": "Très rarement, les {size} cartes sont toutes Super rare ou mieux, dont au moins une Ultra rare ou Légendaire.",
-    "understood": "Compris"
+    "understood": "Compris",
+    "kindLabel": "Type de paquet",
+    "kinds": {
+      "wikipedia": "Wikipédia",
+      "anime": "Anime / Manga"
+    },
+    "animeIntro": "Chaque carte est un personnage d’anime ou de manga, issu d’AniList. Sa rareté dépend de sa popularité : plus il a de favoris sur AniList, plus la carte est rare.",
+    "animeRank": "Rang AniList",
+    "animeNote": "Le rang classe les personnages par nombre de favoris (1 = le plus aimé). Une fois la rareté tirée, chaque personnage de la tranche a la même chance de sortir. Seuls les 5 000 personnages les plus populaires sont en jeu. Une légendaire sur 20 sort en version mythique.",
+    "animeSpecialTitle": "Particularités",
+    "animeSpecialText": "Les paquets anime / manga ont leur propre réserve et leur propre recharge. Ils n’ont ni God Pack ni booster de chance."
   },
   "kind": {
     "label": "Type de paquet",
