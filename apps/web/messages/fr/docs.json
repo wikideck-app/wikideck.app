@@ -526,6 +526,15 @@
         "after": "curseur `next` de la page précédente"
       }
     },
+    "get-staff-wishlists": {
+      "summary": "Listes d’envies des joueurs, qu’ils aient un profil public ou privé (pour un bot ou une synchronisation). Administrateur.",
+      "query": {
+        "limit": "nombre de joueurs par page, 200 au maximum (100 par défaut)",
+        "after": "curseur `next` de la page précédente",
+        "discordId": "un seul joueur, par son identifiant Discord",
+        "cardId": "les joueurs qui ont cette carte dans leurs envies"
+      }
+    },
     "get-staff-users-id": {
       "summary": "Fiche complète d’un membre : stats, niveau de confiance, indices d’abus."
     },

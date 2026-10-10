@@ -203,6 +203,7 @@ export const STAFF_DOCS: DocSection[] = [
     endpoints: [
       { key: "get-staff-users", method: "GET", path: "/staff/users", query: ["q", "filter", "page"], limit: { max: 120, minutes: 1 } },
       { key: "get-staff-users-sync", method: "GET", path: "/staff/users/sync", query: ["limit", "after"], errors: ["invalid"], limit: { max: 30, minutes: 1 } },
+      { key: "get-staff-wishlists", method: "GET", path: "/staff/wishlists", query: ["limit", "after", "discordId", "cardId"], errors: ["invalid"], limit: { max: 30, minutes: 1 } },
       { key: "get-staff-users-id", method: "GET", path: "/staff/users/{id}" },
       { key: "post-staff-users-id", method: "POST", path: "/staff/users/{id}", body: ["action"], errors: ["invalid", "not_found", "forbidden"] },
       { key: "get-staff-deleted", method: "GET", path: "/staff/deleted", limit: { max: 60, minutes: 1 } },

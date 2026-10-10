@@ -76,5 +76,8 @@
   },
   "featuredHidden": "Aucune carte affichée sur votre profil.",
   "featuredHideAll": "Ne rien afficher",
-  "featuredUseAuto": "Mes plus rares (automatique)"
+  "featuredUseAuto": "Mes plus rares (automatique)",
+  "albumsDragHint": "Glissez les albums pour changer leur ordre.",
+  "moveAlbumBefore": "Avancer l’album {name}",
+  "moveAlbumAfter": "Reculer l’album {name}"
 }

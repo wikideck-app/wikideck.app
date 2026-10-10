@@ -153,6 +153,32 @@ export function ProfileView({
     void saveFeatured(next);
   };
 
+  // ordre des albums du profil : glisser-déposer (ordre local pendant le geste, puis conservé)
+  const [albumDraft, setAlbumDraft] = useState<string[] | null>(null);
+  const [albumDragId, setAlbumDragId] = useState<string | null>(null);
+  const albumList = (() => {
+    if (!albumDraft) return profile.albums;
+    const byId = new Map(profile.albums.map((a) => [a.id, a]));
+    return [
+      ...albumDraft.flatMap((id) => byId.get(id) ?? []),
+      ...profile.albums.filter((a) => !albumDraft.includes(a.id)),
+    ];
+  })();
+  const canReorderAlbums = profile.isSelf && albumList.length > 1;
+  const saveAlbumOrder = (ids: string[]) =>
+    act(() => apiCall(apiUrl, "/albums/order", "PUT", { ids }));
+  const shiftAlbum = (id: string, by: -1 | 1) => {
+    const ids = albumList.map((a) => a.id);
+    const from = ids.indexOf(id);
+    const to = from + by;
+    if (from < 0 || to < 0 || to >= ids.length) return;
+    const next = [...ids];
+    next.splice(from, 1);
+    next.splice(to, 0, id);
+    setAlbumDraft(next);
+    void saveAlbumOrder(next);
+  };
+
   const add = () => act(() => apiCall(apiUrl, "/friends", "POST", { userId: player.id }));
   const accept = () =>
     act(() => apiCall(apiUrl, `/friends/${profile.friendshipId}/accept`, "POST"));
@@ -543,12 +569,70 @@ export function ProfileView({
                   </button>
                 )}
               </div>
+              {canReorderAlbums && <p className="mt-1 text-xs text-fog">{t("albumsDragHint")}</p>}
               {profile.albums.length === 0 ? (
                 <p className="mt-3 text-sm text-fog">{t(profile.isSelf ? "noAlbumsSelf" : "noAlbums")}</p>
               ) : (
                 <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {profile.albums.map((album) => (
-                    <AlbumTile key={album.id} album={album} />
+                  {albumList.map((album, index) => (
+                    <div
+                      key={album.id}
+                      draggable={canReorderAlbums}
+                      onDragStart={(e) => {
+                        if (!canReorderAlbums) return;
+                        e.dataTransfer.effectAllowed = "move";
+                        e.dataTransfer.setData("text/plain", album.id);
+                        setAlbumDragId(album.id);
+                        setAlbumDraft(albumList.map((a) => a.id));
+                      }}
+                      onDragEnter={() => {
+                        if (!albumDragId || albumDragId === album.id) return;
+                        setAlbumDraft((prev) => {
+                          const ids = prev ?? albumList.map((a) => a.id);
+                          const from = ids.indexOf(albumDragId);
+                          if (from < 0) return ids;
+                          const next = [...ids];
+                          next.splice(from, 1);
+                          next.splice(index, 0, albumDragId);
+                          return next;
+                        });
+                      }}
+                      onDragOver={(e) => albumDragId && e.preventDefault()}
+                      onDrop={(e) => e.preventDefault()}
+                      onDragEnd={() => {
+                        const moved = albumDragId !== null && albumDraft !== null;
+                        setAlbumDragId(null);
+                        if (moved && albumDraft!.join() !== profile.albums.map((a) => a.id).join())
+                          void saveAlbumOrder(albumDraft!);
+                      }}
+                      className={`group/order relative transition-opacity ${
+                        canReorderAlbums ? "cursor-grab active:cursor-grabbing" : ""
+                      } ${albumDragId === album.id ? "opacity-40" : ""}`}
+                    >
+                      <AlbumTile album={album} />
+                      {canReorderAlbums && (
+                        <div className="absolute right-2 top-2 z-40 hidden gap-1 group-focus-within/order:flex [@media(pointer:coarse)]:flex">
+                          <button
+                            type="button"
+                            disabled={busy || index === 0}
+                            aria-label={t("moveAlbumBefore", { name: album.name })}
+                            onClick={() => shiftAlbum(album.id, -1)}
+                            className="flex size-7 items-center justify-center rounded-full bg-black/70 text-white shadow disabled:opacity-30"
+                          >
+                            <ChevronLeft className="size-4" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busy || index === albumList.length - 1}
+                            aria-label={t("moveAlbumAfter", { name: album.name })}
+                            onClick={() => shiftAlbum(album.id, 1)}
+                            className="flex size-7 items-center justify-center rounded-full bg-black/70 text-white shadow disabled:opacity-30"
+                          >
+                            <ChevronRight className="size-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}
