@@ -71,7 +71,8 @@
     "maxDepth": "Cet album est au niveau maximal ({max}) : il ne peut plus avoir de sous-album.",
     "dialogTitle": "Nouveau sous-album de « {name} »",
     "namePlaceholder": "Nom du sous-album",
-    "nameLabel": "Nom du sous-album"
+    "nameLabel": "Nom du sous-album",
+    "none": "Aucun sous-album."
   },
   "scope": {
     "label": "Cartes affichées",
@@ -81,5 +82,9 @@
   "profile": {
     "show": "Afficher sur le profil",
     "hide": "Retirer du profil"
-  }
+  },
+  "backToProfile": "Profil de {name}",
+  "ownerLine": "Album de {name} · {count, plural, =0 {0 carte} one {# carte} other {# cartes}}",
+  "dragHint": "Glissez un album sur un autre pour le ranger dedans.",
+  "dragHintSub": "Glissez un sous-album sur un autre pour le ranger dedans, ou sur le chemin au-dessus pour le remonter."
 }

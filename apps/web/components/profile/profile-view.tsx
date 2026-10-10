@@ -108,8 +108,18 @@ export function ProfileView({
     router.refresh();
   }
 
+  // retirer la dernière carte = n'en afficher aucune (et non revenir aux plus rares)
   const saveFeatured = (ids: string[]) =>
-    act(() => apiCall(apiUrl, "/me", "PATCH", { featuredCardIds: ids }));
+    act(() =>
+      apiCall(
+        apiUrl,
+        "/me",
+        "PATCH",
+        ids.length ? { featuredCardIds: ids } : { featuredMode: "none" },
+      ),
+    );
+  const setFeaturedMode = (mode: "auto" | "none") =>
+    act(() => apiCall(apiUrl, "/me", "PATCH", { featuredMode: mode }));
   const saveShowcase = (id: string | null) =>
     act(() => apiCall(apiUrl, "/me", "PATCH", { showcaseCardId: id }));
   // ordre local pendant un glisser-déposer (puis conservé : il est identique à celui enregistré)
@@ -392,11 +402,35 @@ export function ProfileView({
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className={heading}>{t("featured")}</h2>
                 {profile.isSelf && (
-                  <p className="text-xs text-fog">
-                    {profile.featuredAuto
-                      ? t("featuredAuto")
-                      : t("featuredCount", { count: profile.featured.length, max: FEATURED_MAX })}
-                  </p>
+                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-fog">
+                    <p>
+                      {profile.featuredHidden
+                        ? t("featuredHidden")
+                        : profile.featuredAuto
+                          ? t("featuredAuto")
+                          : t("featuredCount", { count: profile.featured.length, max: FEATURED_MAX })}
+                    </p>
+                    {!profile.featuredHidden && (
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => void setFeaturedMode("none")}
+                        className="underline hover:text-foreground disabled:opacity-50"
+                      >
+                        {t("featuredHideAll")}
+                      </button>
+                    )}
+                    {!profile.featuredAuto && (
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => void setFeaturedMode("auto")}
+                        className="underline hover:text-foreground disabled:opacity-50"
+                      >
+                        {t("featuredUseAuto")}
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
               {canReorder && <p className="mt-1 text-xs text-fog">{t("dragHint")}</p>}
@@ -514,7 +548,7 @@ export function ProfileView({
               ) : (
                 <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {profile.albums.map((album) => (
-                    <AlbumTile key={album.id} album={album} readOnly={!profile.isSelf} />
+                    <AlbumTile key={album.id} album={album} />
                   ))}
                 </div>
               )}

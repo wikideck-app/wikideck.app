@@ -17,8 +17,18 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [moveError, setMoveError] = useState<string | null>(null);
   const roots = data.albums.filter((a) => a.parentId === null);
   const full = data.albums.length >= data.max;
+
+  // glisser un album sur un autre : il est rangé dedans (le serveur refuse cycles et excès de niveaux)
+  async function move(draggedId: string, targetId: string) {
+    setError(null);
+    const res = await apiCall(apiUrl, `/albums/${draggedId}`, "PATCH", { parentId: targetId });
+    if (!res.ok) return setMoveError(res.message);
+    setMoveError(null);
+    router.refresh();
+  }
 
   async function create() {
     const clean = name.trim().replace(/\s+/g, " ");
@@ -57,13 +67,21 @@ export function AlbumsView({ data, apiUrl }: { data: AlbumsResponse; apiUrl: str
           {t("empty")}
         </p>
       ) : (
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {roots.map((a) => (
-            <li key={a.id}>
-              <AlbumTile album={a} />
-            </li>
-          ))}
-        </ul>
+        <>
+          {roots.length > 1 && <p className="mt-6 text-center text-xs text-fog">{t("dragHint")}</p>}
+          {moveError && (
+            <p role="alert" className="mt-2 text-center text-sm text-danger">
+              {moveError}
+            </p>
+          )}
+          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {roots.map((a) => (
+              <li key={a.id}>
+                <AlbumTile album={a} onMove={move} />
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <dialog

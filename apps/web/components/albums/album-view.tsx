@@ -13,7 +13,7 @@ import {
   type AlbumsResponse,
   type CollectionCard,
 } from "@wikideck/shared";
-import { AlbumTile } from "@/components/albums/album-tile";
+import { ALBUM_DRAG_TYPE, AlbumTile } from "@/components/albums/album-tile";
 import { AlbumAddDialog } from "@/components/albums/album-add-dialog";
 import { CardDetail } from "@/components/card-detail";
 import { useConfirm } from "@/components/confirm-dialog";
@@ -160,6 +160,14 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
     router.push(album.parentId ? `/albums/${album.parentId}` : "/albums");
   }
 
+  // glisser un sous-album sur un autre l'y range ; le déposer sur le chemin le remonte (ou le sort à la racine)
+  async function moveAlbum(draggedId: string, parentId: string | null) {
+    setError(null);
+    const res = await apiCall(apiUrl, `/albums/${draggedId}`, "PATCH", { parentId });
+    if (!res.ok) return setError(res.message);
+    router.refresh();
+  }
+
   async function takeOut() {
     const ids = [...picked];
     const ok = await confirm({
@@ -190,10 +198,35 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
       <div className="flex flex-wrap items-center justify-between gap-3">
         <nav aria-label={t("trailLabel")} className="min-w-0">
           <ol className="flex flex-wrap items-center gap-1 text-sm text-pale-mist">
-            {[{ id: "", name: t("back") }, ...data.trail].map((step) => (
-              <li key={step.id || "root"} className="flex items-center gap-1">
+            {[
+              {
+                id: "",
+                name: data.readOnly ? t("backToProfile", { name: data.owner.username }) : t("back"),
+              },
+              ...data.trail,
+            ].map((step) => (
+              <li
+                key={step.id || "root"}
+                className="flex items-center gap-1"
+                onDragOver={(e) => {
+                  if (!data.readOnly && e.dataTransfer.types.includes(ALBUM_DRAG_TYPE))
+                    e.preventDefault();
+                }}
+                onDrop={(e) => {
+                  const dragged = e.dataTransfer.getData(ALBUM_DRAG_TYPE);
+                  if (data.readOnly || !dragged) return;
+                  e.preventDefault();
+                  void moveAlbum(dragged, step.id || null);
+                }}
+              >
                 <Link
-                  href={step.id ? `/albums/${step.id}` : "/albums"}
+                  href={
+                    step.id
+                      ? `/albums/${step.id}`
+                      : data.readOnly
+                        ? `/profile/${data.owner.id}`
+                        : "/albums"
+                  }
                   className="rounded-md px-1.5 py-0.5 hover:bg-foreground/10 hover:text-foreground"
                 >
                   {step.name}
@@ -206,46 +239,50 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
             </li>
           </ol>
         </nav>
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            aria-pressed={album.onProfile}
-            onClick={() => void toggleProfile()}
-            className={buttonClass}
-          >
-            {album.onProfile ? t("profile.hide") : t("profile.show")}
-          </button>
-          <button type="button" onClick={() => void openMove()} className={buttonClass}>
-            {t("move.button")}
-          </button>
-          <button
-            type="button"
-            aria-label={t("rename.label")}
-            title={t("rename.button")}
-            onClick={() => {
-              setName(album.name);
-              setError(null);
-              renameDialog.current?.showModal();
-            }}
-            className={`${buttonClass} px-3!`}
-          >
-            <Pencil className="size-4" />
-          </button>
-          <button
-            type="button"
-            aria-label={t("delete.label")}
-            title={t("delete.button")}
-            onClick={() => void remove()}
-            className={`${buttonClass} px-3! text-danger!`}
-          >
-            <Trash2 className="size-4" />
-          </button>
-        </div>
+        {!data.readOnly && (
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              aria-pressed={album.onProfile}
+              onClick={() => void toggleProfile()}
+              className={buttonClass}
+            >
+              {album.onProfile ? t("profile.hide") : t("profile.show")}
+            </button>
+            <button type="button" onClick={() => void openMove()} className={buttonClass}>
+              {t("move.button")}
+            </button>
+            <button
+              type="button"
+              aria-label={t("rename.label")}
+              title={t("rename.button")}
+              onClick={() => {
+                setName(album.name);
+                setError(null);
+                renameDialog.current?.showModal();
+              }}
+              className={`${buttonClass} px-3!`}
+            >
+              <Pencil className="size-4" />
+            </button>
+            <button
+              type="button"
+              aria-label={t("delete.label")}
+              title={t("delete.button")}
+              onClick={() => void remove()}
+              className={`${buttonClass} px-3! text-danger!`}
+            >
+              <Trash2 className="size-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       <h1 className="mt-6 font-display text-4xl font-medium">{album.name}</h1>
       <p className="text-sm text-fog">
-        {t("mine", { count: data.count })}
+        {data.readOnly
+          ? t("ownerLine", { name: data.owner.username, count: data.count })
+          : t("mine", { count: data.count })}
       </p>
       {error && (
         <p role="alert" className="mt-3 text-sm text-danger">
@@ -261,7 +298,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
               {data.children.length}
             </span>
           </h2>
-          {data.depth < ALBUM_MAX_DEPTH && (
+          {!data.readOnly && data.depth < ALBUM_MAX_DEPTH && (
             <button
               type="button"
               className={buttonClass}
@@ -277,18 +314,28 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
         </div>
         {data.children.length === 0 ? (
           <p className="mt-3 text-sm text-fog">
-            {data.depth < ALBUM_MAX_DEPTH
-              ? t("sub.empty")
-              : t("sub.maxDepth", { max: ALBUM_MAX_DEPTH })}
+            {data.readOnly
+              ? t("sub.none")
+              : data.depth < ALBUM_MAX_DEPTH
+                ? t("sub.empty")
+                : t("sub.maxDepth", { max: ALBUM_MAX_DEPTH })}
           </p>
         ) : (
-          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {data.children.map((child) => (
-              <li key={child.id}>
-                <AlbumTile album={child} />
-              </li>
-            ))}
-          </ul>
+          <>
+            {!data.readOnly && data.children.length > 1 && (
+              <p className="mt-3 text-xs text-fog">{t("dragHintSub")}</p>
+            )}
+            <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {data.children.map((child) => (
+                <li key={child.id}>
+                  <AlbumTile
+                    album={child}
+                    onMove={data.readOnly ? undefined : (dragged, target) => void moveAlbum(dragged, target)}
+                  />
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </section>
 
@@ -323,25 +370,27 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
               {data.count}
             </span>
           </h2>
-          <div className="flex gap-2">
-            <button type="button" className={primaryButtonClass} onClick={() => setAdding(true)}>
-              <Plus className="size-4" /> {tc("add")}
-            </button>
-            {scope !== "all" && (
-            <button
-              type="button"
-              aria-pressed={selectMode}
-              disabled={data.total === 0}
-              onClick={() => {
-                setSelectMode((s) => !s);
-                setPicked(new Set());
-              }}
-              className={`${buttonClass} ${selectMode ? "bg-accent! text-accent-foreground!" : ""}`}
-            >
-              {selectMode ? t("selectDone") : t("select")}
-            </button>
-            )}
-          </div>
+          {!data.readOnly && (
+            <div className="flex gap-2">
+              <button type="button" className={primaryButtonClass} onClick={() => setAdding(true)}>
+                <Plus className="size-4" /> {tc("add")}
+              </button>
+              {scope !== "all" && (
+              <button
+                type="button"
+                aria-pressed={selectMode}
+                disabled={data.total === 0}
+                onClick={() => {
+                  setSelectMode((s) => !s);
+                  setPicked(new Set());
+                }}
+                className={`${buttonClass} ${selectMode ? "bg-accent! text-accent-foreground!" : ""}`}
+              >
+                {selectMode ? t("selectDone") : t("select")}
+              </button>
+              )}
+            </div>
+          )}
         </div>
 
         {data.children.length > 0 && (
@@ -516,7 +565,7 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
       {selected && (
         <CardDetail
           card={selected}
-          quantity={selected.quantity}
+          quantity={data.readOnly ? 0 : selected.quantity}
           apiUrl={apiUrl}
           onClose={() => {
             setSelectedId(null);
