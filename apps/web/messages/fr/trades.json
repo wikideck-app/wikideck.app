@@ -24,7 +24,7 @@
     "busy": "Le serveur est occupé, réessayez.",
     "self_trade": "Vous ne pouvez pas échanger avec vous-même.",
     "player_not_found": "Ce joueur n’existe pas.",
-    "recipient_private": "Ce joueur a un profil privé : vous ne pouvez pas lui demander de cartes.",
+    "recipient_private": "Ce joueur a un profil privé et n’est pas votre ami : vous ne pouvez pas lui demander de cartes.",
     "not_available_mine": "Vous ne possédez plus ces cartes en quantité suffisante.",
     "not_available_theirs": "Ce joueur ne possède plus ces cartes en quantité suffisante.",
     "too_many_pending": "Trop de propositions en attente : attendez une réponse ou annulez-en.",
@@ -57,13 +57,14 @@
     "give": "Je donne",
     "request": "Je demande",
     "selected": "({count, plural, one {# sélectionnée} other {# sélectionnées}})",
-    "privateNotice": "{name} a un profil privé : vous ne pouvez que lui offrir des cartes.",
+    "privateNotice": "{name} a un profil privé : vous ne pouvez que lui offrir des cartes, sauf si vous devenez amis.",
     "send": "Envoyer la proposition",
     "counterTitle": "Contre-proposition",
     "counterIntro": "Modifiez les cartes : la proposition d’origine sera close et l’autre joueur recevra votre contre-proposition. Sans réponse, elle expire au bout de {days} jours.",
     "counterSend": "Envoyer la contre-proposition",
     "removeCard": "Retirer {title}",
-    "chosen": "Cartes choisies"
+    "chosen": "Cartes choisies",
+    "privateFriend": "profil privé, mais vous êtes amis"
   },
   "selector": {
     "searchPlaceholder": "Rechercher une carte…",

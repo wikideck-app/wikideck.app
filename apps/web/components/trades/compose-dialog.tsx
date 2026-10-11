@@ -167,7 +167,8 @@ export function ComposeDialog({
             <span className="font-bold">{recipient.username}</span>
             {!recipient.isPublic && (
               <span className="inline-flex items-center gap-1 text-xs text-fog">
-                <Lock className="size-3" /> {t("compose.private")}
+                <Lock className="size-3" />{" "}
+                {recipient.friend ? t("compose.privateFriend") : t("compose.private")}
               </span>
             )}
             {!fixedRecipient && (
@@ -242,7 +243,7 @@ export function ComposeDialog({
               {t("compose.request")}{" "}
               <span className="font-normal text-fog">{t("compose.selected", { count: request.size })}</span>
             </h3>
-            {recipient.isPublic ? (
+            {recipient.isPublic || recipient.friend ? (
               <div className="mt-3">
                 <CardSelector
                   key={recipient.id}
