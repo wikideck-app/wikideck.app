@@ -34,11 +34,12 @@ export const USER_DOCS: DocSection[] = [
       { key: "post-auth-logout", method: "POST", path: "/auth/logout", limit: { max: 20, minutes: 1 } },
       { key: "get-auth-me", method: "GET", path: "/auth/me", returns: "{ user: SessionUser | null }", limit: { max: 120, minutes: 1 } },
       { key: "get-me", method: "GET", path: "/me", limit: { max: 60, minutes: 1 } },
-      { key: "patch-me", method: "PATCH", path: "/me", body: ["username", "isPublic", "showcaseCardId", "featuredCardIds"], errors: ["invalid_username", "username_taken", "not_owned"], limit: { max: 20, minutes: 1 } },
+      { key: "patch-me", method: "PATCH", path: "/me", body: ["username", "isPublic", "showcaseCardId", "featuredCardIds", "featuredMode", "displayedTitle"], errors: ["invalid_username", "username_taken", "not_owned"], limit: { max: 20, minutes: 1 } },
       { key: "delete-me", method: "DELETE", path: "/me", body: ["confirm"], errors: ["confirmation_required", "active_auctions"], limit: { max: 3, minutes: 1 } },
       { key: "put-me-settings", method: "PUT", path: "/me/settings", body: ["settings"], limit: { max: 120, minutes: 1 } },
       { key: "get-me-export", method: "GET", path: "/me/export", limit: { max: 5, minutes: 1 } },
       { key: "get-me-pulls", method: "GET", path: "/me/pulls", limit: { max: 30, minutes: 1 } },
+      { key: "get-me-referral", method: "GET", path: "/me/referral", returns: "{ code, referrals, max, reward }", limit: { max: 30, minutes: 1 } },
       { key: "post-bug-reports", method: "POST", path: "/bug-reports", body: ["message", "page"], errors: ["invalid", "too_many_reports"], limit: { max: 5, minutes: 10 } },
     ],
   },
@@ -68,7 +69,7 @@ export const USER_DOCS: DocSection[] = [
   {
     id: "catalogue",
     endpoints: [
-      { key: "get-cards", method: "GET", path: "/cards", query: ["page", "q", "rarity", "show", "sort"], limit: { max: 60, minutes: 1 } },
+      { key: "get-cards", method: "GET", path: "/cards", query: ["page", "q", "rarity", "show", "sort", "source"], limit: { max: 60, minutes: 1 } },
       { key: "get-cards-rates", method: "GET", path: "/cards/rates", limit: { max: 30, minutes: 1 } },
       { key: "get-ranking", method: "GET", path: "/ranking", query: ["board"], limit: { max: 30, minutes: 1 } },
       { key: "get-achievements", method: "GET", path: "/achievements", limit: { max: 30, minutes: 1 } },
@@ -79,7 +80,7 @@ export const USER_DOCS: DocSection[] = [
   {
     id: "marche",
     endpoints: [
-      { key: "get-market", method: "GET", path: "/market", query: ["view", "q", "rarity", "sort", "page"], limit: { max: 90, minutes: 1 } },
+      { key: "get-market", method: "GET", path: "/market", query: ["view", "q", "rarity", "sort", "page", "source"], limit: { max: 90, minutes: 1 } },
       { key: "post-market", method: "POST", path: "/market", body: ["cardId", "startPrice", "hours"], errors: ["invalid", "card_locked", "too_many_listings"], limit: { max: 15, minutes: 1 } },
       { key: "get-market-id", method: "GET", path: "/market/{id}" },
       { key: "post-market-id-bid", method: "POST", path: "/market/{id}/bid", body: ["amount"], errors: ["invalid", "outbid", "insufficient_funds"] },
@@ -93,6 +94,7 @@ export const USER_DOCS: DocSection[] = [
     endpoints: [
       { key: "get-trades", method: "GET", path: "/trades", query: ["box"], limit: { max: 60, minutes: 1 } },
       { key: "post-trades", method: "POST", path: "/trades", body: ["recipientId", "offer", "request"], errors: ["invalid", "self_trade", "recipient_private", "not_available_mine", "not_available_theirs", "too_many_pending"] },
+      { key: "post-trades-id-counter", method: "POST", path: "/trades/{id}/counter", body: ["offer", "request"], errors: ["invalid", "already_resolved", "expired", "not_available_mine", "not_available_theirs", "too_many_pending"], limit: { max: 10, minutes: 1 } },
       { key: "post-trades-id-accept", method: "POST", path: "/trades/{id}/accept", errors: ["expired", "busy"] },
       { key: "post-trades-id-decline", method: "POST", path: "/trades/{id}/decline" },
       { key: "post-trades-id-cancel", method: "POST", path: "/trades/{id}/cancel" },
@@ -128,6 +130,8 @@ export const USER_DOCS: DocSection[] = [
       { key: "patch-albums-id", method: "PATCH", path: "/albums/{id}", body: ["name", "parentId"], errors: ["invalid_name", "album_exists", "album_cycle", "album_too_deep"] },
       { key: "delete-albums-id", method: "DELETE", path: "/albums/{id}" },
       { key: "put-albums-id-cards", method: "PUT", path: "/albums/{id}/cards", body: ["add", "remove"], errors: ["invalid", "album_full", "not_owned"] },
+      { key: "put-albums-id-highlights", method: "PUT", path: "/albums/{id}/highlights", body: ["cardIds"], errors: ["invalid", "not_found"], limit: { max: 60, minutes: 1 } },
+      { key: "put-albums-order", method: "PUT", path: "/albums/order", body: ["ids"], errors: ["invalid", "not_found"], limit: { max: 30, minutes: 1 } },
       { key: "get-albums-id-candidates", method: "GET", path: "/albums/{id}/candidates" },
       { key: "get-wishlist", method: "GET", path: "/wishlist", limit: { max: 60, minutes: 1 } },
       { key: "get-wishlist-ids", method: "GET", path: "/wishlist/ids", limit: { max: 120, minutes: 1 } },

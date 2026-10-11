@@ -106,7 +106,9 @@
         "username": "nouveau pseudo",
         "isPublic": "profil public ou privé",
         "showcaseCardId": "carte en vitrine (une carte possédée), ou null",
-        "featuredCardIds": "cartes en vedette (identifiants de cartes possédées)"
+        "featuredCardIds": "cartes en vedette (identifiants de cartes possédées)",
+        "featuredMode": "auto (les cartes les plus rares) ou none (aucune carte en vedette)",
+        "displayedTitle": "titre affiché sur le profil (identifiant d’un titre obtenu), none ou null pour n’en afficher aucun"
       }
     },
     "delete-me": {
@@ -126,6 +128,9 @@
     },
     "get-me-pulls": {
       "summary": "Historique des ouvertures de paquets, regroupées par ouverture."
+    },
+    "get-me-referral": {
+      "summary": "Ton code de parrainage, le nombre de filleuls, le maximum et la récompense en paquets."
     },
     "post-bug-reports": {
       "summary": "Envoie un rapport de bug à l’équipe.",
@@ -208,10 +213,11 @@
       "summary": "Toutes les cartes du catalogue, avec ce que tu possèdes.",
       "query": {
         "page": "numéro de page",
-        "q": "recherche (mots de 3 lettres minimum)",
+        "q": "recherche : chaque mot (3 lettres minimum) doit se trouver dans le titre ou, pour les animés, dans le nom de l’œuvre",
         "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
         "show": "all, mine (possédées), missing (manquantes), drawn (déjà tirées)",
-        "sort": "rarity_desc, rarity_asc, alpha"
+        "sort": "rarity_desc, rarity_asc, alpha",
+        "source": "anime (personnages d’anime et de manga) ou wikipedia (par défaut)"
       }
     },
     "get-cards-rates": {
@@ -236,10 +242,11 @@
       "summary": "Enchères du marché, 24 par page.",
       "query": {
         "view": "all, selling (mes ventes), bidding (mes enchères)",
-        "q": "recherche sur le titre",
+        "q": "recherche : chaque mot doit se trouver dans le titre ou, pour les animés, dans le nom de l’œuvre",
         "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
         "sort": "ending, new, price_asc, price_desc",
-        "page": "numéro de page"
+        "page": "numéro de page",
+        "source": "anime ou wikipedia : ne garde que ce type de cartes"
       }
     },
     "post-market": {
@@ -281,6 +288,13 @@
       "summary": "Propose un échange (10 cartes par côté, 10 propositions en attente).",
       "body": {
         "recipientId": "joueur destinataire",
+        "offer": "['{' cardId, quantity '}'] : ce que tu donnes",
+        "request": "['{' cardId, quantity '}'] : ce que tu demandes"
+      }
+    },
+    "post-trades-id-counter": {
+      "summary": "Répond à une proposition en attente par une contre-proposition. Les champs sont de ton point de vue : offer est ce que tu donnes, request ce que tu demandes.",
+      "body": {
         "offer": "['{' cardId, quantity '}'] : ce que tu donnes",
         "request": "['{' cardId, quantity '}'] : ce que tu demandes"
       }
@@ -381,10 +395,10 @@
       }
     },
     "get-albums-id": {
-      "summary": "Détail d’un album : son chemin (trail), ses sous-albums (children), ses pièces maîtresses et ses cartes.",
+      "summary": "Détail d’un album : son chemin (trail), ses sous-albums (children), ses pièces maîtresses (highlights, et highlightIds pour celles choisies) et ses cartes.",
       "query": {
         "scope": "own (cartes de l’album seul, par défaut) ou all (avec ses sous-albums)",
-        "q": "recherche dans le titre ou le sous-titre",
+        "q": "recherche : chaque mot doit se trouver dans le titre ou le sous-titre",
         "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
         "page": "numéro de page"
       }
@@ -404,6 +418,18 @@
       "body": {
         "add": "identifiants de cartes à ajouter",
         "remove": "identifiants de cartes à retirer"
+      }
+    },
+    "put-albums-id-highlights": {
+      "summary": "Choisit les pièces maîtresses de l’album (3 cartes de l’album au maximum). Une liste vide rétablit la sélection automatique.",
+      "body": {
+        "cardIds": "identifiants des cartes de l’album à mettre en avant, dans l’ordre"
+      }
+    },
+    "put-albums-order": {
+      "summary": "Fixe l’ordre des albums affichés sur le profil.",
+      "body": {
+        "ids": "identifiants des albums du profil, du premier au dernier"
       }
     },
     "get-albums-id-candidates": {
