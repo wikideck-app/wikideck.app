@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import {
+  ALBUM_HIGHLIGHTS,
   ALBUM_MAX_DEPTH,
   ALBUM_NAME_MAX,
   RARITIES,
@@ -184,6 +185,15 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
     router.refresh();
   }
 
+  async function setHighlights(cardIds: string[]) {
+    setError(null);
+    const res = await apiCall(apiUrl, `/albums/${album.id}/highlights`, "PUT", { cardIds });
+    if (!res.ok) return setError(res.message);
+    setPicked(new Set());
+    setSelectMode(false);
+    router.refresh();
+  }
+
   const toggle = (card: CollectionCard) =>
     setPicked((prev) => {
       const next = new Set(prev);
@@ -341,9 +351,20 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
 
       {data.highlights.length > 0 && (
         <section className="mt-8" aria-label={t("highlights")}>
-          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-fog">
-            {t("highlights")}
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-fog">
+              {t("highlights")}
+            </h2>
+            {!data.readOnly && data.highlightIds.length > 0 && (
+              <button
+                type="button"
+                onClick={() => void setHighlights([])}
+                className="text-xs text-fog underline hover:text-foreground"
+              >
+                {t("highlightsReset")}
+              </button>
+            )}
+          </div>
           <div className="mt-4 flex h-96 items-center justify-center overflow-hidden rounded-xl border border-line bg-surface">
             <div className="relative flex w-40 items-center justify-center sm:w-48">
               {data.highlights.map((card, i) => (
@@ -486,6 +507,14 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
                   >
                     <WikiCard card={card} quantity={card.quantity} compact />
                   </button>
+                  {!selectMode && data.highlightIds.includes(card.id) && (
+                    <span
+                      title={t("highlightBadge")}
+                      className="pointer-events-none absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-accent text-xs text-accent-foreground shadow"
+                    >
+                      ★
+                    </span>
+                  )}
                   {selectMode && (
                     <span
                       aria-hidden
@@ -544,6 +573,15 @@ export function AlbumView({ data, apiUrl }: { data: AlbumResponse; apiUrl: strin
           <span className="text-sm">
             {t("selected", { count: picked.size })}
           </span>
+          <button
+            type="button"
+            className={buttonClass}
+            disabled={picked.size > ALBUM_HIGHLIGHTS}
+            title={picked.size > ALBUM_HIGHLIGHTS ? t("highlightMax", { max: ALBUM_HIGHLIGHTS }) : undefined}
+            onClick={() => void setHighlights([...picked])}
+          >
+            {t("highlightPin")}
+          </button>
           <button type="button" className={dangerButtonClass} onClick={() => void takeOut()}>
             {t("takeOut")}
           </button>
