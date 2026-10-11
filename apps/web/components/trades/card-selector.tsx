@@ -3,7 +3,13 @@
 import { Minus, Plus, Search } from "@/components/icons";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { TRADE_MAX_CARDS, type CollectionCard, type CollectionResponse } from "@wikideck/shared";
+import {
+  RARITIES,
+  TRADE_MAX_CARDS,
+  type CollectionCard,
+  type CollectionResponse,
+  type Rarity,
+} from "@wikideck/shared";
 import { WikiCard } from "@/components/wiki-card";
 import { apiFetch } from "@/lib/tags-api";
 import { buttonClass } from "@/components/settings/controls";
@@ -25,6 +31,7 @@ export function CardSelector({
   const tc = useTranslations("common");
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<"all" | "wikipedia" | "anime">("all");
+  const [rarities, setRarities] = useState<Rarity[]>([]);
   const [page, setPage] = useState(1);
   const [cards, setCards] = useState<CollectionCard[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -40,6 +47,13 @@ export function CardSelector({
         const params = new URLSearchParams({ sort: "rarity_desc", page: String(page) });
         if (query.trim()) params.set("q", query.trim());
         if (source !== "all") params.set("source", source);
+        if (rarities.length)
+          params.set(
+            "rarity",
+            RARITIES.filter((r) => rarities.includes(r.value))
+              .map((r) => r.code)
+              .join(","),
+          );
         const result = await apiFetch<CollectionResponse>(apiUrl, `${endpoint}?${params}`);
         if (id !== requestId.current) return;
         if (!result.ok) {
@@ -54,7 +68,7 @@ export function CardSelector({
       page === 1 && query ? 300 : 0,
     );
     return () => clearTimeout(timer);
-  }, [apiUrl, endpoint, query, source, page]);
+  }, [apiUrl, endpoint, query, source, rarities, page]);
 
   function toggle(card: CollectionCard) {
     const next = new Map(selection);
@@ -89,6 +103,29 @@ export function CardSelector({
             {t(`sources.${k}`)}
           </button>
         ))}
+      </div>
+      <div className="mb-3 flex flex-wrap gap-1" role="group" aria-label={t("rarityLabel")}>
+        {[...RARITIES].reverse().map((r) => {
+          const active = rarities.includes(r.value);
+          return (
+            <button
+              key={r.value}
+              type="button"
+              aria-pressed={active}
+              onClick={() => {
+                setRarities((prev) =>
+                  prev.includes(r.value) ? prev.filter((v) => v !== r.value) : [...prev, r.value],
+                );
+                setPage(1);
+              }}
+              className={`min-w-9 rounded-full px-2.5 py-1 text-xs font-bold transition-colors ${
+                active ? "bg-accent text-accent-foreground" : "bg-foreground/10 hover:bg-foreground/15"
+              }`}
+            >
+              {r.code}
+            </button>
+          );
+        })}
       </div>
       <div className="relative max-w-xs">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />

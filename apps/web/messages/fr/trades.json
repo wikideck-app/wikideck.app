@@ -78,7 +78,8 @@
       "all": "Toutes",
       "wikipedia": "Wikipédia",
       "anime": "Anime / Manga"
-    }
+    },
+    "rarityLabel": "Filtrer par rareté"
   },
   "counterBadge": "Contre-proposition",
   "counterAction": "Contre-proposer"
