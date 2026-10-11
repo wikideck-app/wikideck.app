@@ -63,7 +63,7 @@
     "by": "par {name}",
     "reason": "motif : {reason}",
     "wikibits": "{amount} ({reason})",
-    "packs": "+{count}",
+    "packs": "+{count} {kind, select, anime {anime / manga} bonus {bonus} other {Wikipédia}}",
     "role": "{from} → {to}",
     "noRole": "aucun",
     "automatic": "automatique",
@@ -150,7 +150,13 @@
     "typeName": "Tapez « {name} » pour confirmer",
     "actionsOn": "Actions du staff sur ce compte",
     "bitsAdd": "Ajouter",
-    "bitsRemove": "Retirer"
+    "bitsRemove": "Retirer",
+    "packsKind": "Type de paquet",
+    "packKinds": {
+      "wikipedia": "Wikipédia",
+      "anime": "Anime / Manga",
+      "bonus": "Bonus"
+    }
   },
   "alerts": {
     "intro": "Comptes dont les indices d’abus des 30 derniers jours totalisent au moins 30. Un indice seul ne restreint jamais un compte : vérifiez avant d’agir. Une alerte marquée comme lue ne revient que si un nouvel indice apparaît.",

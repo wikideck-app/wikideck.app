@@ -583,7 +583,7 @@
     "post-staff-users-id": {
       "summary": "Agit sur un membre. Chaque action est consignée dans le journal.",
       "body": {
-        "action": "ban '{' reason '}', unban, rename '{' username '}', setTrust '{' override '}', clearSignals (modérateur sur un rang inférieur) ; wikibits '{' amount, reason '}', packs '{' count '}', setRole '{' role '}', delete '{' confirm, reason '}' (administrateur)"
+        "action": "ban '{' reason '}', unban, rename '{' username '}', setTrust '{' override '}', clearSignals (modérateur sur un rang inférieur) ; wikibits '{' amount, reason '}', packs '{' count, kind (wikipedia, anime ou bonus ; wikipedia par défaut) '}', setRole '{' role '}', delete '{' confirm, reason '}' (administrateur)"
       }
     },
     "get-staff-deleted": {

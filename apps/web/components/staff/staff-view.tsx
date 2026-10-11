@@ -94,7 +94,10 @@ function describe(row: StaffAuditRow, t: Translator) {
     case "wikibits":
       return `${Number(d.amount) > 0 ? "+" : ""}${t("audit.wikibits", { amount: String(d.amount), reason: String(d.reason) })}`;
     case "packs":
-      return t("audit.packs", { count: Number(d.count) });
+      return t("audit.packs", {
+        count: Number(d.count),
+        kind: d.kind === "anime" || d.kind === "bonus" ? String(d.kind) : "wikipedia",
+      });
     case "set_role":
       return t("audit.role", {
         from: String(d.from ?? t("audit.noRole")),
@@ -363,6 +366,7 @@ function Member({
   const [delConfirm, setDelConfirm] = useState("");
   const { confirm, dialog: confirmDialog } = useConfirm();
   const [packs, setPacks] = useState("1");
+  const [packKind, setPackKind] = useState<"wikipedia" | "anime" | "bonus">("wikipedia");
 
   const load = useCallback(async () => {
     const res = await apiFetch<StaffMemberDetail>(apiUrl, `/staff/users/${id}`);
@@ -698,9 +702,19 @@ function Member({
                   className="flex gap-2"
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    await run({ action: "packs", count: Number(packs) }, tm("packsGiven"));
+                    await run({ action: "packs", count: Number(packs), kind: packKind }, tm("packsGiven"));
                   }}
                 >
+                  <select
+                    value={packKind}
+                    onChange={(e) => setPackKind(e.target.value as "wikipedia" | "anime" | "bonus")}
+                    aria-label={tm("packsKind")}
+                    className={field}
+                  >
+                    <option value="wikipedia">{tm("packKinds.wikipedia")}</option>
+                    <option value="anime">{tm("packKinds.anime")}</option>
+                    <option value="bonus">{tm("packKinds.bonus")}</option>
+                  </select>
                   <input
                     value={packs}
                     onChange={(e) => setPacks(e.target.value)}
