@@ -1,5 +1,6 @@
 "use client";
 
+import { showSystemNotification } from "@/lib/web-push";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import type { PackStatus } from "@wikideck/shared";
@@ -27,15 +28,12 @@ export function PackWatcher({ initial, apiUrl }: { initial: PackStatus | null; a
         const status = (await res.json()) as PackStatus;
         if (status.packs > known.current && document.visibilityState === "hidden") {
           if ("Notification" in window && Notification.permission === "granted") {
-            const n = new Notification(translate.current("title"), {
+            void showSystemNotification(translate.current("title"), {
               body: translate.current("body"),
               icon: "/logo.webp",
               tag: "booster-ready",
+              data: { url: "/packs" },
             });
-            n.onclick = () => {
-              window.focus();
-              window.location.assign("/packs");
-            };
           }
         }
         known.current = status.packs;

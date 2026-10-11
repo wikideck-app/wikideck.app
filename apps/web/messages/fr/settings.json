@@ -104,7 +104,18 @@
     "boosterLabel": "Alerte de recharge de paquet",
     "events": "Événements thématiques",
     "eventsHelp": "Début et fin d’un événement spécial sur un thème de Wikipédia (par exemple une semaine d’histoire de France). Aucun événement n’existe encore : votre choix est enregistré pour plus tard.",
-    "eventsLabel": "Alertes d’événements thématiques"
+    "eventsLabel": "Alertes d’événements thématiques",
+    "push": {
+      "title": "Notifications sur cet appareil",
+      "help": "Recevez les messages, échanges, enchères, demandes d’amis, cadeaux et succès même quand Wikideck est fermé. À activer sur chaque appareil, y compris votre téléphone. Sur iPhone, ajoutez d’abord Wikideck à l’écran d’accueil.",
+      "enable": "Activer",
+      "disable": "Désactiver",
+      "states": {
+        "unsupported": "Ce navigateur ne les prend pas en charge.",
+        "denied": "Elles sont bloquées dans les réglages du navigateur.",
+        "unconfigured": "Le serveur n’est pas encore configuré pour les envoyer."
+      }
+    }
   },
   "privacy": {
     "title": "Confidentialité & données du joueur",

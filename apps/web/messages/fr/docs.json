@@ -132,6 +132,22 @@
     "get-me-referral": {
       "summary": "Ton code de parrainage, le nombre de filleuls, le maximum et la récompense en paquets."
     },
+    "get-push-key": {
+      "summary": "Clé publique VAPID, nécessaire au navigateur pour s’abonner aux notifications (null si le serveur ne les envoie pas)."
+    },
+    "post-push-subscription": {
+      "summary": "Abonne l’appareil aux notifications Web Push (10 appareils par compte).",
+      "body": {
+        "endpoint": "adresse de l’abonnement (PushSubscription.endpoint)",
+        "keys": "['{' p256dh, auth '}'] : clés de l’abonnement"
+      }
+    },
+    "delete-push-subscription": {
+      "summary": "Désabonne l’appareil des notifications Web Push.",
+      "body": {
+        "endpoint": "adresse de l’abonnement à supprimer"
+      }
+    },
     "post-bug-reports": {
       "summary": "Envoie un rapport de bug à l’équipe.",
       "body": {

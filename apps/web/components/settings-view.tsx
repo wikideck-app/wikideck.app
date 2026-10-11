@@ -20,7 +20,7 @@ import {
 import { SelectMenu } from "@/components/select-menu";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   USERNAME_MAX,
   USERNAME_MIN,
@@ -42,6 +42,7 @@ import {
 } from "@/components/settings/controls";
 import { sfx } from "@/lib/audio";
 import { useSettings } from "@/lib/settings-context";
+import { disablePush, enablePush, pushState, showSystemNotification, type PushState } from "@/lib/web-push";
 import { apiCall } from "@/lib/tags-api";
 
 type SectionId =
@@ -158,7 +159,7 @@ export function SettingsView({ profile, apiUrl }: { profile: MeProfile; apiUrl: 
           {section === "tirage" && <DrawSection />}
           {section === "collection" && <CollectionSection />}
           {section === "audio" && <AudioSection />}
-          {section === "notifications" && <NotificationsSection />}
+          {section === "notifications" && <NotificationsSection apiUrl={apiUrl} />}
           {section === "confidentialite" && <PrivacySection profile={profile} apiUrl={apiUrl} />}
           {section === "donnees" && <DataSection apiUrl={apiUrl} />}
         </div>
@@ -500,7 +501,7 @@ function AudioSection() {
 
 type Permission = NotificationPermission | "unsupported";
 
-function NotificationsSection() {
+function NotificationsSection({ apiUrl }: { apiUrl: string }) {
   const t = useTranslations("settings.notifications");
   const { settings, update } = useSettings();
   const current = useSyncExternalStore(
@@ -510,6 +511,26 @@ function NotificationsSection() {
   );
   const [answered, setAnswered] = useState<Permission | null>(null);
   const permission = answered ?? current;
+  const [push, setPush] = useState<PushState | null>(null);
+  const [pushBusy, setPushBusy] = useState(false);
+  const [pushError, setPushError] = useState<string | null>(null);
+  useEffect(() => {
+    void pushState().then(setPush);
+  }, []);
+
+  async function togglePush() {
+    setPushBusy(true);
+    setPushError(null);
+    if (push === "on") {
+      await disablePush(apiUrl);
+      setPush(await pushState());
+    } else {
+      const result = await enablePush(apiUrl);
+      setPush(result.state);
+      setPushError(result.error ?? null);
+    }
+    setPushBusy(false);
+  }
 
   async function ask(): Promise<Permission> {
     if (!("Notification" in window)) return "unsupported";
@@ -557,7 +578,7 @@ function NotificationsSection() {
             className={buttonClass}
             disabled={permission !== "granted"}
             onClick={() =>
-              new Notification(t("testTitle"), {
+              void showSystemNotification(t("testTitle"), {
                 body: t("testBody"),
                 icon: "/logo.webp",
               })
@@ -566,6 +587,25 @@ function NotificationsSection() {
             {t("test")}
           </button>
         </div>
+      </SettingRow>
+      <SettingRow
+        title={t("push.title")}
+        description={
+          <>
+            {t("push.help")}
+            {push && push !== "on" && push !== "off" && ` ${t(`push.states.${push}`)}`}
+            {pushError && <span className="block text-danger">{pushError}</span>}
+          </>
+        }
+      >
+        <button
+          type="button"
+          className={push === "on" ? buttonClass : primaryButtonClass}
+          disabled={pushBusy || push === null || push === "unsupported" || push === "denied" || push === "unconfigured"}
+          onClick={() => void togglePush()}
+        >
+          {push === "on" ? t("push.disable") : t("push.enable")}
+        </button>
       </SettingRow>
       <SettingRow
         title={t("booster")}

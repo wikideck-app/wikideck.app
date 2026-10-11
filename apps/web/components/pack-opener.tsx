@@ -119,7 +119,7 @@ export function PackOpener({
   // paquets Wikipédia (réserve principale) ou anime / manga (réserve séparée)
   const [kind, setKind] = useState<PackKind>("wikipedia");
   const status: PackStatus =
-    kind === "anime" && full.anime ? { ...full.anime, boosts: 0 } : full;
+    kind === "anime" && full.anime ? { ...full.anime, boosts: full.boosts } : full;
   // paquets bonus (parrainage) : ils prennent le relais quand la réserve du type choisi est vide
   const bonus = full.bonus ?? 0;
   const available = status.packs + (status.packs < 1 ? bonus : 0);
@@ -237,7 +237,7 @@ export function PackOpener({
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ boost: useBoost && kind === "wikipedia", kind }),
+          body: JSON.stringify({ boost: useBoost, kind }),
         });
         if (res.status !== 503) break;
         if (tries >= QUEUE_MAX_TRIES) {
