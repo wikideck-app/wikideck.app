@@ -9,6 +9,10 @@ const METHOD_STYLE: Record<Method, string> = {
   DELETE: "bg-danger/15 text-danger",
 };
 
+/** ancre d'une route dans la référence */
+export const endpointId = (sectionId: string, e: Pick<Endpoint, "method" | "path">) =>
+  `${sectionId}-${e.method.toLowerCase()}-${e.path.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}`;
+
 type DocsTranslator = Awaited<ReturnType<typeof getTranslations<"docs">>>;
 
 // les noms de champs viennent de la structure (api-docs.ts) : le test i18n vérifie que chacun a un texte
@@ -43,7 +47,7 @@ function Fields({
 
 function EndpointCard({ endpoint, id, t }: { endpoint: Endpoint; id: string; t: DocsTranslator }) {
   return (
-    <li id={id} className="scroll-mt-20 rounded-xl border border-line bg-surface p-4">
+    <li id={id} className="scroll-mt-24 rounded-xl border border-line bg-surface p-4">
       <div className="flex flex-wrap items-center gap-2">
         <span
           className={`rounded-md px-2 py-0.5 text-xs font-bold ${METHOD_STYLE[endpoint.method]}`}
@@ -100,7 +104,7 @@ export async function ApiReference({ sections }: { sections: DocSection[] }) {
   const t = await getTranslations("docs");
   return (
     <>
-      <nav aria-label={t("reference.sections")} className="mt-8 flex flex-wrap gap-2">
+      <nav aria-label={t("reference.sections")} className="flex flex-wrap gap-2">
         {sections.map((s) => (
           <a
             key={s.id}
@@ -112,8 +116,8 @@ export async function ApiReference({ sections }: { sections: DocSection[] }) {
         ))}
       </nav>
       {sections.map((section) => (
-        <section key={section.id} id={section.id} className="mt-12 scroll-mt-20">
-          <h2 className="font-display text-3xl font-medium">{t(`sections.${section.id}.title`)}</h2>
+        <section key={section.id} id={section.id} className="mt-10 scroll-mt-24">
+          <h3 className="font-display text-2xl font-semibold">{t(`sections.${section.id}.title`)}</h3>
           {t.has(`sections.${section.id}.intro` as never) && (
             <p className="prose-serif mt-2 text-pale-mist">
               {t(`sections.${section.id}.intro` as never)}
@@ -125,7 +129,7 @@ export async function ApiReference({ sections }: { sections: DocSection[] }) {
                 key={e.key}
                 endpoint={e}
                 t={t}
-                id={`${section.id}-${e.method.toLowerCase()}-${e.path.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}`}
+                id={endpointId(section.id, e)}
               />
             ))}
           </ul>

@@ -20,15 +20,17 @@ export default async function StaffDocsPage() {
   if (!me?.staff) notFound();
   const t = await getTranslations("docs.staff");
   return (
-    <>
-      <h1 className="font-display text-5xl font-medium">{t("title")}</h1>
+    <div className="mx-auto max-w-4xl py-8">
+      <h1 className="font-display text-5xl font-semibold">{t("title")}</h1>
       <p className="prose-serif mt-3 text-pale-mist">{t.rich("intro", tags)}</p>
       <div className="mt-6 rounded-xl border border-line bg-surface p-4 text-sm text-pale-mist">
         <p>{t.rich("access", tags)}</p>
         <p className="mt-2">{t.rich("journal", tags)}</p>
         <p className="mt-2">{t.rich("roles", tags)}</p>
       </div>
-      <ApiReference sections={STAFF_DOCS} />
-    </>
+      <div className="mt-8">
+        <ApiReference sections={STAFF_DOCS} />
+      </div>
+    </div>
   );
 }

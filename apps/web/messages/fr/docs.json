@@ -1,26 +1,4 @@
 {
-  "api": {
-    "title": "API Wikideck",
-    "intro": "Les routes utilisées par le site, décrites pour que tu saches ce qu’elles font et ce qu’elles renvoient.",
-    "noBotTitle": "Pas encore d’accès pour les bots",
-    "noBotText": "Toutes les routes de données demandent une session ouverte via Discord dans un navigateur. Il n’existe pas encore de clé d’API : un bot Discord ne peut donc pas s’en servir pour l’instant. Seules <code>/health</code> et la racine de l’API sont ouvertes sans connexion.",
-    "principles": "Principes",
-    "baseUrl": "Adresse de base",
-    "baseUrlText": "<code>{url}</code>. Le préfixe <code>/v1</code> est la version ; la réponse indique <code>X-Api-Version</code>.",
-    "auth": "Authentification",
-    "authText": "Cookie <code>wikideck_session</code>, posé après la connexion Discord. Il est <code>HttpOnly</code> et valable 30 jours. Les requêtes depuis un navigateur doivent envoyer les cookies (<code>credentials: \"include\"</code>) et ne sont acceptées que depuis le site officiel. Ne partage jamais ce cookie : il donne accès à ton compte.",
-    "format": "Format",
-    "formatText": "JSON en entrée et en sortie. Les identifiants sont des UUID, les dates sont au format ISO 8601. Les listes sont paginées avec <code>page</code>.",
-    "errors": "Erreurs",
-    "errorsText": "Un code HTTP et un corps <code>'{' \"error\": \"code\" '}'</code>. <code>401</code> : non connecté ; <code>400</code> : requête invalide ; <code>404</code> : introuvable ; <code>409</code> : conflit d’état ; <code>429</code> : trop de requêtes.",
-    "rateLimits": "Limites de débit",
-    "rateLimitsText": "Chaque route a une limite par minute (indiquée à droite de chaque route). Les en-têtes <code>RateLimit-Limit</code>, <code>RateLimit-Remaining</code> et <code>RateLimit-Reset</code> disent où tu en es. Au-delà, la réponse est <code>429 rate_limited</code> avec <code>retryAfter</code> en secondes.",
-    "rarities": "Raretés",
-    "raritiesText": "C commune, PC peu commune, R rare, SR super rare, UR ultra rare, L légendaire, M mythique.",
-    "health": "Santé du service",
-    "healthText": "État du service, version de l’API et charge. Avec la racine de l’API, c’est la seule route publique.",
-    "noLogin": "sans connexion"
-  },
   "staff": {
     "title": "API staff",
     "intro": "Routes de l’espace staff, sous <code>/staff</code>. Même session et mêmes conventions que l’API des joueurs.",
@@ -680,6 +658,146 @@
     },
     "post-quests-id-claim": {
       "summary": "Récupère la récompense en wikibits d'une quête atteinte (une seule fois). L'identifiant contient « : » : encode-le dans l'adresse."
+    }
+  },
+  "site": {
+    "brand": "Wikideck API",
+    "nav": {
+      "docs": "Documentation",
+      "status": "Statut",
+      "support": "Support",
+      "menu": "Menu de la documentation"
+    },
+    "search": {
+      "placeholder": "Rechercher…",
+      "label": "Rechercher dans la documentation",
+      "empty": "Aucun résultat",
+      "shortcut": "Ctrl K"
+    },
+    "sidebar": {
+      "intro": "Introduction",
+      "overview": "Vue d’ensemble",
+      "quickstart": "Démarrage rapide",
+      "auth": "Authentification",
+      "limits": "Limites et quotas",
+      "errors": "Codes d’erreur",
+      "reference": "Références",
+      "resources": "Ressources",
+      "examples": "Exemples",
+      "rarities": "Raretés",
+      "staffDocs": "API staff",
+      "backToSite": "Retour au site"
+    },
+    "baseUrl": {
+      "title": "URL de base",
+      "copy": "Copier",
+      "copied": "Copié",
+      "checking": "Vérification…",
+      "up": "API opérationnelle",
+      "down": "API injoignable"
+    },
+    "toc": {
+      "title": "Sur cette page"
+    },
+    "help": {
+      "title": "Besoin d’aide ?",
+      "text": "Une question ? Viens en parler sur le Discord de Wikideck.",
+      "cta": "Rejoindre le Discord"
+    },
+    "hero": {
+      "badge": "API",
+      "title": "API",
+      "accent": "Wikideck",
+      "intro": "Accède aux fonctionnalités de Wikideck depuis tes propres outils : cartes, collection, marché, échanges et plus encore.",
+      "text": "Les routes décrites ici sont celles que le site utilise lui-même. Elles répondent en JSON et sont limitées par minute.",
+      "start": "Démarrer maintenant",
+      "examples": "Voir les exemples"
+    },
+    "features": {
+      "key": {
+        "title": "Clé d’API",
+        "text": "Authentification par en-tête Authorization."
+      },
+      "json": {
+        "title": "JSON partout",
+        "text": "Entrées et sorties en JSON, dates ISO 8601."
+      },
+      "limits": {
+        "title": "Limites claires",
+        "text": "En-têtes RateLimit sur chaque réponse."
+      },
+      "same": {
+        "title": "Comme le site",
+        "text": "Le site n’utilise pas d’autre API que celle-ci."
+      }
+    },
+    "quickstart": {
+      "title": "Démarrage rapide",
+      "intro": "Fais ta première requête en quelques minutes.",
+      "step1": "Obtiens une clé d’API",
+      "step1Text": "Les clés sont créées par l’équipe, dans l’espace staff. Demande la tienne sur le Discord.",
+      "step2": "Fais une requête",
+      "step2Text": "Envoie ta clé dans l’en-tête <code>Authorization</code>.",
+      "step3": "Reçois la réponse",
+      "step3Text": "Les données reviennent en JSON.",
+      "sample": "Requête d’exemple"
+    },
+    "auth": {
+      "title": "Authentification",
+      "intro": "Chaque requête doit prouver qui tu es, par une clé d’API ou par la session du navigateur.",
+      "keyTitle": "Clé d’API",
+      "keyText": "Envoie <code>Authorization: Bearer wdk_…</code>. La clé agit au nom de son titulaire : elle a les mêmes droits que son compte, et s’arrête si le compte est suspendu ou si la clé est révoquée.",
+      "sessionTitle": "Session du navigateur",
+      "sessionText": "Le site utilise le cookie <code>wikideck_session</code>, posé après la connexion Discord (<code>HttpOnly</code>, 30 jours). Les requêtes d’un navigateur doivent envoyer les cookies et ne sont acceptées que depuis le site officiel. Ne partage jamais ce cookie.",
+      "sessionOnly": "Certaines actions exigent la session du navigateur, même avec une clé : l’ouverture de paquets, la suppression du compte et la gestion des clés.",
+      "whereTitle": "Où trouver ma clé ?",
+      "whereText": "Les clés sont créées par un administrateur (espace staff, Clés API). Pour l’instant il n’y a pas de création en libre-service : demande-en une sur le Discord.",
+      "whereCta": "Demander une clé",
+      "public": "Seules <code>/health</code> et la racine de l’API sont ouvertes sans connexion."
+    },
+    "first": {
+      "title": "Ta première requête",
+      "intro": "Récupère ta collection de cartes.",
+      "responseTitle": "Réponse (200)"
+    },
+    "limits": {
+      "title": "Limites et quotas",
+      "text": "Chaque route a une limite par minute, indiquée à droite de la route dans la référence. Les en-têtes <code>RateLimit-Limit</code>, <code>RateLimit-Remaining</code> et <code>RateLimit-Reset</code> disent où tu en es. Au-delà, la réponse est <code>429 rate_limited</code> avec <code>retryAfter</code> en secondes."
+    },
+    "errors": {
+      "title": "Codes d’erreur",
+      "text": "Un code HTTP et un corps JSON avec le champ <code>error</code>.",
+      "code": "Code",
+      "meaning": "Signification",
+      "400": "Requête invalide.",
+      "401": "Non connecté, ou clé inconnue ou révoquée.",
+      "403": "Action interdite pour ce compte.",
+      "404": "Ressource introuvable.",
+      "409": "Conflit d’état (par exemple une enchère déjà terminée).",
+      "429": "Trop de requêtes : attends le délai indiqué.",
+      "502": "Un service externe (Wikipédia, AniList) ne répond pas.",
+      "503": "Service surchargé : réessaie après le délai indiqué."
+    },
+    "format": {
+      "title": "Format",
+      "text": "Les identifiants sont des UUID, les dates sont au format ISO 8601, les listes sont paginées avec <code>page</code>. Le préfixe de version est <code>/v1</code> : la réponse indique <code>X-Api-Version</code>."
+    },
+    "rarities": {
+      "title": "Raretés",
+      "text": "Les raretés se filtrent par code : C commune, PC peu commune, R rare, SR super rare, UR ultra rare, L légendaire, M mythique."
+    },
+    "examples": {
+      "title": "Exemples",
+      "intro": "La même requête dans trois langages."
+    },
+    "reference": {
+      "title": "Référence des routes",
+      "intro": "Toutes les routes par thème."
+    },
+    "health": {
+      "title": "Santé du service",
+      "text": "État du service, version de l’API et charge. Avec la racine de l’API, c’est la seule route publique.",
+      "noLogin": "sans connexion"
     }
   }
 }
