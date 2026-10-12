@@ -325,7 +325,8 @@
       "DUPLICATE_REDUCTION": "Réduction temporaire des doublons",
       "WISHLIST_SLOT": "Emplacements de liste d’envies",
       "ALBUM_SLOT": "Albums supplémentaires",
-      "AUCTION_SLOT": "Emplacements de vente aux enchères"
+      "AUCTION_SLOT": "Emplacements de vente aux enchères",
+      "PACK_SPEEDUP": "Recharge des paquets accélérée"
     },
     "availableFrom": "Disponible à partir du (facultatif)",
     "availableUntil": "Disponible jusqu’au (facultatif)",
@@ -345,7 +346,8 @@
       "DUPLICATE_REDUCTION": "durée en heures : pendant ce temps, une carte déjà possédée sur deux est remplacée par une carte nouvelle",
       "WISHLIST_SLOT": "nombre d’emplacements ajoutés à la liste d’envies (47 au maximum par joueur en plus des 3 de base)",
       "ALBUM_SLOT": "nombre d’albums (ou sous-albums) que le joueur peut créer en plus des 15 gratuits (85 au maximum)",
-      "AUCTION_SLOT": "nombre de ventes en cours que le joueur peut avoir en plus des 10 gratuites (40 au maximum)"
+      "AUCTION_SLOT": "nombre de ventes en cours que le joueur peut avoir en plus des 10 gratuites (40 au maximum)",
+      "PACK_SPEEDUP": "durée en heures : pendant ce temps, un paquet arrive 2 fois plus vite (Wikipédia et anime). Un nouvel achat prolonge la durée restante"
     }
   },
   "navSubtitle": "Gestion du site et des membres",

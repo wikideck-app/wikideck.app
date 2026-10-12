@@ -81,5 +81,6 @@
     "reduction": "Réduction des doublons jusqu’au {date}",
     "avoided": "{count, plural, one {# doublon évité} other {# doublons évités}}"
   },
-  "bonus": "{count, plural, one {# paquet bonus (parrainage)} other {# paquets bonus (parrainage)}} : il{count, plural, one { sert} other { servent}} quand votre réserve est vide, sans bloquer la recharge."
+  "bonus": "{count, plural, one {# paquet bonus (parrainage)} other {# paquets bonus (parrainage)}} : il{count, plural, one { sert} other { servent}} quand votre réserve est vide, sans bloquer la recharge.",
+  "speedUp": "Recharge des paquets 2 fois plus rapide jusqu’à {date}."
 }

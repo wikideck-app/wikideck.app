@@ -605,10 +605,17 @@ export function PackOpener({
           ))}
         </div>
       )}
-      {(full.duplicateShield ?? 0) > 0 || full.duplicateReductionUntil ? (
+      {(full.duplicateShield ?? 0) > 0 || full.duplicateReductionUntil || full.speedUpUntil ? (
         <ul className="mt-4 flex flex-col items-center gap-1 text-xs text-pale-mist">
           {(full.duplicateShield ?? 0) > 0 && (
             <li>{t("duplicates.shield", { count: full.duplicateShield ?? 0 })}</li>
+          )}
+          {full.speedUpUntil && (
+            <li>
+              {t("speedUp", {
+                date: format.dateTime(new Date(full.speedUpUntil), "mediumTime"),
+              })}
+            </li>
           )}
           {full.duplicateReductionUntil && (
             <li>
