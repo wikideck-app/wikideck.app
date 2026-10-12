@@ -545,7 +545,7 @@
       "summary": "Flux d’événements en direct (SSE) d’un salon. 3 flux simultanés au maximum par joueur."
     },
     "get-staff-overview": {
-      "summary": "Chiffres du site : membres, cartes, enchères, wikibits, activité."
+      "summary": "Chiffres du site : membres, paquets, enchères, wikibits, activité, signalements et bugs à traiter, courbes et évolution sur 7 jours, évènements récents."
     },
     "get-staff-alerts": {
       "summary": "Comptes suspects selon les indices d’abus des 30 derniers jours."

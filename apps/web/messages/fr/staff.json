@@ -82,7 +82,44 @@
     "flagged": "comptes signalés",
     "banned": "comptes suspendus",
     "staff": "membres du staff",
-    "circulation": "en circulation"
+    "circulation": "en circulation",
+    "welcome": "Bienvenue, {name}",
+    "welcomeText": "Voici un aperçu de l’activité du site. Toutes les actions importantes sont regroupées ici.",
+    "recentTitle": "Activité récente",
+    "seeAll": "Tout voir",
+    "noActivity": "Aucune activité pour le moment.",
+    "kinds": {
+      "signup": "Nouveau membre",
+      "pull": "Tirage rare",
+      "report": "Signalement",
+      "bug": "Bug",
+      "auction": "Enchère",
+      "trade": "Échange"
+    },
+    "recent": {
+      "signup": "{name} s’est inscrit",
+      "pull": "{name} a obtenu {card}",
+      "report": "Un message a été signalé",
+      "bug": "Un bug a été signalé",
+      "auction": "Nouvelle enchère sur {card}",
+      "trade": "Nouvelle demande d’échange"
+    },
+    "quickTitle": "Accès rapides",
+    "quick": {
+      "members": "Gérer les membres",
+      "reports": "Voir les signalements",
+      "auctions": "Modérer les enchères",
+      "audit": "Consulter le journal",
+      "shop": "Gérer la boutique",
+      "apiKeys": "Clés API"
+    },
+    "chartTitle": "Statistiques (7 derniers jours)",
+    "series": {
+      "newUsers": "Nouveaux membres",
+      "packs": "Paquets ouverts",
+      "battles": "Parties",
+      "auctions": "Enchères"
+    }
   },
   "members": {
     "search": "Pseudo ou identifiant Discord",
@@ -308,5 +345,7 @@
       "WISHLIST_SLOT": "nombre d’emplacements ajoutés à la liste d’envies (47 au maximum par joueur en plus des 3 de base)",
       "ALBUM_SLOT": "nombre d’albums (ou sous-albums) que le joueur peut créer en plus des 15 gratuits (85 au maximum)"
     }
-  }
+  },
+  "navSubtitle": "Gestion du site et des membres",
+  "backToSite": "Retour au site"
 }

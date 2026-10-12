@@ -1,6 +1,24 @@
 "use client";
 
-import { ArrowLeft, Ban, Check, Search, ShieldCheck } from "@/components/icons";
+import {
+  AlertTriangle,
+  Archive,
+  ArrowLeft,
+  Ban,
+  Bell,
+  Castle,
+  Check,
+  Gavel,
+  LineChart,
+  Lock,
+  Notebook,
+  Search,
+  ShieldCheck,
+  ShoppingBag,
+  Users,
+} from "@/components/icons";
+import type { IconType } from "@/components/icons";
+import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -24,12 +42,12 @@ import type {
 } from "@wikideck/shared";
 import { useConfirm } from "@/components/confirm-dialog";
 import { ShopAdmin } from "@/components/staff/shop-admin";
+import { StaffOverviewPanel, type StaffTab } from "@/components/staff/staff-overview";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
 import { Wikibits } from "@/components/wikibit";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 
-type Tab =
-  "overview" | "members" | "alerts" | "reports" | "bugs" | "auctions" | "guilds" | "deleted" | "audit" | "apiKeys" | "shop";
+type Tab = StaffTab;
 
 const panel = "rounded-xl border border-line bg-surface p-5";
 const heading = "text-xs font-bold uppercase tracking-[0.2em] text-fog";
@@ -161,47 +179,6 @@ function AuditList({ rows, onOpen }: { rows: StaffAuditRow[]; onOpen?: (id: stri
         </li>
       ))}
     </ul>
-  );
-}
-
-function Overview({ apiUrl }: { apiUrl: string }) {
-  const t = useTranslations("staff");
-  const tc = useTranslations("common");
-  const { number: num } = useFormatter();
-  const [data, setData] = useState<StaffOverview | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    void apiFetch<StaffOverview>(apiUrl, "/staff/overview").then((r) =>
-      r.ok ? setData(r.data) : setError(r.message),
-    );
-  }, [apiUrl]);
-  if (error) return <p className="mt-6 text-sm text-danger">{error}</p>;
-  if (!data) return <p className="mt-6 text-sm text-fog">{tc("loading")}</p>;
-  const tiles: [string | number, string][] = [
-    [num(data.users), t("overview.members")],
-    [num(data.newUsers7d), t("overview.new7d")],
-    [num(data.packsOpened24h), t("overview.packs24h")],
-    [num(data.battleGames24h), t("overview.battles24h")],
-    [num(data.auctionsActive), t("overview.auctions")],
-    [num(data.tradesPending), t("overview.trades")],
-    [num(data.flagged), t("overview.flagged")],
-    [num(data.banned), t("overview.banned")],
-    [num(data.staff), t("overview.staff")],
-  ];
-  return (
-    <div className="mt-6 grid gap-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {tiles.map(([v, l]) => (
-          <Stat key={l} value={v} label={l} />
-        ))}
-        <div className="rounded-xl border border-line px-4 py-3 text-center">
-          <div className="font-display text-2xl font-medium">
-            <Wikibits amount={data.wikibitsTotal} />
-          </div>
-          <div className="text-[11px] uppercase tracking-[0.12em] text-fog">{t("overview.circulation")}</div>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -1767,22 +1744,54 @@ function ApiKeys({ apiUrl }: { apiUrl: string }) {
   );
 }
 
+const NAV_ICONS: Record<Tab, IconType> = {
+  overview: LineChart,
+  members: Users,
+  alerts: Bell,
+  reports: ShieldCheck,
+  bugs: AlertTriangle,
+  auctions: Gavel,
+  guilds: Castle,
+  deleted: Archive,
+  audit: Notebook,
+  shop: ShoppingBag,
+  apiKeys: Lock,
+};
+
 export function StaffView({
   apiUrl,
   role,
   meId,
+  meName,
 }: {
   apiUrl: string;
   role: StaffRole;
   meId: string;
+  meName: string;
 }) {
   const t = useTranslations("staff");
   const [tab, setTab] = useState<Tab>("overview");
   const [memberId, setMemberId] = useState<string | null>(null);
+  const [overview, setOverview] = useState<StaffOverview | null>(null);
+  const [overviewError, setOverviewError] = useState<string | null>(null);
+
+  // les chiffres de l'aperçu et les pastilles du menu se rechargent à chaque changement de page
+  useEffect(() => {
+    void apiFetch<StaffOverview>(apiUrl, "/staff/overview").then((r) => {
+      if (r.ok) {
+        setOverview(r.data);
+        setOverviewError(null);
+      } else setOverviewError(r.message);
+    });
+  }, [apiUrl, tab]);
 
   const open = (id: string) => {
     setMemberId(id);
     setTab("members");
+  };
+  const go = (value: Tab) => {
+    setTab(value);
+    if (value !== "members") setMemberId(null);
   };
   const tabs: Tab[] = [
     "overview",
@@ -1796,36 +1805,70 @@ export function StaffView({
     "audit",
     ...(role === "ADMIN" ? (["shop", "apiKeys"] as const) : []),
   ];
+  const pending: Partial<Record<Tab, number>> = {
+    alerts: overview?.flagged,
+    reports: overview?.openReports,
+    bugs: overview?.openBugs,
+  };
 
   return (
-    <div className="mt-6">
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        <div
-          className="flex flex-wrap justify-center gap-1 rounded-2xl border border-line p-1"
+    <div className="mt-2 grid gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
+      <aside className="lg:sticky lg:top-4 lg:self-start">
+        <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent">
+            <ShieldCheck className="size-6" />
+          </span>
+          <div className="min-w-0">
+            <h1 className="font-display text-2xl font-semibold leading-none">{t("title")}</h1>
+            <p className="mt-1 text-xs text-fog">{t("navSubtitle")}</p>
+          </div>
+        </div>
+        <nav
+          aria-label={t("title")}
+          className="mt-3 flex gap-1 overflow-x-auto rounded-2xl border border-line bg-surface p-2 lg:grid lg:overflow-visible"
           role="tablist"
         >
-          {tabs.map((value) => (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              aria-selected={tab === value}
-              onClick={() => {
-                setTab(value);
-                if (value !== "members") setMemberId(null);
-              }}
-              className={`rounded-full px-5 py-1.5 text-sm font-semibold transition-colors ${
-                tab === value ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
-              }`}
-            >
-              {t(`tabs.${value}`)}
-            </button>
-          ))}
+          {tabs.map((value) => {
+            const Icon = NAV_ICONS[value];
+            const count = pending[value] ?? 0;
+            const active = tab === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => go(value)}
+                className={`flex shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors ${
+                  active
+                    ? "bg-accent/15 text-accent shadow-[inset_3px_0_0_var(--accent)]"
+                    : "text-pale-mist hover:bg-foreground/10"
+                }`}
+              >
+                <Icon className="size-5 shrink-0" />
+                <span className="flex-1 whitespace-nowrap text-left">{t(`tabs.${value}`)}</span>
+                {count > 0 && (
+                  <span className="min-w-5 rounded-full bg-danger px-1.5 py-0.5 text-center text-[11px] font-bold leading-none text-white">
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+        <div className="mt-3 hidden items-center justify-between gap-2 rounded-2xl border border-line bg-surface p-3 lg:flex">
+          <Badge className="bg-accent/15 text-accent">{t(`roles.${role}`)}</Badge>
+          <Link href="/" className="flex items-center gap-1.5 text-xs text-fog hover:text-foreground">
+            <ArrowLeft className="size-3.5" />
+            {t("backToSite")}
+          </Link>
         </div>
-        <Badge className="bg-accent/15 text-accent">{t(`roles.${role}`)}</Badge>
-      </div>
+      </aside>
 
-      {tab === "overview" && <Overview apiUrl={apiUrl} />}
+      <div className="min-w-0">
+        {tab === "overview" && (
+          <StaffOverviewPanel data={overview} error={overviewError} name={meName} role={role} go={go} />
+        )}
       {tab === "members" &&
         (memberId ? (
           <Member
@@ -1849,6 +1892,7 @@ export function StaffView({
       {tab === "audit" && <Audit apiUrl={apiUrl} onOpen={open} />}
       {tab === "apiKeys" && <ApiKeys apiUrl={apiUrl} />}
       {tab === "shop" && <ShopAdmin apiUrl={apiUrl} />}
+      </div>
     </div>
   );
 }
