@@ -795,6 +795,38 @@ body {
   margin-left: 0.6em;
 }
 
+/* carte anime / manga : grande image (à la place de la description) et nom de l'œuvre en bas */
+.wk.anime .t {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 1.45em;
+  line-height: 1.15;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.wk.anime .art {
+  flex: 1;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+.wk.anime .photo {
+  object-position: 50% 20%;
+}
+.wk.anime .st {
+  min-height: 3.4em;
+  margin-top: 0.8em;
+  padding-top: 0.6em;
+}
+.wk.anime .series {
+  display: -webkit-box;
+  font-size: 0.8em;
+  line-height: 1.15;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .wk::before,
 .wk::after {
   content: "";

@@ -28,6 +28,8 @@ export function WikiCard({
   const t = useTranslations("cards.wikiCard");
   const rarityLabel = useRarityLabel();
   const info = RARITIES.find((x) => x.value === card.rarity)!;
+  // cartes anime / manga : nom en haut, grande image, œuvre en bas, sans texte de description
+  const anime = isAnimeSource(card.source);
   const pill = isNew ? t("new") : quantity !== undefined && quantity > 1 ? `×${quantity}` : "";
 
   const tilt = (e: React.PointerEvent<HTMLElement>) => {
@@ -44,7 +46,7 @@ export function WikiCard({
   return (
     <div className={`wk-wrap ${className}`}>
       <article
-        className={`wk r-${info.code}${compact ? " compact" : ""}`}
+        className={`wk r-${info.code}${compact ? " compact" : ""}${anime ? " anime" : ""}`}
         onPointerMove={tilt}
         onPointerLeave={untilt}
       >
@@ -103,9 +105,11 @@ export function WikiCard({
                 : t("credit")}</span>
         </div>
 
-        <div className="tx">
-          <p>{card.extract || card.description}</p>
-        </div>
+        {!anime && (
+          <div className="tx">
+            <p>{card.extract || card.description}</p>
+          </div>
+        )}
 
         <div className="st">
           {isAnimeSource(card.source) && card.description && (

@@ -64,7 +64,15 @@ export function CardDetail({
       </button>
 
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-        <WikiCard card={card} className="w-56 shrink-0" />
+        <div className="flex w-56 shrink-0 flex-col gap-3">
+          <WikiCard card={card} className="w-full" />
+          {/* les cartes anime / manga n'affichent plus leur description : un aperçu est donné ici */}
+          {isAnimeSource(card.source) && card.extract && (
+            <p className="prose-serif line-clamp-6 px-1 text-sm leading-snug text-pale-mist">
+              {card.extract}
+            </p>
+          )}
+        </div>
 
         <div className="w-full min-w-0 flex-1">
           <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 pr-9">
