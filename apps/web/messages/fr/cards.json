@@ -15,7 +15,13 @@
     "oldest": "Moins récentes",
     "rarity_desc": "Rareté : décroissante",
     "rarity_asc": "Rareté : croissante",
-    "alpha": "Alphabétique (A → Z)"
+    "alpha": "Alphabétique (A → Z)",
+    "alpha_desc": "Alphabétique (Z → A)",
+    "quantity_desc": "Doublons d’abord (exemplaires décroissants)",
+    "quantity_asc": "Exemplaires uniques d’abord",
+    "views_desc": "Popularité : décroissante",
+    "views_asc": "Popularité : croissante",
+    "favorites": "Favorites d’abord"
   },
   "ownership": {
     "all": "Toutes",

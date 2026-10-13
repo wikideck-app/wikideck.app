@@ -157,7 +157,7 @@
         "page": "numéro de page",
         "q": "recherche : chaque mot doit apparaître dans le titre ou le sous-titre",
         "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
-        "sort": "recent, oldest, rarity_desc, rarity_asc, alpha",
+        "sort": "recent, oldest, rarity_desc, rarity_asc, alpha, alpha_desc, quantity_desc (doublons d’abord), quantity_asc, views_desc, views_asc (popularité), favorites",
         "tag": "identifiant d’étiquette",
         "fav": "1 pour les favorites seulement"
       }
