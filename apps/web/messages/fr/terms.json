@@ -25,7 +25,7 @@
   "trading": {
     "title": "5. Échanges et enchères",
     "final": "Un échange accepté et une enchère terminée sont <strong>définitifs</strong> : ils ne peuvent être annulés.",
-    "bids": "Une carte mise aux enchères est mise de côté jusqu’à la fin de la vente. Les mises sont débitées immédiatement et remboursées si vous êtes surenchéri. Une mise dans les dernières secondes prolonge l’enchère.",
+    "bids": "Une carte mise aux enchères est mise de côté jusqu’à la fin de la vente. Les mises sont débitées immédiatement et remboursées si vous êtes surenchéri. Une mise dans les 20 dernières secondes remet le temps restant à 1 minute, pour éviter les mises de dernière seconde.",
     "fee": "Le vendeur reçoit le prix final moins {fee} % de frais de vente.",
     "abuse": "Il est interdit de manipuler les prix, de s’échanger des cartes entre comptes que vous contrôlez pour fausser un classement ou un succès, ou d’exploiter une faille."
   },

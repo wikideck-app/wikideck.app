@@ -79,7 +79,7 @@
     "amountLabel": "Montant de la mise",
     "raise": "Relancer",
     "bid": "Miser",
-    "bidRules": "La mise est débitée immédiatement. Si vous êtes surenchéri, elle vous est intégralement remboursée. Une mise dans les {window} dernières secondes prolonge la fin de l’enchère de {extend} secondes.",
+    "bidRules": "La mise est débitée immédiatement. Si vous êtes surenchéri, elle vous est intégralement remboursée. Pour éviter les mises de dernière seconde, une mise placée dans les {window} dernières secondes remet le chrono à {extend} secondes.",
     "yourSale": "C’est votre vente. Une fois terminée, vous recevrez le prix moins {fee} % de frais ; sans mise, la carte vous revient.",
     "cancel": "Annuler la vente",
     "history": "Historique des mises ({count})",

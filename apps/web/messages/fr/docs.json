@@ -258,7 +258,7 @@
       "summary": "Détail d’une enchère et historique des offres."
     },
     "post-market-id-bid": {
-      "summary": "Place une offre.",
+      "summary": "Place une offre. Anti-snipe : une offre placée dans les 20 dernières secondes remet le temps restant à 1 minute.",
       "body": {
         "amount": "montant en wikibits"
       }
