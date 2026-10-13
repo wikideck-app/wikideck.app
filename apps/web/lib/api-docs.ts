@@ -72,6 +72,7 @@ export const USER_DOCS: DocSection[] = [
   {
     id: "catalogue",
     endpoints: [
+      { key: "get-cards-id-stats", method: "GET", path: "/cards/{id}/stats", returns: "{ drawn: number }", errors: ["not_found"], limit: { max: 120, minutes: 1 } },
       { key: "get-cards", method: "GET", path: "/cards", query: ["page", "q", "rarity", "show", "sort", "source"], limit: { max: 60, minutes: 1 } },
       { key: "get-cards-rates", method: "GET", path: "/cards/rates", limit: { max: 30, minutes: 1 } },
       { key: "get-ranking", method: "GET", path: "/ranking", query: ["board"], limit: { max: 30, minutes: 1 } },

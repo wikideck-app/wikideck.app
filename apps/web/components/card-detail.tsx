@@ -33,6 +33,18 @@ export function CardDetail({
   const tc = useTranslations("common");
   const rarityLabel = useRarityLabel();
   const [lock, setLock] = useState<string | null>(null);
+  // nombre de tirages de cette carte, tous joueurs confondus (rattaché à la carte pour ne jamais afficher celui d'une autre)
+  const [drawn, setDrawn] = useState<{ id: string; count: number } | null>(null);
+  useEffect(() => {
+    if (!apiUrl) return;
+    let cancelled = false;
+    void apiFetch<{ drawn: number }>(apiUrl, `/cards/${card.id}/stats`).then((res) => {
+      if (!cancelled && res.ok) setDrawn({ id: card.id, count: res.data.drawn });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [apiUrl, card.id]);
   const wantsLock = !!apiUrl && (!!onSell || !!onRecycle);
   useEffect(() => {
     if (!wantsLock) return;
@@ -102,6 +114,7 @@ export function CardDetail({
           <ul className="mt-4 space-y-1 text-sm opacity-60">
             <li>{t("copies", { count: quantity })}</li>
             <li>{t("views", { count: card.views })}</li>
+            {drawn?.id === card.id && <li>{t("drawn", { count: drawn.count })}</li>}
           </ul>
 
           {onRecycle && quantity > 0 && (

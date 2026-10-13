@@ -203,6 +203,9 @@
         "items": "['{' title, lang, quantity '}']"
       }
     },
+    "get-cards-id-stats": {
+      "summary": "Nombre de fois où la carte a été tirée dans un paquet, tous joueurs confondus (une légendaire compte aussi les tirages de sa version mythique)."
+    },
     "get-cards": {
       "summary": "Toutes les cartes du catalogue, avec ce que tu possèdes.",
       "query": {

@@ -44,7 +44,8 @@
     "viewOnAnilist": "Voir le personnage sur AniList",
     "licenseAnilist": "Données et images : AniList. Les personnages et œuvres appartiennent à leurs ayants droit.",
     "viewOnKitsu": "Voir le personnage sur Kitsu",
-    "licenseKitsu": "Données et images : Kitsu. Les personnages et œuvres appartiennent à leurs ayants droit."
+    "licenseKitsu": "Données et images : Kitsu. Les personnages et œuvres appartiennent à leurs ayants droit.",
+    "drawn": "Tirée au total : {count, plural, =0 {jamais} one {# fois} other {# fois}}"
   },
   "catalog": {
     "title": "Toutes les cartes",
