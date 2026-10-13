@@ -2,6 +2,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { LegalLinks } from "@/components/legal/legal-links";
+import { XLink } from "@/components/x-link";
 import { DiscordAuth } from "@/components/discord-auth";
 import { Features } from "@/components/features";
 import { Reveal } from "@/components/reveal";
@@ -150,7 +151,10 @@ export default async function Page({ searchParams }: PageProps<"/">) {
         <footer className="on-midnight mt-auto bg-black">
           <div className="mx-auto w-full max-w-[1200px] px-6 py-10 text-xs text-fog">
             <p>{t("footer.disclaimer")}</p>
-            <LegalLinks className="mt-3" />
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <LegalLinks />
+              <XLink />
+            </div>
           </div>
         </footer>
       </main>

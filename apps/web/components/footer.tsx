@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { BugReportButton } from "@/components/bug-report";
 import { LegalLinks } from "@/components/legal/legal-links";
+import { XLink } from "@/components/x-link";
 
 // pied de page de l'espace connecté : copyright à gauche, liens légaux et signalement de bug à droite
 export async function Footer({ apiUrl }: { apiUrl: string }) {
@@ -13,6 +14,7 @@ export async function Footer({ apiUrl }: { apiUrl: string }) {
         </p>
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
           <LegalLinks className="gap-x-5" />
+          <XLink />
           <BugReportButton apiUrl={apiUrl} />
         </div>
       </div>

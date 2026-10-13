@@ -6,3 +6,6 @@ export const PUBLIC_PATHS = ["/", "/legal-notice", "/privacy", "/terms", "/docs"
 
 // serveur Discord de la communauté (redirection gérée côté site)
 export const DISCORD_URL = "https://wikideck.app/discord";
+
+// compte X (Twitter) de Wikideck
+export const X_URL = "https://x.com/wikideckapp";

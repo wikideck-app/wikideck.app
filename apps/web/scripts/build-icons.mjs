@@ -28,6 +28,7 @@ const ICONS = {
   Database: "database-bold",
   Diamond: "diamonds-four-bold",
   DiscordLogo: "fa6-brands:discord",
+  XLogo: "fa6-brands:x-twitter",
   Download: "download-simple-bold",
   Eye: "eye-bold",
   Flame: "fire-bold",

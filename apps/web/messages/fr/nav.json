@@ -46,5 +46,7 @@
   "packsAnime": "Paquets anime / manga",
   "packsWikipediaShort": "W",
   "packsAnimeShort": "A",
-  "packsBonus": "Paquets bonus"
+  "packsBonus": "Paquets bonus",
+  "xLabel": "Wikideck sur X (nouvelle fenêtre)",
+  "xName": "X"
 }

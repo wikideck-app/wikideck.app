@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { LegalLinks } from "@/components/legal/legal-links";
+import { XLink } from "@/components/x-link";
 
 export default async function LegalLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("legal.layout");
@@ -21,7 +22,10 @@ export default async function LegalLayout({ children }: { children: React.ReactN
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">{children}</main>
       <footer className="border-t border-line">
         <div className="mx-auto w-full max-w-3xl px-6 py-6 text-xs text-fog">
-          <LegalLinks />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <LegalLinks />
+            <XLink />
+          </div>
         </div>
       </footer>
     </div>
