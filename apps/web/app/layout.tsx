@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Atkinson_Hyperlegible, Newsreader, Outfit } from "next/font/google";
@@ -25,6 +25,13 @@ const readable = Atkinson_Hyperlegible({
   weight: ["400", "700"],
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#10141c" },
+    { media: "(prefers-color-scheme: light)", color: "#f8f9fa" },
+  ],
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getTranslations("meta"), getLocale()]);
   const { language, region } = new Intl.Locale(locale).maximize();
@@ -34,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: t("homeTitle"), template: t("titleTemplate") },
     description: t("description"),
     category: t("category"),
-    alternates: { canonical: "/" },
+    alternates: { canonical: "/", languages: { [locale]: "/", "x-default": "/" } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",

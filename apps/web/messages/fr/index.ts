@@ -25,6 +25,7 @@ import profile from "./profile.json";
 import quests from "./quests.json";
 import ranking from "./ranking.json";
 import referral from "./referral.json";
+import seoPages from "./seoPages.json";
 import settings from "./settings.json";
 import shop from "./shop.json";
 import staff from "./staff.json";
@@ -64,6 +65,7 @@ const catalog = {
   quests,
   ranking,
   referral,
+  seoPages,
   settings,
   shop,
   staff,

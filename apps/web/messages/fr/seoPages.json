@@ -1,0 +1,119 @@
+{
+  "layout": {
+    "homeLabel": "Wikideck, accueil",
+    "nav": "Pages de présentation",
+    "wikipedia": "Cartes Wikipédia",
+    "anime": "Anime & manga",
+    "play": "Jouer gratuitement"
+  },
+  "wikipedia": {
+    "breadcrumb": "Fil d’Ariane",
+    "crumb": "Cartes Wikipédia",
+    "h1": "Cartes Wikipédia : collectionnez les articles de l’encyclopédie",
+    "intro": "Sur Wikideck, chaque article de Wikipédia devient une carte à collectionner. Ouvrez des paquets gratuits, découvrez des articles tirés au sort, complétez vos albums et échangez avec vos amis. Plus un article est lu dans le monde, plus sa carte est rare.",
+    "cta": "Ouvrir mon premier paquet",
+    "other": "Voir les cartes anime et manga",
+    "sections": {
+      "a": {
+        "title": "Chaque article devient une carte",
+        "text": "Une carte Wikipédia reprend le titre de l’article, son illustration, le début du texte et un lien vers la page d’origine. Les cartes se tirent au sort dans des paquets de cinq, et la réserve se recharge toute seule : un paquet toutes les 10 minutes, jusqu’à 15 en stock."
+      },
+      "b": {
+        "title": "La rareté suit la popularité de l’article",
+        "text": "Le nombre de visites d’un article sur les 30 derniers jours fixe la rareté de sa carte. Une page très consultée comme Albert Einstein est légendaire, un sujet de niche est commun : collectionner, c’est aussi découvrir ce que le monde lit. Une légendaire peut sortir en version mythique, plus brillante et plus rare."
+      },
+      "c": {
+        "title": "Complétez, échangez, progressez",
+        "text": "Rangez vos cartes dans des albums et sous-albums, mettez en avant vos pièces maîtresses, échangez avec d’autres joueurs ou vendez aux enchères contre des wikibits. Les quêtes débloquent des titres, de Nouveau joueur à Gardien de Wikipédia, et la roue de la fortune offre un tour gratuit chaque jour."
+      }
+    },
+    "raritiesTitle": "Les 7 raretés des cartes Wikipédia",
+    "raritiesIntro": "La rareté d’une carte dépend du nombre de visites de l’article sur Wikipédia pendant les 30 derniers jours.",
+    "rarityName": "Rareté",
+    "rarityRule": "Condition",
+    "rarities": {
+      "COMMON": "Moins de 50 visites en 30 jours",
+      "UNCOMMON": "Au moins 50 visites en 30 jours",
+      "RARE": "Au moins 250 visites en 30 jours",
+      "SUPER_RARE": "Au moins 1 000 visites en 30 jours",
+      "ULTRA_RARE": "Au moins 5 000 visites en 30 jours",
+      "LEGENDARY": "Au moins 20 000 visites en 30 jours",
+      "MYTHIC": "Version spéciale d’une légendaire : 1 chance sur 20 quand une légendaire sort d’un paquet, 1 sur 4 avec un booster de chance"
+    },
+    "faqTitle": "Questions sur les cartes Wikipédia",
+    "faq": {
+      "0": {
+        "q": "Comment sont choisis les articles des cartes ?",
+        "a": "Les articles sont tirés au sort parmi ceux de Wikipédia en français. Plus un article est lu, plus la carte correspondante est rare, mais n’importe quel article peut sortir d’un paquet."
+      },
+      "1": {
+        "q": "Qu’est-ce qu’un God Pack ?",
+        "a": "Un paquet spécial, très rare, qui contient cinq cartes rares d’un seul coup. Il peut sortir à la place d’un paquet normal."
+      },
+      "2": {
+        "q": "Peut-on importer une collection existante ?",
+        "a": "Oui, depuis Wiki-Masters : chaque carte ne peut être importée qu’une seule fois par compte."
+      },
+      "3": {
+        "q": "Les cartes Wikipédia sont-elles gratuites ?",
+        "a": "Oui, tout le jeu est gratuit. Les paquets se rechargent seuls et les wikibits se gagnent en jouant."
+      }
+    },
+    "credits": "Wikideck n’est pas affilié à Wikipédia. Texte des articles : CC BY-SA 4.0, crédits sur la page de chaque article."
+  },
+  "anime": {
+    "breadcrumb": "Fil d’Ariane",
+    "crumb": "Cartes anime et manga",
+    "h1": "Cartes anime et manga : collectionnez vos personnages préférés",
+    "intro": "Plus de 80 000 personnages d’anime et de manga à collectionner, issus d’AniList et de Kitsu. Ouvrez des paquets dédiés, complétez vos albums par œuvre, débloquez des titres et échangez avec la communauté. Plus un personnage est aimé des fans, plus sa carte est rare.",
+    "cta": "Ouvrir mon premier paquet",
+    "other": "Voir les cartes Wikipédia",
+    "sections": {
+      "a": {
+        "title": "Des personnages d’AniList et de Kitsu",
+        "text": "Les cartes anime et manga reprennent des personnages issus de deux bases de données ouvertes : nom, illustration et œuvre d’origine. Le catalogue compte plus de 80 000 personnages et se complète régulièrement, de Luffy à Gojo en passant par Mikasa."
+      },
+      "b": {
+        "title": "Plus un personnage est aimé, plus la carte est rare",
+        "text": "Pour AniList, le classement des personnages par nombre de favoris fixe la rareté : les 350 plus aimés sont légendaires. Les personnages de Kitsu sont communs, peu communs ou rares selon leur rôle et la popularité de leur œuvre. Une légendaire peut sortir en version mythique."
+      },
+      "c": {
+        "title": "Des paquets à part, des quêtes et des titres",
+        "text": "Les paquets anime et manga ont leur propre réserve, 15 paquets au maximum, et leur propre recharge, un toutes les 10 minutes. Le booster de chance fonctionne aussi dessus. Des quêtes dédiées font gagner des wikibits et débloquent des titres, de Nouveau fan jusqu’à Hokage."
+      }
+    },
+    "raritiesTitle": "Les raretés des cartes anime et manga",
+    "raritiesIntro": "Pour les personnages d’AniList, la rareté dépend de leur rang de popularité. La chance de tirage de chaque rareté est fixe.",
+    "rarityName": "Rareté",
+    "rarityRule": "Condition et chance de tirage",
+    "rarities": {
+      "COMMON": "Rang 4 001 à 5 000, environ 42,5 % des tirages",
+      "UNCOMMON": "Rang 3 001 à 4 000, environ 25 % des tirages",
+      "RARE": "Rang 1 801 à 3 000, environ 16 % des tirages",
+      "SUPER_RARE": "Rang 901 à 1 800, environ 10 % des tirages",
+      "ULTRA_RARE": "Rang 351 à 900, environ 5 % des tirages",
+      "LEGENDARY": "Les 350 personnages les plus aimés, environ 1,5 % des tirages",
+      "MYTHIC": "Version spéciale d’une légendaire : 1 chance sur 20 quand une légendaire sort d’un paquet, 1 sur 4 avec un booster de chance"
+    },
+    "faqTitle": "Questions sur les cartes anime et manga",
+    "faq": {
+      "0": {
+        "q": "Quels animes et mangas sont présents ?",
+        "a": "Les personnages proviennent d’AniList et de Kitsu, deux bases de données communautaires. Chaque carte affiche le personnage et le nom de son œuvre. Les œuvres réservées aux adultes sont exclues."
+      },
+      "1": {
+        "q": "Les paquets anime sont-ils séparés des paquets Wikipédia ?",
+        "a": "Oui. Ils ont leur propre réserve de 15 paquets et leur propre recharge. Vous pouvez aussi utiliser des paquets bonus de parrainage."
+      },
+      "2": {
+        "q": "Comment trouver tous les personnages d’une œuvre ?",
+        "a": "Dans le catalogue, tapez le nom de l’œuvre : la recherche cherche à la fois dans le nom du personnage et dans celui de l’œuvre."
+      },
+      "3": {
+        "q": "Les images appartiennent-elles à Wikideck ?",
+        "a": "Non. Les personnages et les œuvres appartiennent à leurs ayants droit. Les données et les images proviennent d’AniList et de Kitsu, et Wikideck n’est affilié à aucun de ces services."
+      }
+    },
+    "credits": "Données et images : AniList et Kitsu. Les personnages et les œuvres appartiennent à leurs ayants droit. Wikideck n’est affilié ni à AniList ni à Kitsu."
+  }
+}

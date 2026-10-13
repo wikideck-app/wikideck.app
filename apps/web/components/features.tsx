@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { BookOpen, Castle, Gavel, Handshake, Puzzle, Swords } from "@/components/icons";
+import { BookOpen, Castle, Gavel, Handshake, Puzzle, ShoppingBag, Sparkles, Swords, Trophy } from "@/components/icons";
 import { Reveal } from "@/components/reveal";
 
 const FEATURES = [
@@ -9,6 +9,9 @@ const FEATURES = [
   { key: "trades", icon: Handshake },
   { key: "auctions", icon: Gavel },
   { key: "guild", icon: Castle },
+  { key: "anime", icon: Sparkles },
+  { key: "quests", icon: Trophy },
+  { key: "shop", icon: ShoppingBag },
 ] as const;
 
 export function Features() {

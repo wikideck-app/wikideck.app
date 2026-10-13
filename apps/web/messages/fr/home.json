@@ -3,14 +3,16 @@
     "homeLabel": "Wikideck, retour en haut",
     "signIn": "Se connecter",
     "links": {
-      "cards": "Cartes",
-      "game": "Le jeu"
+      "cards": "Wikipédia",
+      "anime": "Anime & manga",
+      "game": "Le jeu",
+      "faq": "FAQ"
     }
   },
-  "headline": "L’encyclopédie devient votre terrain de jeu.",
-  "tagline": "Ouvrez des paquets, complétez votre album et défiez vos amis avec des cartes tirées d’articles Wikipédia.",
+  "headline": "L’encyclopédie et l’anime deviennent votre terrain de jeu.",
+  "tagline": "Ouvrez des paquets de cartes tirées d’articles Wikipédia et de personnages d’anime et de manga, complétez vos albums et défiez vos amis.",
   "cards": {
-    "eyebrow": "Cartes",
+    "eyebrow": "Cartes Wikipédia",
     "title": "Chaque carte est un vrai article.",
     "text": "Sa fréquentation sur Wikipédia fixe sa rareté. Retournez les cartes pour lire l’article."
   },
@@ -42,6 +44,18 @@
     "guild": {
       "title": "Rejoignez une guilde",
       "text": "Réunissez-vous à plusieurs, discutez et faites grimper votre équipe."
+    },
+    "anime": {
+      "title": "Anime et manga",
+      "text": "Des dizaines de milliers de personnages à collectionner, rangés par œuvre et par rareté."
+    },
+    "quests": {
+      "title": "Quêtes et titres",
+      "text": "Débloquez des titres de joueur et gagnez des wikibits en complétant vos collections."
+    },
+    "shop": {
+      "title": "Boutique",
+      "text": "Dépensez vos wikibits : paquets, boosters de chance, emplacements d’albums et d’envies."
     }
   },
   "cta": {
@@ -49,6 +63,86 @@
     "button": "Commencer avec Discord"
   },
   "footer": {
-    "disclaimer": "Wikideck n’est pas affilié à Wikipédia. Texte des articles : CC BY-SA 4.0 — crédits sur la page de chaque article."
+    "disclaimer": "Wikideck n’est affilié ni à Wikipédia, ni à AniList, ni à Kitsu. Texte des articles : CC BY-SA 4.0, crédits sur la page de chaque article. Personnages et œuvres : propriété de leurs ayants droit.",
+    "explore": {
+      "label": "Explorer",
+      "wikipedia": "Cartes Wikipédia",
+      "anime": "Cartes anime et manga"
+    }
+  },
+  "collections": {
+    "eyebrow": "Deux collections",
+    "title": "Wikipédia ou anime et manga : à vous de choisir.",
+    "wikipedia": {
+      "title": "Cartes Wikipédia",
+      "text": "Chaque article de l’encyclopédie devient une carte. Plus il est lu, plus la carte est rare : de la commune à la légendaire, avec une version mythique pour les plus chanceux.",
+      "cta": "Découvrir les cartes Wikipédia"
+    },
+    "anime": {
+      "title": "Cartes anime et manga",
+      "text": "Des dizaines de milliers de personnages issus d’AniList et de Kitsu. Plus un personnage est aimé des fans, plus sa carte est rare. Chaque carte affiche son œuvre.",
+      "cta": "Découvrir les cartes anime et manga"
+    }
+  },
+  "anime": {
+    "eyebrow": "Anime & manga",
+    "title": "Collectionnez vos personnages préférés.",
+    "text": "Des paquets dédiés, avec leur propre réserve et leur propre recharge, des quêtes et des titres à débloquer. Données et images : AniList et Kitsu."
+  },
+  "how": {
+    "eyebrow": "Comment ça marche",
+    "title": "Jouez en trois étapes.",
+    "steps": {
+      "login": {
+        "title": "Connectez-vous avec Discord",
+        "text": "Un clic, sans mot de passe ni formulaire. Votre compte est gratuit et vos réserves de paquets sont pleines dès l’arrivée."
+      },
+      "open": {
+        "title": "Ouvrez vos paquets",
+        "text": "Chaque paquet contient 5 cartes. Une nouvelle recharge arrive toutes les 10 minutes, jusqu’à 15 paquets en réserve, pour Wikipédia comme pour l’anime."
+      },
+      "play": {
+        "title": "Complétez, échangez, progressez",
+        "text": "Rangez vos cartes en albums, échangez avec vos amis, vendez aux enchères et débloquez des titres grâce aux quêtes."
+      }
+    }
+  },
+  "faq": {
+    "eyebrow": "Questions fréquentes",
+    "title": "Tout savoir sur Wikideck.",
+    "items": {
+      "0": {
+        "q": "Wikideck est-il gratuit ?",
+        "a": "Oui. Le jeu est entièrement gratuit : les paquets se rechargent tout seuls (un toutes les 10 minutes, 15 en réserve) et les wikibits se gagnent en jouant. Rien ne s’achète avec de l’argent réel."
+      },
+      "1": {
+        "q": "Comment fonctionne la rareté des cartes ?",
+        "a": "Pour une carte Wikipédia, la rareté dépend de la fréquentation de l’article : plus il est lu, plus la carte est rare, de commune à légendaire. Pour un personnage d’anime ou de manga, elle dépend de sa popularité auprès des fans. Une légendaire peut aussi sortir en version mythique."
+      },
+      "2": {
+        "q": "D’où viennent les cartes anime et manga ?",
+        "a": "Des bases de données ouvertes AniList et Kitsu. Chaque carte affiche le personnage, son œuvre et l’image fournie par ces services. Les personnages et les œuvres appartiennent à leurs ayants droit, et Wikideck n’est affilié à aucun d’eux."
+      },
+      "3": {
+        "q": "Faut-il créer un compte ?",
+        "a": "Il suffit de vous connecter avec Discord, sans mot de passe ni formulaire. Votre collection, vos albums et vos wikibits sont liés à ce compte."
+      },
+      "4": {
+        "q": "Peut-on échanger ou vendre ses cartes ?",
+        "a": "Oui. Vous pouvez échanger des cartes avec vos amis ou d’autres joueurs, proposer des contre-offres, ou mettre une carte aux enchères contre des wikibits."
+      },
+      "5": {
+        "q": "Que sont les wikibits ?",
+        "a": "La monnaie du jeu. Vous en gagnez avec la roue quotidienne, les quêtes, les ventes aux enchères et les parties de Bataille, et vous les dépensez à la boutique ou sur le marché."
+      },
+      "6": {
+        "q": "Wikideck est-il affilié à Wikipédia ?",
+        "a": "Non. Wikideck est un jeu indépendant. Le texte des articles est publié sous licence CC BY-SA 4.0, avec les crédits sur la page de chaque article."
+      },
+      "7": {
+        "q": "Existe-t-il une API pour les développeurs ?",
+        "a": "Oui, elle est documentée publiquement : routes, authentification par clé, limites et exemples de code."
+      }
+    }
   }
 }

@@ -6,7 +6,7 @@ type Namespace = keyof Messages;
 // Les composants client reçoivent leurs messages dans le HTML : on n'envoie que les espaces de noms
 // dont ils ont besoin. Les pages rendues côté serveur (légal, docs) lisent tout directement.
 const LANDING: readonly Namespace[] = ["apiErrors", "auth", "cards", "common", "home", "legal"];
-const SERVER_ONLY: readonly Namespace[] = ["docs", "home", "auth", "legalNotice", "meta", "privacy", "terms"];
+const SERVER_ONLY: readonly Namespace[] = ["docs", "home", "auth", "legalNotice", "meta", "privacy", "seoPages", "terms"];
 const STAFF_ONLY: readonly Namespace[] = ["staff"];
 
 async function pick(keep: (ns: Namespace) => boolean) {

@@ -1,7 +1,7 @@
 {
   "siteName": "Wikideck",
   "titleTemplate": "%s — Wikideck",
-  "description": "Wikideck est un jeu de cartes gratuit : ouvrez des paquets d’articles Wikipédia, complétez votre album, échangez, vendez aux enchères et défiez vos amis dans des courses Wikipédia.",
+  "description": "Jeu de cartes gratuit : collectionnez des articles Wikipédia et des personnages d’anime et de manga, ouvrez des paquets, complétez vos albums, échangez et vendez aux enchères.",
   "pages": {
     "notFound": "Page introuvable",
     "collection": "Collection",
@@ -30,9 +30,19 @@
     "docs": "API",
     "docsStaff": "API staff",
     "shop": "Boutique",
-    "quests": "Quêtes"
+    "quests": "Quêtes",
+    "cartesWikipedia": "Cartes Wikipédia : collectionnez les articles",
+    "cartesAnime": "Cartes anime et manga : collectionnez vos personnages"
   },
-  "homeTitle": "Wikideck — Collectionnez les articles de Wikipédia en cartes",
-  "tagline": "Cartes Wikipédia, paquets à ouvrir et courses entre amis",
-  "category": "Jeu de cartes"
+  "homeTitle": "Wikideck, jeu de cartes gratuit : Wikipédia et anime & manga",
+  "tagline": "Cartes Wikipédia, anime et manga, paquets à ouvrir et courses entre amis",
+  "category": "Jeu de cartes",
+  "descriptions": {
+    "cartesWikipedia": "Chaque article Wikipédia devient une carte dont la rareté dépend de sa fréquentation. Ouvrez des paquets gratuits, complétez vos albums et échangez avec vos amis.",
+    "cartesAnime": "Plus de 80 000 personnages d’anime et de manga à collectionner : rareté selon la popularité, paquets dédiés, quêtes, titres et échanges. Gratuit.",
+    "docs": "Documentation de l’API Wikideck : routes, authentification par clé d’API, limites de débit et exemples en cURL, JavaScript et Python.",
+    "legalNotice": "Mentions légales de Wikideck : éditeur, hébergeur et contact.",
+    "privacy": "Politique de confidentialité de Wikideck : données collectées, finalités, durées de conservation et droits des utilisateurs.",
+    "terms": "Conditions générales d’utilisation de Wikideck : règles du jeu, wikibits, échanges, enchères et responsabilités."
+  }
 }

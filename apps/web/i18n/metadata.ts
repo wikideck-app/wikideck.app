@@ -6,16 +6,21 @@ type PageKey = keyof Messages["meta"]["pages"];
 
 // export const generateMetadata = pageMetadata("collection");
 // Le titre passe par le template du layout racine (« %s — Wikideck »). Avec `path`, la page est
-// publique : adresse canonique et Open Graph en plus.
+// publique : adresse canonique et Open Graph en plus. Une description propre à la page se déclare dans
+// meta.descriptions ; sans elle, la page reprend celle du site.
 export function pageMetadata(key: PageKey, options: { path?: string } = {}) {
   return async (): Promise<Metadata> => {
-    const t = await getTranslations("meta.pages");
+    const [t, d] = await Promise.all([getTranslations("meta.pages"), getTranslations("meta.descriptions")]);
     const title = t(key);
-    if (!options.path) return { title };
+    const description = d.has(key as never) ? d(key as never) : undefined;
     return {
       title,
-      alternates: { canonical: options.path },
-      openGraph: { title, url: options.path },
+      ...(description && { description }),
+      ...(options.path && {
+        alternates: { canonical: options.path },
+        openGraph: { title, url: options.path, ...(description && { description }) },
+        twitter: { title, ...(description && { description }) },
+      }),
     };
   };
 }

@@ -21,7 +21,7 @@ export async function getShowcase(): Promise<CardDto[]> {
     SAMPLES.map(async (s): Promise<CardDto | null> => {
       try {
         const res = await fetch(`https://fr.wikipedia.org/api/rest_v1/page/summary/${s.slug}`, {
-          headers: { "User-Agent": "Wikideck/1.0 (https://wikideck.fr)" },
+          headers: { "User-Agent": "Wikideck/1.0 (https://wikideck.app)" },
           next: { revalidate: 60 * 60 * 24 },
         });
         if (!res.ok) return null;
@@ -58,4 +58,65 @@ export const TICKER_TITLES = [
   "Nikola Tesla",
   "Mont Blanc",
   "Léonard de Vinci",
+  "One Piece",
+  "Jujutsu Kaisen",
+  "Naruto",
+  "L’Attaque des Titans",
+  "Spy x Family",
 ];
+
+// personnages d'anime et de manga de la page d'accueil : tirés d'AniList (même source que le jeu), rareté d'illustration
+const ANIME_SAMPLES: { search: string; rarity: Rarity }[] = [
+  { search: "Anya Forger", rarity: "RARE" },
+  { search: "Mikasa Ackerman", rarity: "SUPER_RARE" },
+  { search: "Monkey D. Luffy", rarity: "LEGENDARY" },
+  { search: "Satoru Gojo", rarity: "ULTRA_RARE" },
+  { search: "Rem", rarity: "UNCOMMON" },
+];
+
+type AnilistCharacter = {
+  id: number;
+  siteUrl: string;
+  favourites: number;
+  name: { full: string };
+  image: { large: string | null };
+  media: { nodes: { isAdult: boolean; title: { english: string | null; romaji: string | null } }[] };
+} | null;
+
+export async function getAnimeShowcase(): Promise<CardDto[]> {
+  const fields = `id siteUrl favourites name { full } image { large } media(perPage: 1, sort: POPULARITY_DESC) { nodes { isAdult title { english romaji } } }`;
+  const query = `query { ${ANIME_SAMPLES.map(
+    (s, i) => `c${i}: Character(search: ${JSON.stringify(s.search)}, sort: FAVOURITES_DESC) { ${fields} }`,
+  ).join(" ")} }`;
+  try {
+    const res = await fetch("https://graphql.anilist.co", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ query }),
+      next: { revalidate: 60 * 60 * 24 },
+    });
+    if (!res.ok) return [];
+    const { data } = (await res.json()) as { data?: Record<string, AnilistCharacter> };
+    if (!data) return [];
+    return ANIME_SAMPLES.flatMap((s, i): CardDto[] => {
+      const c = data[`c${i}`];
+      const media = c?.media.nodes[0];
+      if (!c || !c.image.large || media?.isAdult) return [];
+      return [
+        {
+          id: `anime-${c.id}`,
+          title: c.name.full,
+          description: media?.title.english ?? media?.title.romaji ?? null,
+          extract: "",
+          imageUrl: c.image.large,
+          url: c.siteUrl,
+          rarity: s.rarity,
+          views: c.favourites,
+          source: "ANILIST",
+        },
+      ];
+    });
+  } catch {
+    return [];
+  }
+}

@@ -7,8 +7,7 @@ import type { IconType } from "@/components/icons";
 import { BaseUrl } from "@/components/docs/base-url";
 import { endpointId } from "@/components/docs/api-reference";
 import { DocsSearch, type SearchEntry } from "@/components/docs/docs-search";
-import { LegalLinks } from "@/components/legal/legal-links";
-import { XLink } from "@/components/x-link";
+import { FooterLinks } from "@/components/footer-links";
 import { API_URL, getCurrentUser } from "@/lib/api";
 import { USER_DOCS } from "@/lib/api-docs";
 import { DISCORD_URL } from "@/lib/site";
@@ -136,10 +135,7 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
           </details>
           <main>{children}</main>
           <footer className="border-t border-line py-6 text-xs text-fog">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-              <LegalLinks />
-              <XLink />
-            </div>
+            <FooterLinks />
           </footer>
         </div>
       </div>

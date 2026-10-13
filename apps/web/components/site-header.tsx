@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 
 const LINKS = [
   { href: "#cards", key: "cards" },
+  { href: "#anime", key: "anime" },
   { href: "#game", key: "game" },
+  { href: "#faq", key: "faq" },
 ] as const;
 
 export function SiteHeader() {
@@ -43,7 +45,7 @@ export function SiteHeader() {
         </a>
 
         <nav className="flex items-center gap-2 sm:gap-6">
-          <ul className="hidden items-center gap-6 sm:flex">
+          <ul className="hidden items-center gap-6 md:flex">
             {LINKS.map((l) => (
               <li key={l.href}>
                 <a
