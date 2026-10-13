@@ -55,8 +55,9 @@ self.addEventListener("push", (event) => {
       if (clients.some((c) => c.visibilityState === "visible")) return;
       await self.registration.showNotification("Wikideck", {
         body: info.body,
-        icon: "/logo.webp",
-        badge: "/logo.webp",
+        icon: "/icons/icon-192.png",
+        // petite icône monochrome de la barre d'état Android
+        badge: "/icons/badge-96.png",
         tag: info.tag,
         data: { url: info.url },
       });

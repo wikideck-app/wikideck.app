@@ -580,7 +580,7 @@ function NotificationsSection({ apiUrl }: { apiUrl: string }) {
             onClick={() =>
               void showSystemNotification(t("testTitle"), {
                 body: t("testBody"),
-                icon: "/logo.webp",
+                icon: "/icons/icon-192.png",
               })
             }
           >

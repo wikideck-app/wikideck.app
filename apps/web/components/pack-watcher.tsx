@@ -30,7 +30,7 @@ export function PackWatcher({ initial, apiUrl }: { initial: PackStatus | null; a
           if ("Notification" in window && Notification.permission === "granted") {
             void showSystemNotification(translate.current("title"), {
               body: translate.current("body"),
-              icon: "/logo.webp",
+              icon: "/icons/icon-192.png",
               tag: "booster-ready",
               data: { url: "/packs" },
             });
