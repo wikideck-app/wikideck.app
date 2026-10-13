@@ -432,7 +432,7 @@ function Member({
         <Avatar url={m.avatarUrl} name={m.username} size="size-16" />
         <div className="min-w-48 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="font-display text-3xl font-medium">{m.username}</h2>
+            <h2 className="min-w-0 wrap-anywhere font-display text-3xl font-medium">{m.username}</h2>
             {m.staff && <Badge className="bg-accent/15 text-accent">{t(`roles.${m.staff}`)}</Badge>}
             {m.banned && <Badge className="bg-danger/15 text-danger">{t("members.banned")}</Badge>}
             <Badge className={TRUST_STYLE[m.trust]}>{t(`trust.${m.trust}`)}</Badge>
@@ -470,7 +470,7 @@ function Member({
         <Stat value={m.battle.wins} label={tm("wins")} />
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-2">
         <section className={panel}>
           <h3 className={heading}>{tm("trustTitle")}</h3>
           <div className="mt-3 grid grid-cols-2 gap-3">
@@ -676,7 +676,7 @@ function Member({
                   );
                 })()}
                 <form
-                  className="flex gap-2"
+                  className="flex flex-wrap gap-2"
                   onSubmit={async (e) => {
                     e.preventDefault();
                     await run({ action: "packs", count: Number(packs), kind: packKind }, tm("packsGiven"));
@@ -1805,6 +1805,10 @@ export function StaffView({
     "audit",
     ...(role === "ADMIN" ? (["shop", "apiKeys"] as const) : []),
   ];
+  // sur téléphone le menu défile : la page ouverte reste visible
+  useEffect(() => {
+    document.querySelector('[role="tablist"] [aria-selected="true"]')?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [tab]);
   const pending: Partial<Record<Tab, number>> = {
     alerts: overview?.flagged,
     reports: overview?.openReports,
@@ -1812,8 +1816,8 @@ export function StaffView({
   };
 
   return (
-    <div className="mt-2 grid gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
-      <aside className="lg:sticky lg:top-4 lg:self-start">
+    <div className="mt-2 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
+      <aside className="min-w-0 lg:sticky lg:top-4 lg:self-start">
         <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent">
             <ShieldCheck className="size-6" />

@@ -235,6 +235,7 @@ export function StaffOverviewPanel({
   if (error) return <p className="text-sm text-danger">{error}</p>;
   if (!data) return <p className="text-sm text-fog">{tc("loading")}</p>;
 
+  const now = new Date();
   const num = (n: number) => format.number(n);
   const eventText = (e: StaffRecentEvent) =>
     t(`overview.recent.${e.kind}`, { name: e.name ?? "", card: e.card ?? "" });
@@ -298,7 +299,7 @@ export function StaffOverviewPanel({
                     <span className="wrap-break-word">{eventText(e)}</span>
                   </div>
                   <time dateTime={e.at} className="shrink-0 text-xs text-fog">
-                    {format.relativeTime(new Date(e.at))}
+                    {format.relativeTime(new Date(e.at), now)}
                   </time>
                 </li>
               ))}
