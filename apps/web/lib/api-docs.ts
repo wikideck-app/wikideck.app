@@ -50,6 +50,9 @@ export const USER_DOCS: DocSection[] = [
     id: "paquets",
     endpoints: [
       { key: "get-packs", method: "GET", path: "/packs", returns: "{ packs, max, nextInMs, boosts }", limit: { max: 60, minutes: 1 } },
+      { key: "post-packs-share", method: "POST", path: "/packs/share", body: ["cardIds", "newIds"], returns: "{ id: string }", errors: ["invalid", "not_found", "too_many_shares"], limit: { max: 10, minutes: 1 } },
+      { key: "get-shares-id", method: "GET", path: "/shares/{id}", returns: "{ id, ownerName, createdAt, cards }", errors: ["not_found"], limit: { max: 120, minutes: 1 } },
+      { key: "get-shares-id-image", method: "GET", path: "/shares/{id}/image", returns: "image/png", errors: ["not_found"], limit: { max: 60, minutes: 1 } },
       { key: "post-packs-open", method: "POST", path: "/packs/open", body: ["boost"], returns: "{ packs, max, nextInMs, boosts, cards, godpack? }", errors: ["no_packs", "busy", "no_boost", "overloaded", "wikipedia_unavailable"], limit: { max: 6, minutes: 1 } },
       { key: "get-wheel", method: "GET", path: "/wheel", returns: "{ canSpin }", limit: { max: 60, minutes: 1 } },
       { key: "get-wheel-history", method: "GET", path: "/wheel/history", returns: "{ mine, recent }", limit: { max: 30, minutes: 1 } },

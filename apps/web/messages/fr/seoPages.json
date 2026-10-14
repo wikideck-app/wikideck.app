@@ -115,5 +115,12 @@
       }
     },
     "credits": "Données et images : AniList et Kitsu. Les personnages et les œuvres appartiennent à leurs ayants droit. Wikideck n’est affilié ni à AniList ni à Kitsu."
+  },
+  "share": {
+    "title": "Tirage de {name}",
+    "titleAnon": "Un tirage Wikideck",
+    "count": "{count, plural, one {# carte ouverte} other {# cartes ouvertes}} sur Wikideck",
+    "ctaText": "Wikideck est un jeu de cartes gratuit : collectionnez des articles Wikipédia et des personnages d’anime et de manga.",
+    "cta": "Ouvrir mes propres paquets"
   }
 }

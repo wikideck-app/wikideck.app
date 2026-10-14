@@ -1,19 +1,20 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "@/components/icons";
+import { Check, ChevronLeft, ChevronRight, PackageOpen, Send } from "@/components/icons";
 import Image from "next/image";
 import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { OpenPackResponse, PackKind, PackStatus, TagDto } from "@wikideck/shared";
+import { RARITIES, type OpenPackResponse, type PackKind, type PackStatus, type TagDto } from "@wikideck/shared";
 import { CardDetail } from "@/components/card-detail";
 import { SellDialog } from "@/components/market/sell-dialog";
 import { RecycleDialog } from "@/components/recycle-dialog";
 import { TagEditor } from "@/components/tag-editor";
-import { FlipCard } from "@/components/wiki-card";
+import { FlipCard, WikiCard } from "@/components/wiki-card";
 import { LegendaryReveal } from "@/components/legendary-reveal";
 import { playLegendary, sfx } from "@/lib/audio";
+import { RARITY_COLOR } from "@/lib/rarity-ui";
 import { useSettings } from "@/lib/settings-context";
 
 const MIN_SHAKE_MS = 400;
@@ -98,7 +99,7 @@ const PackStage3D = dynamic(() => import("@/components/pack-stage-3d").then((m) 
   loading: () => <div className="h-104 w-88 max-w-full" />,
 });
 
-type Phase = "idle" | "shaking" | "bursting" | "reveal";
+type Phase = "idle" | "shaking" | "bursting" | "reveal" | "summary";
 
 export function PackOpener({
   initial,
@@ -114,7 +115,7 @@ export function PackOpener({
   const format = useFormatter();
   const router = useRouter();
   const { settings } = useSettings();
-  const { skip, speed } = settings.animations;
+  const { skip, speed, summary: showSummary } = settings.animations;
   const [full, setStatus] = useState(initial);
   // paquets Wikipédia (réserve principale) ou anime / manga (réserve séparée)
   const [kind, setKind] = useState<PackKind>("wikipedia");
@@ -132,6 +133,10 @@ export function PackOpener({
   const [selling, setSelling] = useState(false);
   const [recycling, setRecycling] = useState(false);
   const [allTags, setAllTags] = useState(tags);
+  // partage du résultat du tirage sous forme d'image
+  const [sharing, setSharing] = useState(false);
+  const [shareNote, setShareNote] = useState<string | null>(null);
+  const [shareLink, setShareLink] = useState<{ url: string; image: string } | null>(null);
   const [queued, setQueued] = useState(false);
   const [tear, setTear] = useState(0);
   const [torn, setTorn] = useState(false);
@@ -187,6 +192,50 @@ export function PackOpener({
     setPhase("idle");
   }, []);
 
+  // lien public du tirage (page /tirage/<id>, avec aperçu pour les réseaux sociaux) : partagé avec la feuille de
+  // partage du système, sinon copié dans le presse-papiers
+  async function shareResult() {
+    if (sharing) return;
+    setSharing(true);
+    setShareNote(null);
+    try {
+      const res = await fetch(`${apiUrl}/packs/share`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cardIds: cards.map((c) => c.id),
+          newIds: cards.filter((c) => c.isNew).map((c) => c.id),
+        }),
+      });
+      if (!res.ok) throw new Error("share");
+      const { id } = (await res.json()) as { id: string };
+      const url = `${window.location.origin}/tirage/${id}`;
+      setShareLink({ url, image: `${apiUrl}/shares/${id}/image` });
+      if (navigator.share) {
+        await navigator.share({ title: t("summary.shareText"), text: t("summary.shareText"), url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShareNote(t("summary.copied"));
+      }
+    } catch (e) {
+      // fermer la feuille de partage n'est pas une erreur
+      if (!(e instanceof DOMException && e.name === "AbortError")) setShareNote(t("summary.shareError"));
+    } finally {
+      setSharing(false);
+    }
+  }
+
+  // fin du tirage : récapitulatif de toutes les cartes si le réglage est actif, sinon retour direct
+  const finish = useCallback(() => {
+    if (!showSummary) return backToIdle();
+    legendaryAudio.current?.stop();
+    legendaryAudio.current = null;
+    setCinematic(null);
+    setDetailOpen(false);
+    setPhase("summary");
+  }, [showSummary, backToIdle]);
+
   const swipeStart = useRef<{ x: number; y: number } | null>(null);
 
   const flippedRef = useRef(flipped);
@@ -226,6 +275,9 @@ export function PackOpener({
 
   const open = useCallback(async () => {
     setError(null);
+    // un nouveau tirage : le lien du précédent n'a plus lieu d'être affiché
+    setShareLink(null);
+    setShareNote(null);
     setTorn(true);
     sfx.open();
     setPhase("shaking");
@@ -306,6 +358,13 @@ export function PackOpener({
         }
         return;
       }
+      if (phase === "summary") {
+        if (key === " " && !detailOpen) {
+          e.preventDefault();
+          if (!e.repeat) backToIdle();
+        }
+        return;
+      }
       if (phase !== "reveal") return;
 
       const card = cards[index];
@@ -321,7 +380,7 @@ export function PackOpener({
 
       if (key === " ") {
         e.preventDefault();
-        if (!e.repeat) backToIdle();
+        if (!e.repeat) finish();
       } else if (key === "arrowright") setIndex((i) => Math.min(cards.length - 1, i + 1));
       else if (key === "arrowleft") setIndex((i) => Math.max(0, i - 1));
       else if (key === "arrowup") {
@@ -355,7 +414,191 @@ export function PackOpener({
     open,
     revealCurrent,
     backToIdle,
+    finish,
   ]);
+
+  // détail d'une carte, vente et recyclage : depuis l'ouverture carte par carte comme depuis le récapitulatif
+  const dialogs = cards[index] ? (
+    <>
+      {detailOpen && (
+        <CardDetail
+          card={cards[index]}
+          quantity={cards[index].quantity}
+          apiUrl={apiUrl}
+          onClose={() => {
+            setDetailOpen(false);
+            setSelling(false);
+            setRecycling(false);
+          }}
+          onSell={() => setSelling(true)}
+          onRecycle={() => setRecycling(true)}
+        >
+          <TagEditor
+            apiUrl={apiUrl}
+            cardId={cards[index].id}
+            cardTags={cards[index].tags}
+            allTags={allTags}
+            onChange={(cardTags, all) => {
+              setAllTags(all);
+              setCards((prev) =>
+                prev.map((c) => (c.id === cards[index].id ? { ...c, tags: cardTags } : c)),
+              );
+            }}
+          />
+        </CardDetail>
+      )}
+
+      {detailOpen && recycling && (
+        <RecycleDialog
+          apiUrl={apiUrl}
+          lines={[{ card: cards[index], quantity: 1 }]}
+          onClose={() => setRecycling(false)}
+          onDone={(_result, lines) => {
+            setCards((prev) =>
+              prev.map((c) =>
+                c.id === lines[0].card.id ? { ...c, quantity: c.quantity - 1 } : c,
+              ),
+            );
+            router.refresh();
+          }}
+        />
+      )}
+
+      {detailOpen && selling && (
+        <SellDialog
+          apiUrl={apiUrl}
+          initialCard={cards[index]}
+          onClose={() => setSelling(false)}
+          onListed={(card) =>
+            setCards((prev) =>
+              prev.map((c) => (c.id === card.id ? { ...c, quantity: c.quantity - 1 } : c)),
+            )
+          }
+        />
+      )}
+    </>
+  ) : null;
+
+  if (phase === "summary") {
+    const counts = RARITIES.filter((r) => cards.some((c) => c.rarity === r.value))
+      .reverse()
+      .map((r) => ({ rarity: r.value, count: cards.filter((c) => c.rarity === r.value).length }));
+    return (
+      <div className="relative z-10 mt-6 flex w-full flex-col items-center gap-8">
+        <div className="text-center">
+          <PackageOpen className="mx-auto size-14 text-accent drop-shadow-[0_0_24px_rgba(255,180,84,0.55)]" aria-hidden />
+          <h2 className="font-display mt-3 text-5xl font-semibold">{t("summary.title")}</h2>
+          <p className="prose-serif mt-2 text-lg text-pale-mist">{t("summary.text", { count: cards.length })}</p>
+        </div>
+
+        <ul className="flex w-full max-w-[1500px] flex-wrap items-start justify-center gap-4 sm:gap-5">
+          {cards.map((card, i) => (
+            <li key={card.id} className="w-40 sm:w-48 lg:w-56 xl:w-60">
+              <button
+                type="button"
+                aria-label={t("summary.openCard", { title: card.title })}
+                onClick={() => {
+                  setIndex(i);
+                  setDetailOpen(true);
+                }}
+                className="block w-full rounded-[9.6%/6.5%] outline-none transition hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                <WikiCard card={card} isNew={card.isNew} quantity={card.quantity} />
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 rounded-full border border-line bg-surface px-6 py-3 text-sm font-semibold">
+          <span>{t("summary.cards", { count: cards.length })}</span>
+          {counts.map(({ rarity, count }) => (
+            <span key={rarity} className="flex items-center gap-2 border-l border-line pl-5">
+              <i aria-hidden className="size-3 rounded-full" style={{ background: RARITY_COLOR[rarity] }} />
+              {t(`summary.rarity.${rarity}`, { count })}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setFlipped(new Set());
+              setIndex(0);
+              setPhase("reveal");
+            }}
+            className="rounded-full border border-foreground/20 px-7 py-2.5 text-sm font-bold transition hover:bg-foreground/10"
+          >
+            {t("summary.review")}
+          </button>
+          <button
+            type="button"
+            onClick={backToIdle}
+            className="inline-flex items-center gap-2 rounded-full bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70"
+          >
+            <Check className="size-4" /> {t("summary.finish")}
+          </button>
+          <button
+            type="button"
+            disabled={sharing}
+            onClick={() => void shareResult()}
+            className="inline-flex items-center gap-2 rounded-full border border-accent/50 px-7 py-2.5 text-sm font-bold text-accent transition hover:bg-accent/10 disabled:opacity-50"
+          >
+            <Send className="size-4" /> {sharing ? t("summary.sharing") : t("summary.share")}
+          </button>
+          {available > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                backToIdle();
+                open();
+              }}
+              className="rounded-full border border-foreground/20 px-7 py-2.5 text-sm font-bold transition hover:bg-foreground/10"
+            >
+              {t("nextPack", { count: available })}
+            </button>
+          )}
+        </div>
+
+        {(shareNote || shareLink) && (
+          <div className="-mt-4 flex w-full max-w-xl flex-col items-center gap-2 text-sm text-pale-mist">
+            {shareNote && <p role="status">{shareNote}</p>}
+            {shareLink && (
+              <div className="flex w-full flex-wrap items-center gap-2 rounded-xl border border-line bg-surface p-2">
+                <input
+                  readOnly
+                  value={shareLink.url}
+                  aria-label={t("summary.link")}
+                  onFocus={(e) => e.currentTarget.select()}
+                  className="min-w-0 flex-1 bg-transparent px-2 py-1 text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(shareLink.url).then(() => setShareNote(t("summary.copied")));
+                  }}
+                  className="rounded-lg border border-line px-3 py-1 text-xs font-semibold hover:bg-foreground/10"
+                >
+                  {t("summary.copy")}
+                </button>
+                <a
+                  href={shareLink.image}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download="wikideck-tirage.png"
+                  className="rounded-lg border border-line px-3 py-1 text-xs font-semibold hover:bg-foreground/10"
+                >
+                  {t("summary.image")}
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+
+        {dialogs}
+      </div>
+    );
+  }
 
   if (phase === "reveal") {
     const last = index === cards.length - 1;
@@ -473,7 +716,7 @@ export function PackOpener({
         <div className="flex flex-wrap items-center justify-center gap-3">
           <button
             type="button"
-            onClick={() => (last ? backToIdle() : go(index + 1))}
+            onClick={() => (last ? finish() : go(index + 1))}
             className="rounded-lg bg-accent px-8 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/70"
           >
             {last ? t("finish") : t("more", { count: left })}
@@ -493,62 +736,7 @@ export function PackOpener({
           )}
         </div>
 
-        {detailOpen && (
-          <CardDetail
-            card={cards[index]}
-            quantity={cards[index].quantity}
-            apiUrl={apiUrl}
-            onClose={() => {
-              setDetailOpen(false);
-              setSelling(false);
-              setRecycling(false);
-            }}
-            onSell={() => setSelling(true)}
-            onRecycle={() => setRecycling(true)}
-          >
-            <TagEditor
-              apiUrl={apiUrl}
-              cardId={cards[index].id}
-              cardTags={cards[index].tags}
-              allTags={allTags}
-              onChange={(cardTags, all) => {
-                setAllTags(all);
-                setCards((prev) =>
-                  prev.map((c) => (c.id === cards[index].id ? { ...c, tags: cardTags } : c)),
-                );
-              }}
-            />
-          </CardDetail>
-        )}
-
-        {detailOpen && recycling && (
-          <RecycleDialog
-            apiUrl={apiUrl}
-            lines={[{ card: cards[index], quantity: 1 }]}
-            onClose={() => setRecycling(false)}
-            onDone={(_result, lines) => {
-              setCards((prev) =>
-                prev.map((c) =>
-                  c.id === lines[0].card.id ? { ...c, quantity: c.quantity - 1 } : c,
-                ),
-              );
-              router.refresh();
-            }}
-          />
-        )}
-
-        {detailOpen && selling && (
-          <SellDialog
-            apiUrl={apiUrl}
-            initialCard={cards[index]}
-            onClose={() => setSelling(false)}
-            onListed={(card) =>
-              setCards((prev) =>
-                prev.map((c) => (c.id === card.id ? { ...c, quantity: c.quantity - 1 } : c)),
-              )
-            }
-          />
-        )}
+        {dialogs}
       </div>
     );
   }

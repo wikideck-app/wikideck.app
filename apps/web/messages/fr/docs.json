@@ -136,6 +136,19 @@
     "get-packs": {
       "summary": "Nombre de paquets disponibles, maximum, délai avant le prochain et stock de boosters de chance."
     },
+    "post-packs-share": {
+      "summary": "Crée le lien public d’un tirage (page /tirage/{id}, avec aperçu pour les réseaux sociaux). Seules les cartes que vous possédez sont acceptées ; 50 liens par jour au plus. Un même tirage garde le même lien.",
+      "body": {
+        "cardIds": "identifiants des cartes du tirage (5 au plus)",
+        "newIds": "parmi elles, celles qui sont nouvelles (badge « Nouveau », facultatif)"
+      }
+    },
+    "get-shares-id": {
+      "summary": "Cartes d’un tirage partagé, sans connexion. Le pseudo n’est indiqué que si le profil du joueur est public."
+    },
+    "get-shares-id-image": {
+      "summary": "Image PNG (1600 × 900) d’un tirage partagé, sans connexion : c’est l’aperçu affiché par les réseaux sociaux."
+    },
     "post-packs-open": {
       "summary": "Ouvre un paquet de 5 cartes. Les cartes sont ajoutées à la collection et renvoyées avec leur nouveauté et leur quantité.",
       "body": {

@@ -75,5 +75,6 @@
   "title_locked": "Vous n’avez pas encore obtenu ce titre.",
   "shop_wishlist_full": "Votre liste d’envies a déjà atteint le nombre maximum d’emplacements.",
   "shop_album_full": "Vous avez déjà acheté le nombre maximum d’albums supplémentaires.",
-  "shop_auction_full": "Vous avez déjà acheté le nombre maximum d’emplacements de vente."
+  "shop_auction_full": "Vous avez déjà acheté le nombre maximum d’emplacements de vente.",
+  "too_many_shares": "Trop de liens de partage créés aujourd’hui : réessayez demain."
 }

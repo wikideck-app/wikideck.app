@@ -338,6 +338,16 @@ function DrawSection() {
         />
       </SettingRow>
       <SettingRow
+        title={t("summary")}
+        description={t("summaryHelp")}
+      >
+        <Toggle
+          label={t("summary")}
+          checked={animations.summary}
+          onChange={(summary) => update((s) => ({ ...s, animations: { ...s.animations, summary } }))}
+        />
+      </SettingRow>
+      <SettingRow
         title={t("speed")}
         description={t("speedHelp")}
       >
