@@ -2,6 +2,7 @@
 
 import { Check, ChevronDown } from "@/components/icons";
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 export function SelectMenu<T extends string>({
   label,
@@ -21,17 +22,31 @@ export function SelectMenu<T extends string>({
   const root = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const list = useRef<HTMLUListElement>(null);
+  // la liste est posée sur <body> en position fixe : aucun parent (transformations 3D, contenu différé…) ne peut la recouvrir
+  const [box, setBox] = useState<{ top: number; left: number; width: number } | null>(null);
   const current = options.findIndex((o) => o.value === value);
 
   useEffect(() => {
     if (!open) return;
     // clic ou focus ailleurs : on ferme
-    const close = (e: Event) => !root.current?.contains(e.target as Node) && setOpen(false);
+    const inside = (n: Node) => root.current?.contains(n) || list.current?.contains(n);
+    const close = (e: Event) => !inside(e.target as Node) && setOpen(false);
+    const place = () => {
+      const r = trigger.current?.getBoundingClientRect();
+      if (r) setBox({ top: r.bottom + 8, left: r.left, width: r.width });
+    };
+    place();
     document.addEventListener("pointerdown", close);
     document.addEventListener("focusin", close);
+    addEventListener("resize", place);
+    addEventListener("scroll", place, true);
     return () => {
       document.removeEventListener("pointerdown", close);
       document.removeEventListener("focusin", close);
+      removeEventListener("resize", place);
+      removeEventListener("scroll", place, true);
     };
   }, [open]);
 
@@ -84,6 +99,7 @@ export function SelectMenu<T extends string>({
   return (
     <div ref={root} className={`relative ${open ? "z-30" : ""} ${block ? "w-full" : ""}`} onKeyDown={onKeyDown}>
       <button
+        ref={trigger}
         type="button"
         role="combobox"
         aria-label={label}
@@ -99,31 +115,43 @@ export function SelectMenu<T extends string>({
           className={`size-4 opacity-60 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
-      {open && (
-        <ul
-          id={`${id}-list`}
-          role="listbox"
-          aria-label={label}
-          className={`absolute z-30 mt-2 max-h-[min(24rem,70dvh)] overflow-y-auto min-w-full rounded-xl border border-line bg-surface p-1 shadow-xl ${block ? "left-0 right-0" : "right-0"}`}
-        >
-          {options.map((o, i) => (
-            <li
-              key={o.value}
-              id={`${id}-${i}`}
-              role="option"
-              aria-selected={o.value === value}
-              onPointerEnter={() => setActive(i)}
-              onClick={() => choose(i)}
-              className={`flex cursor-pointer items-center justify-between gap-6 whitespace-nowrap rounded-lg px-3 py-2 text-sm ${
-                i === active ? "bg-foreground/10" : ""
-              } ${o.value === value ? "font-bold text-accent" : ""}`}
-            >
-              {o.label}
-              {o.value === value && <Check className="size-4" />}
-            </li>
-          ))}
-        </ul>
-      )}
+      {open &&
+        box &&
+        createPortal(
+          <ul
+            ref={list}
+            id={`${id}-list`}
+            role="listbox"
+            aria-label={label}
+            style={{
+              top: box.top,
+              ...(block ? { left: box.left, width: box.width } : { right: innerWidth - box.left - box.width, minWidth: box.width }),
+            }}
+            className="fixed z-[100] max-h-[min(34rem,calc(100dvh-6rem))] overflow-y-auto overscroll-contain rounded-xl border border-line bg-surface p-1 shadow-xl"
+          >
+            {options.map((o, i) => (
+              <li key={o.value} role="presentation">
+                <button
+                  type="button"
+                  id={`${id}-${i}`}
+                  role="option"
+                  aria-selected={o.value === value}
+                  tabIndex={-1}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onPointerEnter={() => setActive(i)}
+                  onClick={() => choose(i)}
+                  className={`flex w-full cursor-pointer items-center justify-between gap-6 whitespace-nowrap rounded-lg px-3 py-2 text-left text-sm ${
+                    i === active ? "bg-foreground/10" : ""
+                  } ${o.value === value ? "font-bold text-accent" : ""}`}
+                >
+                  {o.label}
+                  {o.value === value && <Check className="size-4" />}
+                </button>
+              </li>
+            ))}
+          </ul>,
+          document.body,
+        )}
     </div>
   );
 }
