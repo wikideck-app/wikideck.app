@@ -13,6 +13,7 @@ import type {
   TradesResponse,
 } from "@wikideck/shared";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
+import { OwnedBar } from "@/components/owned-badge";
 import { WikiCard } from "@/components/wiki-card";
 import { sfx } from "@/lib/audio";
 import { useLiveEvents } from "@/lib/push";
@@ -72,10 +73,13 @@ function CardStrip({
   title,
   cards,
   side,
+  ownedLabel,
 }: {
   title: string;
   cards: TradeCard[];
   side: "left" | "right";
+  /** bandeau « déjà possédée » de celui qui reçoit la carte */
+  ownedLabel: (count: number) => string;
 }) {
   const t = useTranslations("trades");
   const count = cards.reduce((n, c) => n + c.quantity, 0);
@@ -102,6 +106,7 @@ function CardStrip({
               style={{ "--i": i } as React.CSSProperties}
             >
               <WikiCard card={c} quantity={c.quantity} />
+              {!!c.owned && <OwnedBar label={ownedLabel(c.owned)} />}
             </li>
           ))}
         </ul>
@@ -205,8 +210,8 @@ function TradeRow({
       )}
 
       <div className="relative mt-6 grid gap-4 sm:grid-cols-2 sm:gap-8">
-        <CardStrip title={t("give")} cards={trade.give} side="left" />
-        <CardStrip title={t("receive")} cards={trade.receive} side="right" />
+        <CardStrip title={t("give")} cards={trade.give} side="left" ownedLabel={(count) => t("owned.theirs", { name: p.username, count })} />
+        <CardStrip title={t("receive")} cards={trade.receive} side="right" ownedLabel={(count) => t("owned.mine", { count })} />
         <Versus burst={swapping} />
       </div>
 

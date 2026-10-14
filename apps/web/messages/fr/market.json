@@ -34,7 +34,9 @@
   },
   "tile": {
     "view": "Voir l’enchère : {title}",
-    "bids": "{count, plural, =0 {Aucune mise} one {# mise} other {# mises}}"
+    "bids": "{count, plural, =0 {Aucune mise} one {# mise} other {# mises}}",
+    "owned": "Déjà possédée",
+    "ownedCount": "Possédée ×{count}"
   },
   "sellDialog": {
     "pickTitle": "Quelle carte mettre en vente ?",
@@ -84,7 +86,8 @@
     "cancel": "Annuler la vente",
     "history": "Historique des mises ({count})",
     "noBids": "Aucune mise placée pour l’instant.",
-    "marketViewLabel": "Vue du marché"
+    "marketViewLabel": "Vue du marché",
+    "alreadyOwned": "{count, plural, one {Vous la possédez déjà} other {Vous la possédez déjà (×#)}}"
   },
   "stats": {
     "title": "Vue du marché",

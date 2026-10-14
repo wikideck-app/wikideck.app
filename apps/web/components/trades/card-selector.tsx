@@ -12,6 +12,7 @@ import {
   type CollectionSort,
   type Rarity,
 } from "@wikideck/shared";
+import { OwnedDot } from "@/components/owned-badge";
 import { SelectMenu } from "@/components/select-menu";
 import { WikiCard } from "@/components/wiki-card";
 import { apiFetch } from "@/lib/tags-api";
@@ -26,6 +27,8 @@ export function CardSelector({
   onChange,
   tone = "accent",
   listClassName = "max-h-[42vh]",
+  extraParams,
+  ownedLabel,
 }: {
   apiUrl: string;
   endpoint: string;
@@ -35,6 +38,10 @@ export function CardSelector({
   tone?: "accent" | "blue";
   /** hauteur de la zone défilante */
   listClassName?: string;
+  /** paramètres d'URL en plus (ex. with=<joueur> : savoir ce que l'autre joueur possède déjà) */
+  extraParams?: Record<string, string>;
+  /** texte du bandeau « déjà possédée » d'une carte ; null : pas de bandeau */
+  ownedLabel?: (card: CollectionCard) => string | null;
 }) {
   const t = useTranslations("trades.selector");
   const ts = useTranslations("cards.sorts");
@@ -55,7 +62,7 @@ export function CardSelector({
     const timer = setTimeout(
       async () => {
         setLoading(true);
-        const params = new URLSearchParams({ sort, page: String(page) });
+        const params = new URLSearchParams({ sort, page: String(page), ...extraParams });
         if (query.trim()) params.set("q", query.trim());
         if (source !== "all") params.set("source", source);
         if (rarities.length)
@@ -79,7 +86,8 @@ export function CardSelector({
       page === 1 && query ? 300 : 0,
     );
     return () => clearTimeout(timer);
-  }, [apiUrl, endpoint, query, source, rarities, sort, page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiUrl, endpoint, query, source, rarities, sort, page, JSON.stringify(extraParams ?? {})]);
 
   function toggle(card: CollectionCard) {
     const next = new Map(selection);
@@ -181,6 +189,7 @@ export function CardSelector({
               const chosen = selection.get(card.id);
               return (
                 <li key={card.id}>
+                  <div className="relative">
                   <button
                     type="button"
                     onClick={() => toggle(card)}
@@ -196,6 +205,11 @@ export function CardSelector({
                   >
                     <WikiCard card={card} quantity={card.quantity} compact />
                   </button>
+                  {(() => {
+                    const label = ownedLabel?.(card);
+                    return label ? <OwnedDot label={label} /> : null;
+                  })()}
+                  </div>
                   {chosen && card.quantity > 1 && (
                     <div className="mt-1.5 flex items-center justify-center gap-2 text-sm">
                       <button

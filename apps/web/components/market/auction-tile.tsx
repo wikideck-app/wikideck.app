@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import type { AuctionDto } from "@wikideck/shared";
+import { OwnedPill } from "@/components/owned-badge";
 import { WikiCard } from "@/components/wiki-card";
 import { Wikibits } from "@/components/wikibit";
 import { Countdown } from "./countdown";
@@ -32,8 +33,14 @@ export function AuctionTile({ auction: a }: { auction: AuctionDto }) {
       onKeyDown={(e) => e.key === "Enter" && router.push(`/market/${a.id}`)}
       className="cv-item group block cursor-pointer rounded-[9.6%/6.5%] outline-none focus-visible:ring-2 focus-visible:ring-accent"
     >
-      <div className={`transition group-hover:-translate-y-1 ${active ? "" : "opacity-60"}`}>
+      <div className={`relative transition group-hover:-translate-y-1 ${active ? "" : "opacity-60"}`}>
         <WikiCard card={a.card} compact />
+        {a.viewer.owned > 0 && !a.viewer.isSeller && (
+          <OwnedPill
+            label={a.viewer.owned > 1 ? t("tile.ownedCount", { count: a.viewer.owned }) : t("tile.owned")}
+            className="absolute bottom-2 left-2 z-10"
+          />
+        )}
       </div>
       <div className="mt-2 px-1 pb-1">
         <div className="flex items-baseline justify-between gap-2">

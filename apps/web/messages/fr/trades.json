@@ -137,5 +137,9 @@
       "title": "Mes échanges"
     }
   },
-  "messageQuote": "Message : {text}"
+  "messageQuote": "Message : {text}",
+  "owned": {
+    "mine": "{count, plural, one {Vous l’avez déjà} other {Vous l’avez déjà ×#}}",
+    "theirs": "{count, plural, one {Déjà chez {name}} other {Déjà chez {name} ×#}}"
+  }
 }

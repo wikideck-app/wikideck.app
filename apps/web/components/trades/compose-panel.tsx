@@ -10,6 +10,7 @@ import {
   type CreateTradeBody,
   type PlayerSummary,
 } from "@wikideck/shared";
+import { OwnedPill } from "@/components/owned-badge";
 import { primaryButtonClass } from "@/components/settings/controls";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 import { CardSelector, type Selection } from "./card-selector";
@@ -26,7 +27,19 @@ function Avatar({ player, size = "size-8" }: { player: PlayerSummary; size?: str
 }
 
 // carte choisie : miniature, titre, quantité, bouton pour la retirer
-function Picked({ selection, onChange, empty, hint }: { selection: Selection; onChange: (s: Selection) => void; empty: string; hint: string }) {
+function Picked({
+  selection,
+  onChange,
+  empty,
+  hint,
+  ownedLabel,
+}: {
+  selection: Selection;
+  onChange: (s: Selection) => void;
+  empty: string;
+  hint: string;
+  ownedLabel: (card: Selection extends Map<string, infer V> ? V extends { card: infer C } ? C : never : never) => string | null;
+}) {
   const t = useTranslations("trades.compose");
   if (selection.size === 0)
     return (
@@ -50,6 +63,10 @@ function Picked({ selection, onChange, empty, hint }: { selection: Selection; on
             <span className="block truncate text-sm font-semibold">{card.title}</span>
             {card.description && <span className="block truncate text-xs text-fog">{card.description}</span>}
           </span>
+          {(() => {
+            const label = ownedLabel(card);
+            return label ? <OwnedPill label={label} className="shrink-0" /> : null;
+          })()}
           {quantity > 1 && <span className="text-sm font-bold tabular-nums">{quantity}×</span>}
           <button
             type="button"
@@ -132,6 +149,11 @@ export function ComposePanel({
 
   const empty = offer.size === 0 && request.size === 0;
   const canSeeCards = !!recipient && (recipient.isPublic || recipient.friend);
+  // bandeaux « déjà possédée » : ce que l'autre joueur a déjà (cartes que je donne), ce que j'ai déjà (cartes que je demande)
+  const theirsLabel = (card: { otherOwned?: number }) =>
+    recipient && card.otherOwned ? t("owned.theirs", { name: recipient.username, count: card.otherOwned }) : null;
+  const mineLabel = (card: { viewerOwned?: number }) =>
+    card.viewerOwned ? t("owned.mine", { count: card.viewerOwned }) : null;
 
   async function send() {
     if (!recipient || empty || sending) return;
@@ -232,6 +254,8 @@ export function ComposePanel({
             onChange={setOffer}
             tone="blue"
             listClassName="max-h-[60vh]"
+            extraParams={recipient && canSeeCards ? { with: recipient.id } : undefined}
+            ownedLabel={theirsLabel}
           />
         </Column>
 
@@ -246,6 +270,7 @@ export function ComposePanel({
               selection={request}
               onChange={setRequest}
               listClassName="max-h-[60vh]"
+              ownedLabel={mineLabel}
             />
           ) : (
             <p className="flex items-center gap-2 py-6 text-sm text-pale-mist">
@@ -270,14 +295,14 @@ export function ComposePanel({
                 {t("panel.summary.youGive")}
                 <span className="text-xs font-normal text-fog">{t("panel.summary.count", { count: offer.size })}</span>
               </h3>
-              <Picked selection={offer} onChange={setOffer} empty={t("panel.summary.empty")} hint={t("panel.summary.emptyGive")} />
+              <Picked selection={offer} onChange={setOffer} empty={t("panel.summary.empty")} hint={t("panel.summary.emptyGive")} ownedLabel={theirsLabel} />
             </div>
             <div className="min-w-0">
               <h3 className="mb-2 flex items-baseline justify-between text-sm font-bold text-accent">
                 {t("panel.summary.youRequest")}
                 <span className="text-xs font-normal text-fog">{t("panel.summary.count", { count: request.size })}</span>
               </h3>
-              <Picked selection={request} onChange={setRequest} empty={t("panel.summary.empty")} hint={t("panel.summary.emptyRequest")} />
+              <Picked selection={request} onChange={setRequest} empty={t("panel.summary.empty")} hint={t("panel.summary.emptyRequest")} ownedLabel={mineLabel} />
             </div>
           </div>
 

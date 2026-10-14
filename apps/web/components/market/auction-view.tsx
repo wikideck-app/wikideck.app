@@ -13,6 +13,7 @@ import {
   type AuctionDetail,
 } from "@wikideck/shared";
 import { buttonClass, dangerButtonClass, primaryButtonClass } from "@/components/settings/controls";
+import { OwnedPill } from "@/components/owned-badge";
 import { WikiCard } from "@/components/wiki-card";
 import { WikibitIcon, Wikibits } from "@/components/wikibit";
 import { useRarityLabel } from "@/lib/labels";
@@ -143,6 +144,9 @@ export function AuctionView({ initial, apiUrl }: { initial: AuctionDetail; apiUr
                 <span className="rounded-full border border-line px-2 py-px text-[11px] font-bold text-pale-mist">
                   {rarityLabel(a.card.rarity)}
                 </span>
+                {a.viewer.owned > 0 && !a.viewer.isSeller && (
+                  <OwnedPill label={t("alreadyOwned", { count: a.viewer.owned })} />
+                )}
                 {t("soldBy")} <Avatar name={a.seller.username} url={a.seller.avatarUrl} />
                 <Link
                   href={`/profile/${a.seller.id}`}
