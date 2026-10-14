@@ -82,7 +82,7 @@ export function SelectMenu<T extends string>({
   }
 
   return (
-    <div ref={root} className={`relative ${block ? "w-full" : ""}`} onKeyDown={onKeyDown}>
+    <div ref={root} className={`relative ${open ? "z-30" : ""} ${block ? "w-full" : ""}`} onKeyDown={onKeyDown}>
       <button
         type="button"
         role="combobox"
@@ -104,7 +104,7 @@ export function SelectMenu<T extends string>({
           id={`${id}-list`}
           role="listbox"
           aria-label={label}
-          className={`absolute z-30 mt-2 min-w-full overflow-hidden rounded-xl border border-line bg-surface p-1 shadow-xl ${block ? "left-0 right-0" : "right-0"}`}
+          className={`absolute z-30 mt-2 max-h-[min(24rem,70dvh)] overflow-y-auto min-w-full rounded-xl border border-line bg-surface p-1 shadow-xl ${block ? "left-0 right-0" : "right-0"}`}
         >
           {options.map((o, i) => (
             <li

@@ -370,7 +370,7 @@ export function CollectionView({ data, apiUrl }: { data: CollectionResponse; api
         <p className="mt-10 text-center opacity-60">{t("empty")}</p>
       ) : (
         <div
-          className={`mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 ${isPending ? "opacity-60" : ""}`}
+          className={`isolate mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 ${isPending ? "opacity-60" : ""}`}
         >
           {data.cards.map((card) => {
             const isPicked = picked.has(card.id);
