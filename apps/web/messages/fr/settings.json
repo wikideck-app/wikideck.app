@@ -55,7 +55,7 @@
     "fpsHelp": "30 images par seconde chauffent moins et économisent la batterie, sur téléphone notamment.",
     "fpsOption": "{count} FPS",
     "summary": "Récapitulatif de fin de tirage",
-    "summaryHelp": "Une fois toutes les cartes retournées, affiche d’un coup les cartes obtenues, avec le détail par rareté. Vous pouvez revoir l’ouverture ou terminer."
+    "summaryHelp": "Une fois la dernière carte retournée, affiche tout seul les cartes obtenues d’un coup, avec le détail par rareté. Vous pouvez revoir l’ouverture ou terminer."
   },
   "collection": {
     "title": "Collection & accessibilité",

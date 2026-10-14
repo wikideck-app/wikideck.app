@@ -19,6 +19,8 @@ import { useSettings } from "@/lib/settings-context";
 
 const MIN_SHAKE_MS = 400;
 const BURST_MS = 1300;
+// la dernière carte reste visible ce temps-là, puis le récapitulatif s'affiche tout seul
+const AUTO_SUMMARY_MS = 2200;
 const AUTO_FLIP_MS = 350;
 const QUEUE_RETRY_MS = 3000;
 const QUEUE_MAX_TRIES = 10;
@@ -235,6 +237,16 @@ export function PackOpener({
     setDetailOpen(false);
     setPhase("summary");
   }, [showSummary, backToIdle]);
+
+  // récapitulatif automatique : une fois la dernière carte retournée (et sa cinématique terminée), on laisse
+  // un instant pour la regarder, puis il s'affiche sans avoir à cliquer sur « Terminer »
+  useEffect(() => {
+    const last = cards.length - 1;
+    if (!showSummary || phase !== "reveal" || last < 0 || index !== last || !flipped.has(last)) return;
+    if (cinematic || detailOpen) return;
+    const id = setTimeout(finish, AUTO_SUMMARY_MS);
+    return () => clearTimeout(id);
+  }, [showSummary, phase, cards.length, index, flipped, cinematic, detailOpen, finish]);
 
   const swipeStart = useRef<{ x: number; y: number } | null>(null);
 
