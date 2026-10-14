@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, ChevronDown, DiscordLogo, LogOut, Menu, Settings, ShieldCheck, User, X } from "@/components/icons";
+import { ArrowUpRight, ChevronDown, DiscordLogo, LogOut, Menu, Settings, ShieldCheck, ShoppingBag, User, X } from "@/components/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -184,7 +184,11 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             aria-label={t(`groups.${group}`)}
             className="on-light toast-in absolute left-0 top-[calc(100%+10px)] z-10 w-64 rounded-xl bg-surface p-4 shadow-(--shadow-float)"
           >
-            <ul className="flex flex-col gap-1.5">{items(group).map(link)}</ul>
+            <ul className="flex flex-col gap-1.5">
+              {items(group)
+                .filter((item) => item.slug !== "shop")
+                .map(link)}
+            </ul>
           </nav>
         )}
       </div>
@@ -255,6 +259,14 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
 
         <div className="flex min-w-0 items-center justify-end gap-1.5 sm:gap-3">
           {packs && <PackChip packs={packs} />}
+          <Link
+            href="/shop"
+            aria-current={pathname.startsWith("/shop") ? "page" : undefined}
+            className={`${chip} hidden xl:flex aria-[current=page]:border-white aria-[current=page]:bg-white/15`}
+          >
+            <ShoppingBag className="size-4" />
+            {t("items.shop")}
+          </Link>
           <Link href="/market" className={chip} title={t("wikibitsBalance")}>
             <Wikibits amount={user.wikibits} />
           </Link>
