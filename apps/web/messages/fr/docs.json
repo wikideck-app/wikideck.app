@@ -1,10 +1,96 @@
 {
   "staff": {
-    "title": "API staff",
-    "intro": "Routes de l’espace staff, sous <code>/staff</code>. Même session et mêmes conventions que l’API des joueurs.",
-    "access": "<strong>Accès</strong> : compte staff, rôle modérateur ou administrateur. Un compte sans rôle reçoit <code>404</code>.",
-    "journal": "<strong>Journal</strong> : chaque action qui modifie quelque chose est enregistrée avec son auteur, sa cible et son motif, et visible dans <code>/staff/audit</code>.",
-    "roles": "<strong>Rôles</strong> : le modérateur peut bannir, renommer et ajuster la confiance d’un membre de rang inférieur. Donner des wikibits ou des paquets, changer un rôle et supprimer un compte demandent le rôle administrateur. Tu ne peux jamais agir sur toi-même ni sur un administrateur défini par la configuration du serveur."
+    "title": "Documentation staff",
+    "intro": "Référence des routes de l’espace staff, sous <code>/staff</code>. Cette page n’est visible que par l’équipe : elle est séparée de la documentation publique de l’API.",
+    "access": "<strong>Accès</strong> : compte staff, rôle modérateur ou administrateur. Un compte sans rôle reçoit <code>404</code>, un rôle insuffisant <code>403</code>. Chaque route indique son rôle minimum ; sans mention, le modérateur suffit.",
+    "back": "Retour à l’espace staff",
+    "auth": "<strong>Authentification</strong> : session du navigateur ou clé d’API d’un compte staff (en-tête <code>Authorization: Bearer …</code>). Les routes marquées « Session uniquement » refusent les clés.",
+    "actionsTitle": "Actions détaillées",
+    "actionsIntro": "Les routes POST prennent un champ <code>action</code> et ses paramètres. Toute action est consignée dans le journal (auteur, cible, détail).",
+    "rule": "Règle de rang",
+    "ruleText": "Un modérateur n’agit que sur un membre de rang inférieur. Personne n’agit sur soi-même (sauf renommer), ni sur un administrateur défini dans la configuration du serveur.",
+    "groups": {
+      "users": "Membres — POST /staff/users/{id}",
+      "reports": "Signalements — POST /staff/reports/{id}",
+      "bugs": "Bugs — POST /staff/bug-reports/{id}",
+      "guilds": "Guildes — POST /staff/guilds/{id}",
+      "auctions": "Enchères — POST /staff/auctions/{id}",
+      "alerts": "Alertes — POST /staff/alerts"
+    },
+    "actions": {
+      "ban": {
+        "what": "Bannit un membre : il ne peut plus se connecter ni jouer.",
+        "params": "reason (3 à 200 caractères, obligatoire)"
+      },
+      "unban": {
+        "what": "Lève le bannissement.",
+        "params": "aucun"
+      },
+      "rename": {
+        "what": "Change le pseudo (unique, sans tenir compte des majuscules). Permis sur soi-même.",
+        "params": "username"
+      },
+      "setTrust": {
+        "what": "Force le niveau de confiance (TRUSTED ou RESTRICTED) ou revient à l’automatique (null).",
+        "params": "override"
+      },
+      "clearSignals": {
+        "what": "Efface les indices d’abus du membre et recalcule sa confiance.",
+        "params": "aucun"
+      },
+      "wikibits": {
+        "what": "Ajoute ou retire des wikibits (le solde ne peut pas devenir négatif).",
+        "params": "amount (entier non nul, 1 000 000 au plus), reason"
+      },
+      "packs": {
+        "what": "Offre des paquets : Wikipédia, anime ou bonus de parrainage. Ils s’ajoutent au-delà du maximum de recharge.",
+        "params": "count (1 à 100), kind (wikipedia, anime, bonus)"
+      },
+      "setRole": {
+        "what": "Donne ou retire un rôle staff. Impossible sur soi-même ou sur un administrateur de la configuration.",
+        "params": "role (MODERATOR, ADMIN ou null)"
+      },
+      "delete": {
+        "what": "Supprime définitivement le compte et ses données. Refusé tant qu’il a des enchères en cours (target_active_auctions).",
+        "params": "reason, confirm (le pseudo exact)"
+      },
+      "dismiss": {
+        "what": "Classe le signalement sans suite.",
+        "params": "aucun"
+      },
+      "deleteMessage": {
+        "what": "Supprime le message signalé et clôt le signalement.",
+        "params": "aucun"
+      },
+      "resolve": {
+        "what": "Marque le bug comme corrigé.",
+        "params": "aucun"
+      },
+      "dismissBug": {
+        "what": "Classe le rapport sans suite.",
+        "params": "aucun"
+      },
+      "edit": {
+        "what": "Renomme la guilde et/ou change sa description (nom unique).",
+        "params": "name?, description?"
+      },
+      "kick": {
+        "what": "Exclut un membre de la guilde.",
+        "params": "userId"
+      },
+      "dissolve": {
+        "what": "Dissout la guilde et libère tous ses membres.",
+        "params": "confirmName (le nom exact)"
+      },
+      "cancel": {
+        "what": "Annule l’enchère : la carte retourne au vendeur et l’offre au meilleur enchérisseur.",
+        "params": "reason (obligatoire)"
+      },
+      "read": {
+        "what": "Marque une alerte comme lue, ou toutes. Elle ne revient que sur un nouvel indice.",
+        "params": "userId ou all: true"
+      }
+    }
   },
   "reference": {
     "sections": "Sections",
@@ -12,7 +98,12 @@
     "body": "Corps JSON",
     "response": "Réponse",
     "errors": "Erreurs",
-    "limit": "{max} / {minutes, plural, =1 {min} other {# min}}"
+    "limit": "{max} / {minutes, plural, =1 {min} other {# min}}",
+    "role": {
+      "MODERATOR": "Modérateur",
+      "ADMIN": "Administrateur"
+    },
+    "sessionOnly": "Session uniquement"
   },
   "sections": {
     "compte": {
@@ -63,11 +154,18 @@
     },
     "quetes": {
       "title": "Quêtes"
+    },
+    "cles-api": {
+      "title": "Clés d’API (administrateur)",
+      "intro": "Ces routes n’acceptent que la session du navigateur : une clé d’API ne peut pas en créer d’autres."
     }
   },
   "endpoints": {
     "get-auth-discord": {
-      "summary": "Redirige vers Discord pour se connecter."
+      "summary": "Redirige vers Discord pour se connecter.",
+      "query": {
+        "ref": "code de parrainage d’un joueur (facultatif) : conservé jusqu’à la création du compte"
+      }
     },
     "post-auth-logout": {
       "summary": "Ferme la session en cours."
@@ -134,7 +232,7 @@
       }
     },
     "get-packs": {
-      "summary": "Nombre de paquets disponibles, maximum, délai avant le prochain et stock de boosters de chance."
+      "summary": "Paquets disponibles (Wikipédia, anime, bonus de parrainage), maximum, délai avant le prochain et stock de boosters de chance."
     },
     "post-packs-share": {
       "summary": "Crée le lien public d’un tirage (page /tirage/{id}, avec aperçu pour les réseaux sociaux). Seules les cartes que vous possédez sont acceptées ; 50 liens par jour au plus. Un même tirage garde le même lien.",
@@ -152,7 +250,8 @@
     "post-packs-open": {
       "summary": "Ouvre un paquet de 5 cartes. Les cartes sont ajoutées à la collection et renvoyées avec leur nouveauté et leur quantité.",
       "body": {
-        "boost": "true pour utiliser un booster de chance (facultatif)"
+        "boost": "true pour utiliser un booster de chance (facultatif)",
+        "kind": "wikipedia (par défaut) ou anime : type du paquet à ouvrir"
       }
     },
     "get-wheel": {
@@ -172,7 +271,9 @@
         "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
         "sort": "recent, oldest, rarity_desc, rarity_asc, alpha, alpha_desc, quantity_desc (doublons d’abord), quantity_asc, views_desc, views_asc (popularité), favorites",
         "tag": "identifiant d’étiquette",
-        "fav": "1 pour les favorites seulement"
+        "fav": "1 pour les favorites seulement",
+        "source": "anime ou wikipedia : ne garde que ce type de cartes",
+        "with": "identifiant d’un autre joueur : chaque carte indique s’il la possède déjà (champ owned)"
       }
     },
     "get-collection-locks": {
@@ -231,7 +332,10 @@
       }
     },
     "get-cards-rates": {
-      "summary": "Taux de tirage de chaque rareté, par carte et par paquet."
+      "summary": "Taux de tirage de chaque rareté, par carte et par paquet.",
+      "query": {
+        "source": "anime ou wikipedia : taux de ce type de paquet"
+      }
     },
     "get-ranking": {
       "summary": "Classement des joueurs (50 premiers).",
@@ -422,7 +526,8 @@
       "summary": "Renomme et/ou déplace un album. Tous les champs sont facultatifs.",
       "body": {
         "name": "nouveau nom",
-        "parentId": "nouveau parent (un de tes albums, hors lui-même et ses sous-albums), ou null pour le remonter au premier niveau"
+        "parentId": "nouveau parent (un de tes albums, hors lui-même et ses sous-albums), ou null pour le remonter au premier niveau",
+        "onProfile": "true pour afficher l’album sur ton profil public, false pour le masquer (facultatif)"
       }
     },
     "delete-albums-id": {
@@ -550,7 +655,10 @@
       "summary": "Comptes suspects selon les indices d’abus des 30 derniers jours."
     },
     "get-staff-audit": {
-      "summary": "Journal des actions du staff (qui, quoi, sur qui)."
+      "summary": "Journal des actions du staff (qui, quoi, sur qui).",
+      "query": {
+        "page": "numéro de page"
+      }
     },
     "get-staff-users": {
       "summary": "Recherche de membres (la fiche contient l’identifiant et le nom d’utilisateur Discord).",
@@ -586,7 +694,10 @@
       }
     },
     "get-staff-deleted": {
-      "summary": "Historique des comptes supprimés (par le staff ou par eux-mêmes)."
+      "summary": "Historique des comptes supprimés (par le staff ou par eux-mêmes).",
+      "query": {
+        "page": "numéro de page"
+      }
     },
     "get-staff-reports": {
       "summary": "Messages signalés, avec le message et les cinq précédents.",
@@ -596,7 +707,7 @@
       }
     },
     "post-staff-reports-id": {
-      "summary": "Traite un signalement.",
+      "summary": "Traite un signalement. Le message du joueur n’est supprimé que par deleteMessage.",
       "body": {
         "action": "dismiss (classer sans suite) ou deleteMessage"
       }
@@ -679,6 +790,25 @@
     },
     "post-quests-id-claim": {
       "summary": "Récupère la récompense en wikibits d'une quête atteinte (une seule fois). L'identifiant contient « : » : encode-le dans l'adresse."
+    },
+    "post-staff-alerts": {
+      "summary": "Marque une alerte comme lue : elle ne revient que si un nouvel indice d’abus apparaît.",
+      "body": {
+        "userId": "identifiant du membre dont on marque l’alerte comme lue",
+        "all": "true pour marquer toutes les alertes en cours (à la place de userId)"
+      }
+    },
+    "get-staff-api-keys": {
+      "summary": "Clés d’API actives (nom, préfixe, auteur, dernier usage). La clé complète n’est jamais renvoyée."
+    },
+    "post-staff-api-keys": {
+      "summary": "Crée une clé d’API (10 par compte au plus). La clé complète n’est affichée qu’une seule fois, dans la réponse.",
+      "body": {
+        "name": "nom de la clé, 40 caractères au plus"
+      }
+    },
+    "delete-staff-api-keys-id": {
+      "summary": "Révoque une clé : elle cesse de fonctionner immédiatement."
     }
   },
   "site": {

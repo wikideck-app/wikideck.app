@@ -55,6 +55,16 @@ function EndpointCard({ endpoint, id, t }: { endpoint: Endpoint; id: string; t: 
           {endpoint.method}
         </span>
         <code className="min-w-0 break-all text-sm font-semibold">{endpoint.path}</code>
+        {endpoint.role === "ADMIN" && (
+          <span className="rounded-full bg-danger/15 px-2 py-0.5 text-[11px] font-bold text-danger">
+            {t("reference.role.ADMIN")}
+          </span>
+        )}
+        {endpoint.sessionOnly && (
+          <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[11px] font-bold text-warning">
+            {t("reference.sessionOnly")}
+          </span>
+        )}
         {endpoint.limit && (
           <span className="ml-auto text-xs tabular-nums text-fog">
             {t("reference.limit", { max: endpoint.limit.max, minutes: endpoint.limit.minutes })}

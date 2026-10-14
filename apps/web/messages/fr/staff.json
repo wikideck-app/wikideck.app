@@ -351,5 +351,6 @@
     }
   },
   "navSubtitle": "Gestion du site et des membres",
-  "backToSite": "Retour au site"
+  "backToSite": "Retour au site",
+  "docsLink": "Documentation staff"
 }

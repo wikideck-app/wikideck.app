@@ -19,6 +19,10 @@ export type Endpoint = {
   errors?: string[];
   /** requêtes autorisées par fenêtre de `minutes` minutes */
   limit?: { max: number; minutes: number };
+  /** routes staff : rôle minimum (modérateur par défaut) */
+  role?: "MODERATOR" | "ADMIN";
+  /** routes staff : refuse les clés d'API, seule la session du navigateur passe */
+  sessionOnly?: boolean;
 };
 
 export type DocSection = {
@@ -30,7 +34,7 @@ export const USER_DOCS: DocSection[] = [
   {
     id: "compte",
     endpoints: [
-      { key: "get-auth-discord", method: "GET", path: "/auth/discord" },
+      { key: "get-auth-discord", method: "GET", path: "/auth/discord", query: ["ref"] },
       { key: "post-auth-logout", method: "POST", path: "/auth/logout", limit: { max: 20, minutes: 1 } },
       { key: "get-auth-me", method: "GET", path: "/auth/me", returns: "{ user: SessionUser | null }", limit: { max: 120, minutes: 1 } },
       { key: "get-me", method: "GET", path: "/me", limit: { max: 60, minutes: 1 } },
@@ -49,11 +53,11 @@ export const USER_DOCS: DocSection[] = [
   {
     id: "paquets",
     endpoints: [
-      { key: "get-packs", method: "GET", path: "/packs", returns: "{ packs, max, nextInMs, boosts }", limit: { max: 60, minutes: 1 } },
+      { key: "get-packs", method: "GET", path: "/packs", returns: "{ packs, animePacks, bonusPacks, max, nextInMs, boosts }", limit: { max: 60, minutes: 1 } },
       { key: "post-packs-share", method: "POST", path: "/packs/share", body: ["cardIds", "newIds"], returns: "{ id: string }", errors: ["invalid", "not_found", "too_many_shares"], limit: { max: 10, minutes: 1 } },
       { key: "get-shares-id", method: "GET", path: "/shares/{id}", returns: "{ id, ownerName, createdAt, cards }", errors: ["not_found"], limit: { max: 120, minutes: 1 } },
       { key: "get-shares-id-image", method: "GET", path: "/shares/{id}/image", returns: "image/png", errors: ["not_found"], limit: { max: 60, minutes: 1 } },
-      { key: "post-packs-open", method: "POST", path: "/packs/open", body: ["boost"], returns: "{ packs, max, nextInMs, boosts, cards, godpack? }", errors: ["no_packs", "busy", "no_boost", "overloaded", "wikipedia_unavailable"], limit: { max: 6, minutes: 1 } },
+      { key: "post-packs-open", method: "POST", path: "/packs/open", body: ["boost", "kind"], returns: "{ packs, animePacks, bonusPacks, max, nextInMs, boosts, cards, godpack? }", errors: ["no_packs", "busy", "no_boost", "overloaded", "wikipedia_unavailable"], limit: { max: 6, minutes: 1 } },
       { key: "get-wheel", method: "GET", path: "/wheel", returns: "{ canSpin }", limit: { max: 60, minutes: 1 } },
       { key: "get-wheel-history", method: "GET", path: "/wheel/history", returns: "{ mine, recent }", limit: { max: 30, minutes: 1 } },
       { key: "post-wheel-spin", method: "POST", path: "/wheel/spin", returns: "{ index, prize, wikibits, packs, dropBoosts }", errors: ["already_spun"], limit: { max: 10, minutes: 1 } },
@@ -62,7 +66,7 @@ export const USER_DOCS: DocSection[] = [
   {
     id: "collection",
     endpoints: [
-      { key: "get-collection", method: "GET", path: "/collection", query: ["page", "q", "rarity", "sort", "tag", "fav"], limit: { max: 60, minutes: 1 } },
+      { key: "get-collection", method: "GET", path: "/collection", query: ["page", "q", "rarity", "sort", "tag", "fav", "source", "with"], limit: { max: 60, minutes: 1 } },
       { key: "get-collection-locks", method: "GET", path: "/collection/locks", limit: { max: 120, minutes: 1 } },
       { key: "get-collection-duplicates", method: "GET", path: "/collection/duplicates" },
       { key: "put-collection-cardid-favorite", method: "PUT", path: "/collection/{cardId}/favorite", body: ["favorite"], returns: "{ favorite }", limit: { max: 120, minutes: 1 } },
@@ -77,7 +81,7 @@ export const USER_DOCS: DocSection[] = [
     endpoints: [
       { key: "get-cards-id-stats", method: "GET", path: "/cards/{id}/stats", returns: "{ drawn: number }", errors: ["not_found"], limit: { max: 120, minutes: 1 } },
       { key: "get-cards", method: "GET", path: "/cards", query: ["page", "q", "rarity", "show", "sort", "source"], limit: { max: 60, minutes: 1 } },
-      { key: "get-cards-rates", method: "GET", path: "/cards/rates", limit: { max: 30, minutes: 1 } },
+      { key: "get-cards-rates", method: "GET", path: "/cards/rates", query: ["source"], limit: { max: 30, minutes: 1 } },
       { key: "get-ranking", method: "GET", path: "/ranking", query: ["board"], limit: { max: 30, minutes: 1 } },
       { key: "get-achievements", method: "GET", path: "/achievements", limit: { max: 30, minutes: 1 } },
       { key: "post-achievements-claim", method: "POST", path: "/achievements/claim" },
@@ -134,7 +138,7 @@ export const USER_DOCS: DocSection[] = [
       { key: "get-albums", method: "GET", path: "/albums", query: ["card"], limit: { max: 60, minutes: 1 } },
       { key: "post-albums", method: "POST", path: "/albums", body: ["name", "parentId"], errors: ["invalid_name", "album_exists", "too_many_albums", "album_too_deep"] },
       { key: "get-albums-id", method: "GET", path: "/albums/{id}", query: ["scope", "q", "rarity", "page"] },
-      { key: "patch-albums-id", method: "PATCH", path: "/albums/{id}", body: ["name", "parentId"], errors: ["invalid_name", "album_exists", "album_cycle", "album_too_deep"] },
+      { key: "patch-albums-id", method: "PATCH", path: "/albums/{id}", body: ["name", "parentId", "onProfile"], errors: ["invalid_name", "album_exists", "album_cycle", "album_too_deep"] },
       { key: "delete-albums-id", method: "DELETE", path: "/albums/{id}" },
       { key: "put-albums-id-cards", method: "PUT", path: "/albums/{id}/cards", body: ["add", "remove"], errors: ["invalid", "album_full", "not_owned"] },
       { key: "put-albums-id-highlights", method: "PUT", path: "/albums/{id}/highlights", body: ["cardIds"], errors: ["invalid", "not_found"], limit: { max: 60, minutes: 1 } },
@@ -193,50 +197,59 @@ export const USER_DOCS: DocSection[] = [
 
 export const STAFF_DOCS: DocSection[] = [
   {
-    id: "boutique-staff",
-    endpoints: [
-      { key: "get-staff-shop", method: "GET", path: "/staff/shop", limit: { max: 60, minutes: 1 } },
-      { key: "post-staff-shop", method: "POST", path: "/staff/shop", body: ["name", "kind", "amount", "price"], errors: ["invalid", "shop_full"] },
-      { key: "put-staff-shop-id", method: "PUT", path: "/staff/shop/{id}", body: ["name", "kind", "amount", "price"], errors: ["invalid", "not_found"] },
-      { key: "delete-staff-shop-id", method: "DELETE", path: "/staff/shop/{id}", errors: ["not_found"] },
-    ],
-  },
-  {
     id: "tableau",
     endpoints: [
       { key: "get-staff-overview", method: "GET", path: "/staff/overview", limit: { max: 60, minutes: 1 } },
       { key: "get-staff-alerts", method: "GET", path: "/staff/alerts", limit: { max: 60, minutes: 1 } },
-      { key: "get-staff-audit", method: "GET", path: "/staff/audit", limit: { max: 60, minutes: 1 } },
+      { key: "post-staff-alerts", method: "POST", path: "/staff/alerts", body: ["userId", "all"], errors: ["invalid"], limit: { max: 60, minutes: 1 } },
+      { key: "get-staff-audit", method: "GET", path: "/staff/audit", query: ["page"], limit: { max: 60, minutes: 1 } },
     ],
   },
   {
     id: "membres",
     endpoints: [
       { key: "get-staff-users", method: "GET", path: "/staff/users", query: ["q", "filter", "page"], limit: { max: 120, minutes: 1 } },
-      { key: "get-staff-users-sync", method: "GET", path: "/staff/users/sync", query: ["limit", "after"], errors: ["invalid"], limit: { max: 30, minutes: 1 } },
-      { key: "get-staff-wishlists", method: "GET", path: "/staff/wishlists", query: ["limit", "after", "discordId", "cardId"], errors: ["invalid"], limit: { max: 30, minutes: 1 } },
-      { key: "get-staff-users-id", method: "GET", path: "/staff/users/{id}" },
-      { key: "post-staff-users-id", method: "POST", path: "/staff/users/{id}", body: ["action"], errors: ["invalid", "not_found", "forbidden"] },
-      { key: "get-staff-deleted", method: "GET", path: "/staff/deleted", limit: { max: 60, minutes: 1 } },
+      { key: "get-staff-users-sync", method: "GET", path: "/staff/users/sync", role: "ADMIN", query: ["limit", "after"], errors: ["invalid"], limit: { max: 30, minutes: 1 } },
+      { key: "get-staff-wishlists", method: "GET", path: "/staff/wishlists", role: "ADMIN", query: ["limit", "after", "discordId", "cardId"], errors: ["invalid"], limit: { max: 30, minutes: 1 } },
+      { key: "get-staff-users-id", method: "GET", path: "/staff/users/{id}", limit: { max: 120, minutes: 1 } },
+      { key: "post-staff-users-id", method: "POST", path: "/staff/users/{id}", body: ["action"], errors: ["invalid", "invalid_reason", "invalid_username", "username_taken", "insufficient_funds", "confirmation_required", "target_active_auctions", "not_found", "forbidden"], limit: { max: 60, minutes: 1 } },
+      { key: "get-staff-deleted", method: "GET", path: "/staff/deleted", query: ["page"], limit: { max: 60, minutes: 1 } },
     ],
   },
   {
     id: "moderation",
     endpoints: [
-      { key: "get-staff-reports", method: "GET", path: "/staff/reports", query: ["status", "page"] },
+      { key: "get-staff-reports", method: "GET", path: "/staff/reports", query: ["status", "page"], limit: { max: 120, minutes: 1 } },
       { key: "post-staff-reports-id", method: "POST", path: "/staff/reports/{id}", body: ["action"], errors: ["invalid", "not_found", "already_resolved"] },
-      { key: "get-staff-bug-reports", method: "GET", path: "/staff/bug-reports", query: ["status", "page"] },
+      { key: "get-staff-bug-reports", method: "GET", path: "/staff/bug-reports", query: ["status", "page"], limit: { max: 120, minutes: 1 } },
       { key: "post-staff-bug-reports-id", method: "POST", path: "/staff/bug-reports/{id}", body: ["action"], errors: ["invalid", "not_found", "already_resolved"] },
     ],
   },
   {
     id: "marche",
     endpoints: [
-      { key: "get-staff-auctions", method: "GET", path: "/staff/auctions", query: ["q", "status", "page"] },
+      { key: "get-staff-auctions", method: "GET", path: "/staff/auctions", query: ["q", "status", "page"], limit: { max: 120, minutes: 1 } },
       { key: "post-staff-auctions-id", method: "POST", path: "/staff/auctions/{id}", body: ["reason"], errors: ["invalid_reason", "not_found"] },
       { key: "get-staff-guilds", method: "GET", path: "/staff/guilds", query: ["q", "page"], limit: { max: 120, minutes: 1 } },
-      { key: "get-staff-guilds-id", method: "GET", path: "/staff/guilds/{id}" },
-      { key: "post-staff-guilds-id", method: "POST", path: "/staff/guilds/{id}", body: ["action"], errors: ["not_found"] },
+      { key: "get-staff-guilds-id", method: "GET", path: "/staff/guilds/{id}", limit: { max: 120, minutes: 1 } },
+      { key: "post-staff-guilds-id", method: "POST", path: "/staff/guilds/{id}", body: ["action"], errors: ["invalid", "invalid_guild_name", "guild_name_taken", "not_found"], limit: { max: 30, minutes: 1 } },
+    ],
+  },
+  {
+    id: "boutique-staff",
+    endpoints: [
+      { key: "get-staff-shop", method: "GET", path: "/staff/shop", role: "ADMIN", limit: { max: 60, minutes: 1 } },
+      { key: "post-staff-shop", method: "POST", path: "/staff/shop", role: "ADMIN", body: ["name", "kind", "amount", "price"], errors: ["invalid", "shop_full"], limit: { max: 30, minutes: 1 } },
+      { key: "put-staff-shop-id", method: "PUT", path: "/staff/shop/{id}", role: "ADMIN", body: ["name", "kind", "amount", "price"], errors: ["invalid", "not_found"], limit: { max: 60, minutes: 1 } },
+      { key: "delete-staff-shop-id", method: "DELETE", path: "/staff/shop/{id}", role: "ADMIN", errors: ["not_found"], limit: { max: 30, minutes: 1 } },
+    ],
+  },
+  {
+    id: "cles-api",
+    endpoints: [
+      { key: "get-staff-api-keys", method: "GET", path: "/staff/api-keys", role: "ADMIN", sessionOnly: true, limit: { max: 60, minutes: 1 } },
+      { key: "post-staff-api-keys", method: "POST", path: "/staff/api-keys", role: "ADMIN", sessionOnly: true, body: ["name"], returns: "{ key, row }", errors: ["invalid", "too_many_keys"], limit: { max: 10, minutes: 1 } },
+      { key: "delete-staff-api-keys-id", method: "DELETE", path: "/staff/api-keys/{id}", role: "ADMIN", sessionOnly: true, errors: ["not_found"], limit: { max: 30, minutes: 1 } },
     ],
   },
 ];

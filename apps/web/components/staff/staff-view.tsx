@@ -1860,6 +1860,13 @@ export function StaffView({
             );
           })}
         </nav>
+        <Link
+          href="/staff/docs"
+          className="mt-3 flex items-center gap-3 rounded-2xl border border-line bg-surface px-5 py-3 text-sm font-semibold text-pale-mist transition-colors hover:bg-foreground/10"
+        >
+          <Notebook className="size-5 shrink-0" />
+          {t("docsLink")}
+        </Link>
         <div className="mt-3 hidden items-center justify-between gap-2 rounded-2xl border border-line bg-surface p-3 lg:flex">
           <Badge className="bg-accent/15 text-accent">{t(`roles.${role}`)}</Badge>
           <Link href="/" className="flex items-center gap-1.5 text-xs text-fog hover:text-foreground">
