@@ -286,14 +286,16 @@
       "body": {
         "recipientId": "joueur destinataire",
         "offer": "['{' cardId, quantity '}'] : ce que tu donnes",
-        "request": "['{' cardId, quantity '}'] : ce que tu demandes"
+        "request": "['{' cardId, quantity '}'] : ce que tu demandes",
+        "message": "mot d’accompagnement (200 caractères au plus, facultatif)"
       }
     },
     "post-trades-id-counter": {
       "summary": "Répond à une proposition en attente par une contre-proposition. Les champs sont de ton point de vue : offer est ce que tu donnes, request ce que tu demandes.",
       "body": {
         "offer": "['{' cardId, quantity '}'] : ce que tu donnes",
-        "request": "['{' cardId, quantity '}'] : ce que tu demandes"
+        "request": "['{' cardId, quantity '}'] : ce que tu demandes",
+        "message": "mot d’accompagnement (200 caractères au plus, facultatif)"
       }
     },
     "post-trades-id-accept": {
@@ -355,7 +357,10 @@
       "summary": "Collection d’un joueur dont le profil est public.",
       "query": {
         "page": "numéro de page",
-        "q": "recherche"
+        "q": "recherche",
+        "rarity": "raretés : C, PC, R, SR, UR, L, M (séparés par des virgules)",
+        "source": "anime ou wikipedia",
+        "sort": "mêmes valeurs que pour la collection (recent, rarity_desc, quantity_desc…)"
       }
     },
     "get-tags": {

@@ -1,7 +1,6 @@
 {
-  "title": "Échanges",
-  "subtitle": "Proposez des cartes à un autre joueur, en échange des siennes.",
-  "propose": "Proposer un échange",
+  "title": "Échange de cartes",
+  "subtitle": "Proposez un échange avec un autre joueur. Les cartes ne bougent que si les deux joueurs acceptent.",
   "tabs": {
     "incoming": "Reçues",
     "outgoing": "Envoyées",
@@ -64,7 +63,9 @@
     "counterSend": "Envoyer la contre-proposition",
     "removeCard": "Retirer {title}",
     "chosen": "Cartes choisies",
-    "privateFriend": "profil privé, mais vous êtes amis"
+    "privateFriend": "profil privé, mais vous êtes amis",
+    "messageLabel": "Message (optionnel)",
+    "messagePlaceholder": "Ex : Salut ! Je te propose cet échange :)"
   },
   "selector": {
     "searchPlaceholder": "Rechercher une carte…",
@@ -80,8 +81,61 @@
       "wikipedia": "Wikipédia",
       "anime": "Anime / Manga"
     },
-    "rarityLabel": "Filtrer par rareté"
+    "rarityLabel": "Filtrer par rareté",
+    "sortLabel": "Trier les cartes"
   },
   "counterBadge": "Contre-proposition",
-  "counterAction": "Contre-proposer"
+  "counterAction": "Contre-proposer",
+  "shortcuts": {
+    "myTrades": {
+      "title": "Mes échanges",
+      "text": "Suivez vos propositions"
+    },
+    "guide": {
+      "title": "Guide",
+      "text": "Comment ça fonctionne ?"
+    }
+  },
+  "guide": {
+    "steps": {
+      "1": "Choisissez le joueur avec qui échanger.",
+      "2": "Sélectionnez les cartes que vous donnez, puis celles que vous demandez. Vous pouvez aussi n’en donner ou n’en demander aucune.",
+      "3": "Ajoutez un petit mot si vous le souhaitez, puis envoyez la proposition.",
+      "4": "L’autre joueur peut accepter, refuser ou contre-proposer. Les cartes ne bougent que s’il accepte."
+    }
+  },
+  "panel": {
+    "with": "Échanger avec",
+    "withHelp": "Choisissez un joueur pour voir ses cartes et lui proposer un échange.",
+    "give": {
+      "title": "Je donne",
+      "text": "Sélectionnez les cartes que vous proposez ({count, plural, one {# sélectionnée} other {# sélectionnées}})"
+    },
+    "request": {
+      "title": "Je demande",
+      "text": "Sélectionnez les cartes que vous souhaitez recevoir ({count, plural, one {# sélectionnée} other {# sélectionnées}})"
+    },
+    "pickPlayer": "Choisissez d’abord un joueur pour voir ses cartes.",
+    "summary": {
+      "title": "Proposer un échange",
+      "text": "Vérifiez les cartes sélectionnées avant d’envoyer.",
+      "youGive": "Vous donnez",
+      "youRequest": "Vous demandez",
+      "empty": "Aucune carte sélectionnée",
+      "emptyGive": "Sélectionnez des cartes dans votre collection",
+      "emptyRequest": "Sélectionnez des cartes ci-contre",
+      "count": "{count, plural, =0 {0 carte sélectionnée} one {# carte sélectionnée} other {# cartes sélectionnées}}",
+      "message": "Message",
+      "optional": "(optionnel)",
+      "placeholder": "Ex : Salut ! Je te propose cet échange :)",
+      "expiry": "Sans réponse, la proposition expire au bout de {days} jours.",
+      "needPlayer": "Choisissez un joueur pour envoyer la proposition.",
+      "sent": "Proposition envoyée à {name}.",
+      "seeSent": "Voir mes propositions"
+    },
+    "history": {
+      "title": "Mes échanges"
+    }
+  },
+  "messageQuote": "Message : {text}"
 }

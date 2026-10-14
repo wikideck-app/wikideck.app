@@ -97,8 +97,8 @@ export const USER_DOCS: DocSection[] = [
     id: "echanges",
     endpoints: [
       { key: "get-trades", method: "GET", path: "/trades", query: ["box"], limit: { max: 60, minutes: 1 } },
-      { key: "post-trades", method: "POST", path: "/trades", body: ["recipientId", "offer", "request"], errors: ["invalid", "self_trade", "recipient_private", "not_available_mine", "not_available_theirs", "too_many_pending"] },
-      { key: "post-trades-id-counter", method: "POST", path: "/trades/{id}/counter", body: ["offer", "request"], errors: ["invalid", "already_resolved", "expired", "not_available_mine", "not_available_theirs", "too_many_pending"], limit: { max: 10, minutes: 1 } },
+      { key: "post-trades", method: "POST", path: "/trades", body: ["recipientId", "offer", "request", "message"], errors: ["invalid", "self_trade", "recipient_private", "not_available_mine", "not_available_theirs", "too_many_pending"] },
+      { key: "post-trades-id-counter", method: "POST", path: "/trades/{id}/counter", body: ["offer", "request", "message"], errors: ["invalid", "already_resolved", "expired", "not_available_mine", "not_available_theirs", "too_many_pending"], limit: { max: 10, minutes: 1 } },
       { key: "post-trades-id-accept", method: "POST", path: "/trades/{id}/accept", errors: ["expired", "busy"] },
       { key: "post-trades-id-decline", method: "POST", path: "/trades/{id}/decline" },
       { key: "post-trades-id-cancel", method: "POST", path: "/trades/{id}/cancel" },
@@ -118,7 +118,7 @@ export const USER_DOCS: DocSection[] = [
       { key: "get-players", method: "GET", path: "/players", query: ["q", "by"], limit: { max: 40, minutes: 1 } },
       { key: "get-players-id", method: "GET", path: "/players/{id}" },
       { key: "get-players-id-profile", method: "GET", path: "/players/{id}/profile" },
-      { key: "get-players-id-cards", method: "GET", path: "/players/{id}/cards", query: ["page", "q"], errors: ["private", "not_found"] },
+      { key: "get-players-id-cards", method: "GET", path: "/players/{id}/cards", query: ["page", "q", "rarity", "source", "sort"], errors: ["private", "not_found"] },
     ],
   },
   {

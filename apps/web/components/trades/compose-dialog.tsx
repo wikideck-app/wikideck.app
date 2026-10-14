@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import {
   TRADE_EXPIRY_DAYS,
+  TRADE_MESSAGE_MAX,
   type CounterTradeBody,
   type CreateTradeBody,
   type PlayerSummary,
@@ -84,6 +85,7 @@ export function ComposeDialog({
   const [results, setResults] = useState<PlayerSummary[]>([]);
   const [offer, setOffer] = useState<Selection>(() => selectionOf(counterOf?.give ?? []));
   const [request, setRequest] = useState<Selection>(() => selectionOf(counterOf?.receive ?? []));
+  const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestId = useRef(0);
@@ -110,8 +112,8 @@ export function ComposeDialog({
     const lines = (s: Selection) =>
       [...s.values()].map((x) => ({ cardId: x.card.id, quantity: x.quantity }));
     const body: CreateTradeBody | CounterTradeBody = counterOf
-      ? { offer: lines(offer), request: lines(request) }
-      : { recipientId: recipient.id, offer: lines(offer), request: lines(request) };
+      ? { offer: lines(offer), request: lines(request), ...(message.trim() && { message: message.trim() }) }
+      : { recipientId: recipient.id, offer: lines(offer), request: lines(request), ...(message.trim() && { message: message.trim() }) };
     const result = await apiCall(
       apiUrl,
       counterOf ? `/trades/${counterOf.id}/counter` : "/trades",
@@ -263,6 +265,18 @@ export function ComposeDialog({
           </section>
         </>
       )}
+
+      <label className="mt-6 block text-sm font-bold">
+        {t("compose.messageLabel")}
+        <textarea
+          value={message}
+          maxLength={TRADE_MESSAGE_MAX}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder={t("compose.messagePlaceholder")}
+          rows={2}
+          className="mt-2 w-full resize-none rounded-xl border border-line bg-transparent p-3 text-sm font-normal outline-none focus:border-accent"
+        />
+      </label>
 
       {error && (
         <p role="alert" className="mt-5 text-sm text-danger">

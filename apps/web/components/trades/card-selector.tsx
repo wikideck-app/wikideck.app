@@ -4,12 +4,15 @@ import { Minus, Plus, Search } from "@/components/icons";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import {
+  COLLECTION_SORTS,
   RARITIES,
   TRADE_MAX_CARDS,
   type CollectionCard,
   type CollectionResponse,
+  type CollectionSort,
   type Rarity,
 } from "@wikideck/shared";
+import { SelectMenu } from "@/components/select-menu";
 import { WikiCard } from "@/components/wiki-card";
 import { apiFetch } from "@/lib/tags-api";
 import { buttonClass } from "@/components/settings/controls";
@@ -21,14 +24,22 @@ export function CardSelector({
   endpoint,
   selection,
   onChange,
+  tone = "accent",
+  listClassName = "max-h-[42vh]",
 }: {
   apiUrl: string;
   endpoint: string;
   selection: Selection;
   onChange: (next: Selection) => void;
+  /** couleur de la sélection : donne (bleu) ou demande (accent) */
+  tone?: "accent" | "blue";
+  /** hauteur de la zone défilante */
+  listClassName?: string;
 }) {
   const t = useTranslations("trades.selector");
+  const ts = useTranslations("cards.sorts");
   const tc = useTranslations("common");
+  const [sort, setSort] = useState<CollectionSort>("rarity_desc");
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<"all" | "wikipedia" | "anime">("all");
   const [rarities, setRarities] = useState<Rarity[]>([]);
@@ -44,7 +55,7 @@ export function CardSelector({
     const timer = setTimeout(
       async () => {
         setLoading(true);
-        const params = new URLSearchParams({ sort: "rarity_desc", page: String(page) });
+        const params = new URLSearchParams({ sort, page: String(page) });
         if (query.trim()) params.set("q", query.trim());
         if (source !== "all") params.set("source", source);
         if (rarities.length)
@@ -68,7 +79,7 @@ export function CardSelector({
       page === 1 && query ? 300 : 0,
     );
     return () => clearTimeout(timer);
-  }, [apiUrl, endpoint, query, source, rarities, page]);
+  }, [apiUrl, endpoint, query, source, rarities, sort, page]);
 
   function toggle(card: CollectionCard) {
     const next = new Map(selection);
@@ -85,7 +96,8 @@ export function CardSelector({
 
   return (
     <div>
-      <div role="tablist" aria-label={t("sourceLabel")} className="mb-3 flex w-fit gap-1 rounded-2xl border border-line p-1">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <div role="tablist" aria-label={t("sourceLabel")} className="flex w-fit gap-1 rounded-2xl border border-line p-1">
         {(["all", "wikipedia", "anime"] as const).map((k) => (
           <button
             key={k}
@@ -103,6 +115,7 @@ export function CardSelector({
             {t(`sources.${k}`)}
           </button>
         ))}
+      </div>
       </div>
       <div className="mb-3 flex flex-wrap gap-1" role="group" aria-label={t("rarityLabel")}>
         {[...RARITIES].reverse().map((r) => {
@@ -127,7 +140,8 @@ export function CardSelector({
           );
         })}
       </div>
-      <div className="relative max-w-xs">
+      <div className="flex flex-wrap items-center gap-2">
+      <div className="relative min-w-40 max-w-xs flex-1">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
         <input
           type="search"
@@ -141,6 +155,16 @@ export function CardSelector({
           className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
         />
       </div>
+      <SelectMenu
+        label={t("sortLabel")}
+        value={sort}
+        options={COLLECTION_SORTS.map((s) => ({ value: s.value, label: ts(s.value) }))}
+        onChange={(next) => {
+          setSort(next);
+          setPage(1);
+        }}
+      />
+      </div>
 
       {error && (
         <p role="alert" className="mt-3 text-sm text-danger">
@@ -148,7 +172,7 @@ export function CardSelector({
         </p>
       )}
 
-      <div className="mt-4 max-h-[42vh] overflow-y-auto pr-1">
+      <div className={`mt-4 overflow-y-auto pr-1 ${listClassName}`}>
         {!loading && cards.length === 0 && !error ? (
           <p className="py-8 text-center text-sm text-fog">{t("empty")}</p>
         ) : (
@@ -163,7 +187,11 @@ export function CardSelector({
                     aria-pressed={!!chosen}
                     aria-label={t(chosen ? "remove" : "choose", { title: card.title })}
                     className={`block w-full rounded-[9.6%/6.5%] text-left outline-none transition focus-visible:ring-2 focus-visible:ring-accent ${
-                      chosen ? "ring-2 ring-accent" : "opacity-80 hover:opacity-100"
+                      chosen
+                        ? tone === "blue"
+                          ? "ring-2 ring-tag-blue"
+                          : "ring-2 ring-accent"
+                        : "opacity-80 hover:opacity-100"
                     }`}
                   >
                     <WikiCard card={card} quantity={card.quantity} compact />

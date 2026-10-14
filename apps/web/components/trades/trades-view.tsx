@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftRight, Ban, Check, Hourglass, Plus, X, type IconType } from "@/components/icons";
+import { ArrowLeftRight, Ban, BookOpen, Check, Hourglass, Notebook, X, type IconType } from "@/components/icons";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ import { sfx } from "@/lib/audio";
 import { useLiveEvents } from "@/lib/push";
 import { apiCall, apiFetch } from "@/lib/tags-api";
 import { ComposeDialog } from "./compose-dialog";
+import { ComposePanel } from "./compose-panel";
 
 const currentTime = () => Date.now();
 
@@ -197,6 +198,12 @@ function TradeRow({
         <StatusBadge trade={swapping ? { ...trade, status: "ACCEPTED" } : trade} />
       </div>
 
+      {trade.message && (
+        <p className="mt-4 rounded-xl border border-line bg-foreground/5 px-4 py-2.5 text-sm italic text-pale-mist">
+          {t("messageQuote", { text: trade.message })}
+        </p>
+      )}
+
       <div className="relative mt-6 grid gap-4 sm:grid-cols-2 sm:gap-8">
         <CardStrip title={t("give")} cards={trade.give} side="left" />
         <CardStrip title={t("receive")} cards={trade.receive} side="right" />
@@ -260,7 +267,7 @@ export function TradesView({
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [swappingId, setSwappingId] = useState<string | null>(null);
-  const [composing, setComposing] = useState(!!initialRecipient);
+  const [guide, setGuide] = useState(false);
   const [counterOf, setCounterOf] = useState<TradeDto | null>(null);
   const requestId = useRef(0);
 
@@ -312,20 +319,72 @@ export function TradesView({
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="mx-auto max-w-[1500px]">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-5xl font-medium">{t("title")}</h1>
-          <p className="prose-serif mt-2 text-pale-mist">
-            {t("subtitle")}
-          </p>
+          <h1 className="font-display text-4xl font-semibold sm:text-5xl">{t("title")}</h1>
+          <p className="prose-serif mt-2 max-w-2xl text-pale-mist">{t("subtitle")}</p>
         </div>
-        <button type="button" className={primaryButtonClass} onClick={() => setComposing(true)}>
-          <Plus className="size-4" /> {t("propose")}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href="#mes-echanges"
+            className="flex min-w-56 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 transition-colors hover:border-accent"
+          >
+            <span className="flex size-10 items-center justify-center rounded-xl bg-tag-blue/15 text-tag-blue">
+              <Notebook className="size-5" />
+            </span>
+            <span>
+              <span className="block text-sm font-bold">{t("shortcuts.myTrades.title")}</span>
+              <span className="block text-xs text-fog">{t("shortcuts.myTrades.text")}</span>
+            </span>
+          </a>
+          <button
+            type="button"
+            aria-expanded={guide}
+            onClick={() => setGuide((g) => !g)}
+            className="flex min-w-56 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 text-left transition-colors hover:border-accent"
+          >
+            <span className="flex size-10 items-center justify-center rounded-xl bg-tag-green/15 text-tag-green">
+              <BookOpen className="size-5" />
+            </span>
+            <span>
+              <span className="block text-sm font-bold">{t("shortcuts.guide.title")}</span>
+              <span className="block text-xs text-fog">{t("shortcuts.guide.text")}</span>
+            </span>
+          </button>
+        </div>
       </div>
 
-      <div role="tablist" className="mt-8 flex gap-2 border-b border-line">
+      {guide && (
+        <ol className="mt-5 grid gap-2 rounded-2xl border border-line bg-surface p-5 text-sm text-pale-mist sm:grid-cols-2 lg:grid-cols-4">
+          {(["1", "2", "3", "4"] as const).map((n) => (
+            <li key={n} className="flex gap-3">
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
+                {n}
+              </span>
+              {t(`guide.steps.${n}`)}
+            </li>
+          ))}
+        </ol>
+      )}
+
+      <div className="mt-6">
+        <ComposePanel
+          apiUrl={apiUrl}
+          initialRecipient={initialRecipient}
+          onSent={() => {
+            setBox("outgoing");
+            void load("outgoing");
+            router.refresh();
+          }}
+        />
+      </div>
+
+      <h2 id="mes-echanges" className="mt-14 scroll-mt-20 font-display text-3xl font-semibold">
+        {t("panel.history.title")}
+      </h2>
+
+      <div role="tablist" className="mt-4 flex gap-2 border-b border-line">
         {TABS.map((tab) => (
           <button
             key={tab}
@@ -381,18 +440,6 @@ export function TradesView({
           onClose={() => setCounterOf(null)}
           onCreated={() => {
             setCounterOf(null);
-            setBox("outgoing");
-            void load("outgoing");
-            router.refresh();
-          }}
-        />
-      )}
-      {composing && (
-        <ComposeDialog
-          apiUrl={apiUrl}
-          initialRecipient={initialRecipient}
-          onClose={() => setComposing(false)}
-          onCreated={() => {
             setBox("outgoing");
             void load("outgoing");
             router.refresh();
