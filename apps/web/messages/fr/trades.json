@@ -82,7 +82,13 @@
       "anime": "Anime / Manga"
     },
     "rarityLabel": "Filtrer par rareté",
-    "sortLabel": "Trier les cartes"
+    "sortLabel": "Trier les cartes",
+    "density": {
+      "label": "Taille des cartes",
+      "large": "Grandes",
+      "medium": "Moyennes",
+      "small": "Petites"
+    }
   },
   "counterBadge": "Contre-proposition",
   "counterAction": "Contre-proposer",

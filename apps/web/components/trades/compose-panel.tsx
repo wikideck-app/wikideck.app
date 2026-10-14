@@ -253,7 +253,8 @@ export function ComposePanel({
             selection={offer}
             onChange={setOffer}
             tone="blue"
-            listClassName="max-h-[60vh]"
+            defaultDensity="large"
+            listClassName="max-h-[70vh]"
             extraParams={recipient && canSeeCards ? { with: recipient.id } : undefined}
             ownedLabel={theirsLabel}
           />
@@ -269,7 +270,8 @@ export function ComposePanel({
               endpoint={`/players/${recipient.id}/cards`}
               selection={request}
               onChange={setRequest}
-              listClassName="max-h-[60vh]"
+              defaultDensity="large"
+              listClassName="max-h-[70vh]"
               ownedLabel={mineLabel}
             />
           ) : (

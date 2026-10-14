@@ -2,7 +2,7 @@
 
 import { Minus, Plus, Search } from "@/components/icons";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   COLLECTION_SORTS,
   RARITIES,
@@ -18,6 +18,45 @@ import { WikiCard } from "@/components/wiki-card";
 import { apiFetch } from "@/lib/tags-api";
 import { buttonClass } from "@/components/settings/controls";
 
+type Density = "large" | "medium" | "small";
+const DENSITY_KEY = "wd-trade-density";
+// cartes par ligne : grandes (2), moyennes (3) ou petites (4 à 5)
+const GRID: Record<Density, string> = {
+  large: "grid-cols-2",
+  medium: "grid-cols-2 sm:grid-cols-3",
+  small: "grid-cols-3 sm:grid-cols-4 md:grid-cols-5",
+};
+
+// taille choisie, retenue d'une visite à l'autre (lue après l'hydratation : pas d'écart entre serveur et navigateur)
+const densityListeners = new Set<() => void>();
+const readDensity = (): Density | null => {
+  try {
+    const saved = localStorage.getItem(DENSITY_KEY);
+    return saved === "large" || saved === "medium" || saved === "small" ? saved : null;
+  } catch {
+    return null;
+  }
+};
+function useDensity(fallback: Density) {
+  const saved = useSyncExternalStore(
+    (listener) => {
+      densityListeners.add(listener);
+      return () => void densityListeners.delete(listener);
+    },
+    readDensity,
+    () => null,
+  );
+  const set = (next: Density) => {
+    try {
+      localStorage.setItem(DENSITY_KEY, next);
+    } catch {
+      /* stockage indisponible */
+    }
+    densityListeners.forEach((l) => l());
+  };
+  return [saved ?? fallback, set] as const;
+}
+
 export type Selection = Map<string, { card: CollectionCard; quantity: number }>;
 
 export function CardSelector({
@@ -29,6 +68,7 @@ export function CardSelector({
   listClassName = "max-h-[42vh]",
   extraParams,
   ownedLabel,
+  defaultDensity = "medium",
 }: {
   apiUrl: string;
   endpoint: string;
@@ -42,11 +82,14 @@ export function CardSelector({
   extraParams?: Record<string, string>;
   /** texte du bandeau « déjà possédée » d'une carte ; null : pas de bandeau */
   ownedLabel?: (card: CollectionCard) => string | null;
+  /** taille des cartes au départ (le joueur peut la changer, son choix est gardé) */
+  defaultDensity?: Density;
 }) {
   const t = useTranslations("trades.selector");
   const ts = useTranslations("cards.sorts");
   const tc = useTranslations("common");
   const [sort, setSort] = useState<CollectionSort>("rarity_desc");
+  const [density, setDensity] = useDensity(defaultDensity);
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<"all" | "wikipedia" | "anime">("all");
   const [rarities, setRarities] = useState<Rarity[]>([]);
@@ -163,6 +206,22 @@ export function CardSelector({
           className="w-full rounded-lg border border-line bg-transparent py-2 pl-9 pr-3 text-sm outline-none focus:border-accent"
         />
       </div>
+      <div role="group" aria-label={t("density.label")} className="flex gap-0.5 rounded-full border border-line p-0.5">
+        {(["large", "medium", "small"] as const).map((d) => (
+          <button
+            key={d}
+            type="button"
+            aria-pressed={density === d}
+            onClick={() => setDensity(d)}
+            title={t("density.label")}
+            className={`rounded-full px-2.5 py-1 text-xs font-bold transition-colors ${
+              density === d ? "bg-accent text-accent-foreground" : "hover:bg-foreground/10"
+            }`}
+          >
+            {t(`density.${d}`)}
+          </button>
+        ))}
+      </div>
       <SelectMenu
         label={t("sortLabel")}
         value={sort}
@@ -180,11 +239,11 @@ export function CardSelector({
         </p>
       )}
 
-      <div className={`mt-4 overflow-y-auto pr-1 ${listClassName}`}>
+      <div className={`mt-4 overflow-y-auto p-2 pr-3 ${listClassName}`}>
         {!loading && cards.length === 0 && !error ? (
           <p className="py-8 text-center text-sm text-fog">{t("empty")}</p>
         ) : (
-          <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+          <ul className={`no-glow grid gap-4 ${GRID[density]}`}>
             {cards.map((card) => {
               const chosen = selection.get(card.id);
               return (

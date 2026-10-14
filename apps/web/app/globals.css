@@ -160,6 +160,9 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-danger: var(--danger);
+  /* messages de réussite et d'avertissement (utilisés dans l'interface : text-success, bg-warning/15…) */
+  --color-success: var(--tag-green);
+  --color-warning: var(--tag-yellow);
   --color-smoke: var(--smoke);
   --color-fog: var(--fog);
   --color-pale-mist: var(--pale-mist);
@@ -535,6 +538,11 @@ body {
   transition:
     transform 0.15s ease-out,
     box-shadow 0.3s;
+}
+.no-glow .wk,
+.no-glow .wk:hover {
+  /* grilles serrées (sélecteur d'échange) : sans halo coloré, qui formerait une nappe entre les cartes voisines */
+  box-shadow: 0 0.6em 1.4em -0.9em rgba(0, 0, 0, 0.6);
 }
 .wk:hover {
   box-shadow:

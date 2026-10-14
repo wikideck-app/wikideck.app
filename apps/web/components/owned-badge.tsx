@@ -19,9 +19,9 @@ export function OwnedDot({ label }: { label: string }) {
       title={label}
       role="img"
       aria-label={label}
-      className="pointer-events-none absolute right-1 top-1 z-10 flex size-5 items-center justify-center rounded-full bg-success text-black shadow ring-2 ring-black/40"
+      className="pointer-events-none absolute -right-1.5 -top-1.5 z-10 flex size-6 items-center justify-center rounded-full bg-success text-black shadow ring-2 ring-black/40"
     >
-      <Check className="size-3" strokeWidth={3.5} aria-hidden />
+      <Check className="size-3.5" strokeWidth={3.5} aria-hidden />
     </span>
   );
 }
