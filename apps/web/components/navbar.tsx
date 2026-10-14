@@ -120,7 +120,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
     const active = current?.slug === slug;
     const count = badges[slug] ?? 0;
     return (
-      <li key={slug}>
+      <li key={slug} className={slug === "shop" ? "min-[1700px]:hidden" : undefined}>
         <Link
           href={`/${slug}`}
           onClick={() => setOpen(null)}
@@ -185,9 +185,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
             className="on-light toast-in absolute left-0 top-[calc(100%+10px)] z-10 w-64 rounded-xl bg-surface p-4 shadow-(--shadow-float)"
           >
             <ul className="flex flex-col gap-1.5">
-              {items(group)
-                .filter((item) => item.slug !== "shop")
-                .map(link)}
+              {items(group).map(link)}
             </ul>
           </nav>
         )}
@@ -262,7 +260,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           <Link
             href="/shop"
             aria-current={pathname.startsWith("/shop") ? "page" : undefined}
-            className={`${chip} hidden xl:flex aria-[current=page]:border-white aria-[current=page]:bg-white/15`}
+            className={`${chip} hidden min-[1700px]:flex aria-[current=page]:border-white aria-[current=page]:bg-white/15`}
           >
             <ShoppingBag className="size-4" />
             {t("items.shop")}
