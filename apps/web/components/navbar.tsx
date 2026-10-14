@@ -58,7 +58,7 @@ function PackChip({ packs }: { packs: NonNullable<Props["packs"]> }) {
         packs.anime ? `, ${anime} ${packs.anime.packs}/${packs.anime.max}` : ""
       }${(packs.bonus ?? 0) > 0 ? `, ${t("packsBonus")} ${packs.bonus}` : ""}`}
     >
-      <span className="hidden text-[11px] uppercase tracking-[0.12em] text-pale-mist 2xl:inline">
+      <span className="sr-only">
         {t("packsShort")}
       </span>
       <PackCount label={t("packsWikipediaShort")} title={wiki} packs={packs} />
@@ -259,6 +259,7 @@ export function Navbar({ user, logoutUrl, packs }: Props) {
           {packs && <PackChip packs={packs} />}
           <Link
             href="/shop"
+            title={t("items.shop")}
             aria-current={pathname.startsWith("/shop") ? "page" : undefined}
             className={`${chip} hidden min-[1700px]:flex aria-[current=page]:border-white aria-[current=page]:bg-white/15`}
           >
