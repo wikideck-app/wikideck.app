@@ -110,13 +110,29 @@ export function NotificationListener({
 
   useEffect(() => {
     if (!live || typeof EventSource === "undefined") return;
-    const source = new EventSource(`${live.url}/${live.topic}/sse`);
-    source.onopen = () => setPushConnected(true);
-    source.onerror = () => setPushConnected(false);
-    source.addEventListener("message", (e) => {
+    let source: EventSource | null = null;
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    let failures = 0;
+    let stopped = false;
+    // dernier instant (secondes) où le flux était sûrement à jour : à la reconnexion on rattrape ce qui a été manqué
+    let lastSeen = Math.floor(Date.now() / 1000);
+    const seen = new Set<string>();
+
+    const handle = (e: Event) => {
       let event: LiveEvent;
       try {
-        event = JSON.parse(JSON.parse((e as MessageEvent<string>).data).message) as LiveEvent;
+        const packet = JSON.parse((e as MessageEvent<string>).data) as {
+          id?: string;
+          time?: number;
+          message: string;
+        };
+        if (packet.id) {
+          if (seen.has(packet.id)) return;
+          seen.add(packet.id);
+          if (seen.size > 200) seen.delete(seen.values().next().value as string);
+        }
+        if (packet.time) lastSeen = Math.max(lastSeen, packet.time);
+        event = JSON.parse(packet.message) as LiveEvent;
       } catch {
         return;
       }
@@ -131,9 +147,43 @@ export function NotificationListener({
       const id = Date.now() + Math.random();
       setToasts((prev) => [...prev.slice(-2), { id, text, href }]);
       setTimeout(() => setToasts((prev) => prev.filter((x) => x.id !== id)), 7000);
-    });
+    };
+
+    const connect = () => {
+      if (stopped) return;
+      source?.close();
+      clearTimeout(retry);
+      source = new EventSource(`${live.url}/${live.topic}/sse?since=${lastSeen}`);
+      source.onopen = () => {
+        failures = 0;
+        setPushConnected(true);
+      };
+      // le navigateur ne relance pas toujours seul (réponse refusée, réseau coupé, veille) : on s'en charge
+      source.onerror = () => {
+        setPushConnected(false);
+        source?.close();
+        lastSeen = Math.max(lastSeen - 2, 0);
+        retry = setTimeout(connect, Math.min(30_000, 1000 * 2 ** failures++));
+      };
+      source.addEventListener("message", handle);
+    };
+
+    // retour sur l'onglet ou réseau revenu : on vérifie tout de suite que le flux est vivant
+    const wake = () => {
+      if (document.visibilityState === "visible" && source?.readyState !== EventSource.OPEN) {
+        failures = 0;
+        connect();
+      }
+    };
+    connect();
+    document.addEventListener("visibilitychange", wake);
+    addEventListener("online", wake);
     return () => {
-      source.close();
+      stopped = true;
+      source?.close();
+      clearTimeout(retry);
+      document.removeEventListener("visibilitychange", wake);
+      removeEventListener("online", wake);
       setPushConnected(false);
       clearTimeout(refreshTimer.current);
     };
